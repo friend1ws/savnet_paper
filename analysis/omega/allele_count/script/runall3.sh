@@ -7,5 +7,5 @@ python summarize_allele_count.py \
     ../output/ \
     ../output/omega.splicing_mutation.info.txt
 
-Rscript splicig_mut_count.R
+Rscript splicing_mut_count.R
 
