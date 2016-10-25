@@ -13,9 +13,10 @@ with open(cancer_gene_file, 'r') as hin:
     for line in hin:
         F = line.rstrip('\n').split('\t')
         cancer_gene_flag = "FALSE"
-        if F[1] != "---" or F[2] not in ["---", "T"]:
+        # if F[1] != "---" or F[2] not in ["---", "T"]:
+        if F[4] == "CG":
             cancer_gene_flag = "TRUE"
-        gene2cancer_gene_info[F[0]] = F[1] + '\t' + F[2] + '\t' + cancer_gene_flag
+        gene2cancer_gene_info[F[0]] = F[1] + '\t' + F[2] + '\t' + F[4] + '\t' + cancer_gene_flag
 
 
 
@@ -36,7 +37,7 @@ for gsfile in allfiles_target:
             header2ind[cname] = i
 
         if header_print_flag == 0:
-            print >> hout, "Cancer_Type" + '\t' + '\t'.join(header) + '\t' + "LawrenceEtAl_2014" + '\t' + "Cancer_Gene_Census" + '\t' + "Is_Cancer_Gene" 
+            print >> hout, "Cancer_Type" + '\t' + '\t'.join(header) + '\t' + "LawrenceEtAl_2014" + '\t' + "Cancer_Gene_Census" + '\t' + "YeEtAl_2016" + '\t' + "Is_Cancer_Gene" 
             header_print_flag = 1
 
         for line in hin:
@@ -48,7 +49,7 @@ for gsfile in allfiles_target:
             if float(F[header2ind["Score"]]) < float(BF_thres): continue
             if float(F[header2ind["Q_Value"]]) > float(q_value_thres): continue
 
-            cancer_gene_info = gene2cancer_gene_info[gene_symbol] if gene_symbol in gene2cancer_gene_info else "---\t---\tFALSE" 
+            cancer_gene_info = gene2cancer_gene_info[gene_symbol] if gene_symbol in gene2cancer_gene_info else "---\t---\t---\tFALSE" 
 
             for sample_name in sample_names:
                 print >> hout, cancer_type + '\t' + gene_symbol + '\t' + sample_name + '\t' + '\t'.join(F[2:]) + '\t' + cancer_gene_info

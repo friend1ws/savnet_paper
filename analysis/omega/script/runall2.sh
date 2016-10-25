@@ -14,7 +14,7 @@ python subscript_matome/check_inframe.py ../matome/omega.genomon_splicing_mutati
 
 python subscript_matome/summarize_mut_count.py ../matome/omega.mut_count.txt
 
-Rscript subscript_matome/category.R 
+Rscript subscript_matome/category2.R 
 
 Rscript subscript_matome/motif_dist.R
 

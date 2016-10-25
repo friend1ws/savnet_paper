@@ -6,8 +6,7 @@ gg_color_hue6 <- hcl(h = seq(15, 375, length = 7), l=65, c=100)[1:6]
 base_col <- c("A" = gg_color_hue6[3], "C" = gg_color_hue6[5], "G" = gg_color_hue6[2], "T" = gg_color_hue6[1])
 
 
-target_motif_info <- read.table("omega.motif_summary.txt", header = TRUE, sep = "\t")
-# target_motif_info <- read.table("../matome/omega.motif_summary.txt", header = TRUE, sep = "\t")
+target_motif_info <- read.table("../matome/omega.motif_summary.txt", header = TRUE, sep = "\t")
 
 target_motif_count <- target_motif_info %>% 
   group_by(Rel_Pos, Ref_Base, Alt_Base, Motif_Type) %>% 
@@ -219,7 +218,7 @@ p_dd_ad_ac_dc <- plot_grid(p_dd, p_ad, p_dc, p_ac, ncol = 2, align = "h", rel_wi
 
 plot_grid(p_dd_ad_ac_dc, g_legend(p_dummy_for_legend), ncol = 1, rel_heights = c(1, 0.05))
 
-ggsave("snv_motif_dist.png", width = 10, height = 6)
+ggsave("../matome/snv_motif_dist.png", width = 10, height = 6)
 
 
 
@@ -348,7 +347,7 @@ ggplot(edit_dist_count, aes(x = Motif_Type, y = ecount, fill = edit_dist)) +
   labs(x = "mutation type", y = "#mutation", fill = "edit distance diff.") +
   scale_fill_brewer(palette = "Set3")
 
-ggsave("motif2edit_dist_diff.png", width = 10, height = 3)
+ggsave("../matome/motif2edit_dist_diff.png", width = 10, height = 3)
 
 
 
