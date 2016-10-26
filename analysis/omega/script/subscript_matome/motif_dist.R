@@ -350,6 +350,9 @@ ggplot(edit_dist_count, aes(x = Motif_Type, y = ecount, fill = edit_dist)) +
 ggsave("../matome/motif2edit_dist_diff.png", width = 10, height = 3)
 
 
+write.table(edit_dist_count, "../matome/motif2edit_dist_diff.txt",
+             quote = FALSE, row.names = FALSE, sep = "\t")
+
 
 
 

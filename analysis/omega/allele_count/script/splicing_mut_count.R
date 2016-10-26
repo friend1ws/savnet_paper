@@ -73,7 +73,10 @@ splicing_mut_info_filt_snv_ratio <-
   left_join(splicing_mut_info_filt_snv_count, splicing_mut_info_filt_snv_count_total, by = c("Rel_Start_Motif", "Type_Motif")) %>%
   mutate(ratio = count / total_count) 
 
+write.table(splicing_mut_info_filt_snv_ratio, 
+  "../output/splicing_snv_ratio.txt", quote = FALSE, row.names = FALSE, sep = "\t")
 
+ 
 pos_colour <- rep("grey30", 8)
 pos_colour[3:4] <- "red"
 
@@ -208,6 +211,9 @@ splicing_mut_info_filt_indel_ratio <-
   left_join(splicing_mut_info_filt_indel_count, splicing_mut_info_filt_indel_count_total, by = c("InsDel", "Is_Canonical", "Type_Motif")) %>%
   mutate(ratio = count / total_count) 
 
+
+write.table(splicing_mut_info_filt_indel_ratio,
+  "../output/splicing_indel_ratio.txt", quote = FALSE, row.names = FALSE, sep = "\t")
 
 
 ggplot(splicing_mut_info_filt_indel_ratio %>% 
