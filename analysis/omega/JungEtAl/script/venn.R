@@ -23,8 +23,8 @@ JungEtAl_RS_CG <- JungEtAl_RS %>% filter(Gene %in% cancer_gene_list)
 omega <- read.table("../../matome/omega.motif_summary.txt", sep = "\t",
                     header = TRUE, quote = "", stringsAsFactors = FALSE) %>%
   filter(substring(Sample_Name, 1, 12) %in% target_sample) %>%
-  filter((Motif_Type == "splicing donor disruption" & Rel_Pos %in% c(1, 2, 3, 4)) |
-          Motif_Type == "splicing acceptor disruption" & Rel_Pos %in% c(7, 8, 9)) %>%
+  filter((Mutation_Type == "splicing donor disruption" & Rel_Pos %in% c(1, 2, 3, 4, 5)) |
+          Mutation_Type == "splicing acceptor disruption" & Rel_Pos %in% c(5, 6, 7)) %>%
   mutate(Comp_Key = paste(substring(Sample_Name, 1, 12), 
                           unlist(lapply(strsplit(Mutation_Key, ','), function(x) {paste(x[1], x[2], sep = "_")})),
                           sep = "_"))
