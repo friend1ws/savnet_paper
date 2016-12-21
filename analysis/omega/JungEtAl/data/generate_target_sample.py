@@ -2,7 +2,8 @@
 
 import glob
 
-all_files = glob.glob("../../output/*/mut_SJ_IR_list.txt")
+# all_files = glob.glob("../../output/*/mut_SJ_IR_list.txt")
+all_files = glob.glob("../../gsm_out/gsm_file_list/*.mut_SJ_IR_list.txt")
 
 sample_list_omega = {}
 
