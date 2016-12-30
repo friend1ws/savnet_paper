@@ -2,7 +2,8 @@
 library(dplyr)
 library(ggplot2)
 
-splicing_mutation <- read.table("../matome/omega.genomon_splicing_mutation.result.txt", header = TRUE, sep = "\t", as.is=TRUE, quote="", stringsAsFactors = FALSE)
+splicing_mutation <- read.table("../matome/omega.genomon_splicing_mutation.result.txt", 
+                                header = TRUE, sep = "\t", as.is=TRUE, quote="", stringsAsFactors = FALSE)
 
 multiple_effect <- splicing_mutation %>% 
   group_by(Cancer_Type, Sample_Name, Gene_Symbol, Mutation_Key) %>% 
@@ -13,10 +14,11 @@ multiple_effect_count <- multiple_effect %>%
   group_by(splice_count) %>% 
   summarize(count = n()) 
 
+multiple_effect_count$splice_count2 <- factor(multiple_effect_count$splice_count, levels = 1:max(multiple_effect_count$splice_count))
 
-ggplot(multiple_effect_count, aes(x = splice_count, y = count)) + 
+ggplot(multiple_effect_count, aes(x = splice_count2, y = count)) + 
   geom_bar(stat = "identity") + 
-  labs(x = "#splicing event", y = "#mutation") +
+  labs(x = "#Splicing event", y = "#Mutation") +
   scale_y_log10() +
   theme_minimal() +
   theme(axis.text = element_text(size = rel(1.2)),

@@ -112,8 +112,8 @@ ggplot(cancer_splicing_mutation_count_proc %>% arrange(Mutation_Type2),
   coord_flip() +
   theme_minimal() +
   theme(legend.position = "bottom",
-        axis.text = element_text(size = rel(1.2)),
-        axis.title = element_text(size = rel(1.2))) +
+        axis.text = element_text(size = rel(1.0)),
+        axis.title = element_text(size = rel(1.0))) +
   scale_fill_brewer(palette = "Pastel2")
 
 ggsave("../matome/gene_mutationtype_summary.png", width = 10, height = 6, units = "in")
