@@ -35,6 +35,8 @@ Rscript subscript_matome/fdr_summary.R
 
 Rscript subscript_matome/cancer_gene_summary.R 
 
+Rscript subscript_matome/cancer_gene_ratio.R
+
 Rscript subscript_matome/mes_hbond_spidex.fig.R
 
 Rscript subscript_matome/JungEtAl_venn.R
