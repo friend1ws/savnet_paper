@@ -14,6 +14,7 @@ sp_mut_count <- splicing_mutation %>%
 count_summary <- full_join(sp_mut_count, mut_count, by = c("Cancer_Type", "Sample_Name"))
 count_summary$Mut_Sp_Count[is.na(count_summary$Mut_Sp_Count)] <- 0
 
+count_summary <- count_summary %>% filter(!(Cancer_Type %in% c("LAML", "OV")))
 
 sv_count_median <- count_summary %>% 
   group_by(Cancer_Type) %>% 
@@ -28,7 +29,7 @@ ggplot(count_summary, aes(x = Cancer_Type, y = Mut_Sp_Count)) +
   geom_boxplot(outlier.colour = NA, fill = "#3288bd") +
   theme_bw() +
   ylim(c(-0.2, 8)) +
-  labs(y = "#SV", x = "cancer type") +
+  labs(y = "#SV", x = "Cancer type") +
   theme(axis.text = element_text(size = rel(1.2)),
         axis.title = element_text(size = rel(1.5)),
         axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5),
@@ -48,7 +49,7 @@ ggplot(count_summary_median) +
   geom_point(aes(x = Mut_Count_Median, y = Mut_Sp_Count_Median), colour = "red") + 
   geom_text_repel(data = count_summary_median %>% filter(Mut_Sp_Count_Median > 0), 
                   aes(x = Mut_Count_Median, y = Mut_Sp_Count_Median, label = Cancer_Type)) +
-  labs(x = "median #mutation", y = "median #splicing_mutation") +
+  labs(x = "Median #mutation", y = "Median #splicing_mutation") +
   theme_bw() +
   theme(axis.text = element_text(size = rel(1.2)),
         axis.title = element_text(size = rel(1.5)))
@@ -65,7 +66,7 @@ ggplot(count_summary_trmean) +
   geom_point(aes(x = Mut_Count_Mean, y = Mut_Sp_Count_Mean), colour = "red") + 
   geom_text_repel(data = count_summary_trmean, 
                   aes(x = Mut_Count_Mean, y = Mut_Sp_Count_Mean, label = Cancer_Type)) +
-  labs(x = "trucated mean #mutation", y = "truncated mean #splicing_mutation") +
+  labs(x = "Trucated mean #mutation", y = "Truncated mean #splicing_mutation") +
   theme_bw() +
   theme(axis.text = element_text(size = rel(1.2)),
         axis.title = element_text(size = rel(1.5)))

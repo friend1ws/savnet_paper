@@ -8,7 +8,9 @@ gsm_file = sys.argv[1]
 input_list_dir = sys.argv[2]
 
 header2ind0 = {}
-key2exist = {}
+# key2exist = {}
+key2gsm = {}
+
 with open(gsm_file, 'r') as hin:
     header = hin.readline().rstrip('\n').split('\t')
     for (i, cname) in enumerate(header):
@@ -30,7 +32,19 @@ with open(gsm_file, 'r') as hin:
         key = F[header2ind0["Sample_Name"]] + '\t' + mut_chr + '\t' + mut_start + '\t' + mut_end + '\t' + mut_ref + '\t' + mut_alt
         # if mut_alt == "-":
         #     print >> sys.stderr, key
-        key2exist[key] = 1
+        # key2exist[key] = 1
+
+        gsm = F[header2ind0["Splicing_Class"]]
+        if gsm == "intronic-alternative-5'-splice-site": gsm = "alternative-5'-splice-site"
+        if gsm == "intronic-alternative-3'-splice-site": gsm = "alternative-3'-splice-site"
+        if gsm == "opposite-side-intron-retention": gsm = "intron-retention"
+
+        if key in key2gsm:
+            if gsm not in key2gsm[key]:
+                key2gsm[key].append(gsm)
+        else:
+            key2gsm[key] = [gsm]
+
 
 
 all_list_files = glob.glob(input_list_dir + "/*.mut_SJ_IR_list.txt")
@@ -74,12 +88,17 @@ for list_file in sorted(all_list_files):
                     F2 = line2.rstrip('\n').split('\t')
 
                     key = sample_name + '\t' + '\t'.join(F2[header2ind2[x]] for x in ["Chr", "Start", "End", "Ref", "Alt"])
-                    gsm_info = "FALSE"
-                    if key in key2exist: gsm_info = "TRUE"
+                    gsm_info = "no-change"
+                    if key in key2gsm:
+                        if len(key2gsm[key]) > 1:
+                            gsm_info = "complex"
+                        else:
+                            gsm_info = key2gsm[key][0]
+
                     #     print >> sys.stderr, key
 
                     if gsm_info == "FALSE" and F2[header2ind2["Func.refGene"]] not in ["exonic", "exonic;splicing", "splicing"]: continue
-                    if gsm_info == "FALSE" and F2[header2ind2["ExonicFunc.refGene"]] == "synonymous SNV": continue
+                    # if gsm_info == "FALSE" and F2[header2ind2["ExonicFunc.refGene"]] == "synonymous SNV": continue
 
                     if F2[8].strip() == "": F2[8] = "---"
 

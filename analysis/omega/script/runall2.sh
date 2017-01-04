@@ -18,7 +18,7 @@ python subscript_matome/summarize_mut_count.py ../matome/omega.mut_count.txt
 
 python subscript_matome/check_position_fdr.py ../gsm_out/d5.15_a15.5_8_ka/ 3.0 > ../matome/position_fdr.txt
 
-python subscript_matome/creation_exon_check.py ../matome/omega.genomon_splicing_mutation.result.txt ../matome/omega.creation_exon.txt
+python subscript_matome/check_alt_junc.py ../matome/omega.genomon_splicing_mutation.result.txt ../matome/omega.alt_junc.txt
 
 python subscript_matome/merge_mut.py ../matome/omega.genomon_splicing_mutation.result.txt ../gsm_out/gsm_file_list/ > ../matome/omega.mutation.merged.txt
 
@@ -38,6 +38,8 @@ Rscript subscript_matome/cancer_gene_summary.R
 Rscript subscript_matome/cancer_gene_ratio.R
 
 Rscript subscript_matome/mes_hbond_spidex.fig.R
+
+Rscript subscript_matome/alt_junc_pos.R
 
 Rscript subscript_matome/JungEtAl_venn.R
 
