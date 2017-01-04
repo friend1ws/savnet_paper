@@ -25,7 +25,8 @@ python subscript_matome/merge_mut.py ../matome/omega.genomon_splicing_mutation.r
 
 Rscript subscript_matome/category2.R 
 
-Rscript subscript_matome/motif_dist.R
+# Rscript subscript_matome/motif_dist.R
+Rscript subscript_matome/motif_dist_creation.R
 
 Rscript subscript_matome/multiple_events.R
 
