@@ -1,55 +1,82 @@
 library(dplyr)
 library(ggplot2)
+library(cowplot)
 
-a <- read.table("../matome/omega.alt_junc.txt", sep = "\t", header = TRUE, quote = "") # %>%
-#   filter(Mutation_Type %in% c("splicing donor creation", "splicing acceptor creation"))
-
-
-# %>% mutate(Pos_Ratio = (Mut_Pos - Exon_Start) / (Exon_End - Exon_Start))
+a <- read.table("../matome/omega.alt_junc.txt", sep = "\t", header = TRUE, quote = "")
 
 Pos_Diff <- rep(NA, nrow(a))
 
 ind <- a$Mutation_Type %in% c("splicing acceptor disruption", "splicing acceptor creation") & a$Exon_Strand == "+"
-Pos_Diff[ind] <- a$Junc_Pos[ind] - a$Exon_Start[ind]
+Pos_Diff[ind] <- a$Exon_Start[ind] - a$Junc_Pos[ind] 
 
 ind <- a$Mutation_Type %in% c("splicing acceptor disruption", "splicing acceptor creation") & a$Exon_Strand == "-"
-Pos_Diff[ind] <- a$Exon_End[ind] - a$Junc_Pos[ind]
+Pos_Diff[ind] <- a$Junc_Pos[ind] - a$Exon_End[ind] 
 
 ind <- a$Mutation_Type %in% c("splicing donor disruption", "splicing donor creation") & a$Exon_Strand == "+"
-Pos_Diff[ind] <- a$Exon_End[ind] - a$Junc_Pos[ind]
+Pos_Diff[ind] <- a$Junc_Pos[ind] - a$Exon_End[ind] 
 
 ind <- a$Mutation_Type %in% c("splicing donor disruption", "splicing donor creation") & a$Exon_Strand == "-"
-Pos_Diff[ind] <- a$Junc_Pos[ind] - a$Exon_Start[ind]
+Pos_Diff[ind] <- a$Exon_Start[ind] - a$Junc_Pos[ind] 
 
-
-
-
-# Pos_Diff[a$Exon_Strand == "-"] <- a$Exon_End[a$Exon_Strand == "-"] - a$Mut_Pos[a$Exon_Strand == "-"] 
-
-
-# Pos_Ratio2 <- a$Pos_Ratio
-
-# Pos_Ratio2[a$Exon_Strand == "-"] <- 1 - Pos_Ratio2[a$Exon_Strand == "-"] 
 
 a$Pos_Diff <- Pos_Diff
 
 
 
-a <- a %>% filter(Pos_Diff >= -100) %>% filter(Pos_Diff <= 300)
+a <- a %>% filter(Pos_Diff <= 100) %>% filter(Pos_Diff >= -300)
 a_donor <- a %>% filter(Mutation_Type == "splicing donor creation")
 a_acceptor <- a %>% filter(Mutation_Type == "splicing acceptor creation")
 
 a$Mutation_Type <- factor(a$Mutation_Type, 
-                          levels = c("splicing donor creation", "splicing acceptor creation",
-                                     "splicing donor disruption", "splicing acceptor disruption"))
+                          levels = c("splicing donor disruption", "splicing acceptor disruption", 
+                            "splicing donor creation", "splicing acceptor creation"))
 
-ggplot(a , aes(x = Pos_Diff, fill = Mutation_Type)) + 
-  geom_histogram(binwidth = 5, colour = "gray30") +
-  xlim(c(-100, 300)) + 
-  # facet_grid(.~Mutation_Type, scales = "free") +
-  facet_wrap( ~ Mutation_Type, scales = "free", ncol = 2) +
-  guides(fill = FALSE) +
-  labs(x = "Exonic position")
+p_dd <- ggplot(a %>% filter(Mutation_Type == "splicing donor disruption"),
+               aes(x = Pos_Diff)) + 
+  geom_histogram(binwidth = 5, fill = "#fdb462", colour = "grey30") +
+  theme_minimal() +
+  xlim(c(-300, 100)) +
+  ggtitle("Donor disruption") +
+  labs(x = "", y = "") +
+  geom_vline(xintercept = 0, colour="#fb8072", linetype = "longdash")
 
-ggsave("../matome/alt_exon_pos.png", width = 6, height = 6)
+p_dc <- ggplot(a %>% filter(Mutation_Type == "splicing donor creation"),
+               aes(x = Pos_Diff)) + 
+  geom_histogram(binwidth = 5, fill = "#fdb462", colour = "grey30") +
+  theme_minimal() +
+  xlim(c(-300, 100)) +
+  ggtitle("Donor creation") +
+  labs(x = "", y = "") +
+  geom_vline(xintercept = 0, colour="#fb8072", linetype = "longdash")
+
+p_ad <- ggplot(a %>% filter(Mutation_Type == "splicing acceptor disruption"),
+               aes(x = Pos_Diff)) + 
+  geom_histogram(binwidth = 5, fill = "#fdb462", colour = "grey30") +
+  theme_minimal() +
+  scale_x_reverse(limits=c(100, -300)) +
+  ggtitle("Acceptor Disruption") +
+  labs(x = "", y = "") +
+  geom_vline(xintercept = 0, colour="#fb8072", linetype = "longdash")
+
+p_ac <- ggplot(a %>% filter(Mutation_Type == "splicing acceptor creation"),
+               aes(x = Pos_Diff)) + 
+  geom_histogram(binwidth = 5, fill = "#fdb462", colour = "grey30") +
+  theme_minimal() +
+  scale_x_reverse(limits=c(100, -300)) +
+  ggtitle("Acceptor creation") +
+  labs(x = "", y = "") +
+  geom_vline(xintercept = 0, colour="#fb8072", linetype = "longdash")
+
+p_dc_ac <- plot_grid(p_dc, p_ac, ncol = 2, align = "h")
+p_dd_ad <- plot_grid(p_dd, p_ad, ncol = 2, align = "h")
+
+xlabel <- ggdraw() + draw_label("Intronic position")
+ylabel <- ggdraw() + draw_label("Frequency", angle = 90)
+
+p_dc_ac_dd_ad_xl <- plot_grid(p_dc_ac, p_dd_ad, xlabel, ncol = 1, align = "v", rel_heights = c(1, 1, 0.1))
+
+plot_grid(ylabel, p_dc_ac_dd_ad_xl, ncol = 2, align = "h", rel_widths = c(0.05, 1))
+
+
+ggsave("../matome/alt_junc_pos.png", width = 8, height = 6)
 
