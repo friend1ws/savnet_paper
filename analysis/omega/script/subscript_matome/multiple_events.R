@@ -16,15 +16,15 @@ multiple_effect_count <- multiple_effect %>%
 
 multiple_effect_count$splice_count2 <- factor(multiple_effect_count$splice_count, levels = 1:max(multiple_effect_count$splice_count))
 
-ggplot(multiple_effect_count, aes(x = splice_count2, y = count)) + 
+ggplot(multiple_effect_count, aes(x = splice_count2, y = log10(count + 1))) + 
   geom_bar(stat = "identity") + 
-  labs(x = "#Splicing event", y = "#Mutation") +
-  scale_y_log10() +
+  labs(x = "Associated splicing count", y = "log10(Mutation count + 1)") +
+  # scale_y_log10() +
   theme_minimal() +
   theme(axis.text = element_text(size = rel(1.2)),
         axis.title = element_text(size = rel(1.2)))
 
-ggsave("../matome/multi_event.png", width = 6, height = 6)
+ggsave("../matome/multi_event.pdf", width = 4, height = 6)
 
 
 splicing_multiple_mut <- splicing_mutation %>% 

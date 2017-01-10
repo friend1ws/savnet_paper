@@ -12,8 +12,8 @@ cancer_gene_list <- as.character(cancer_gene[cancer_gene$V5 == "CG", "V1"])
 
 JungEtAl_RS <- read.table("../JungEtAl/data/ng.3414-S2.ST3.proc.txt", sep = "\t", 
                           header = TRUE, quote = "", stringsAsFactors = FALSE) %>%
-  filter(Distance.to.5..donor.splice.site %in% c(-2, 1, -1, -2) |
-         Distance.to.3..acceptor.splice.site %in% c(1, -1, -2)) %>%
+  filter(Distance.to.5..donor.splice.site %in% c(-3, -2, -1, 1, 2) |
+         Distance.to.3..acceptor.splice.site %in% c(-1, 1, 2)) %>%
   filter(Sample %in% target_sample) %>%
   mutate(Comp_Key = paste(Sample, sub("chr", "", Chromosome), Position, sep = "_"))
 
@@ -36,22 +36,24 @@ All_comp <- list(GSM = omega$Comp_Key, JungEtAl = JungEtAl_RS$Comp_Key)
 
 venn.diagram(All_comp, 
              fill = c("dodgerblue", "goldenrod1"),
+             imagetype = "png",
              filename = "../matome/JungEtAl_comp.png",
              height = 3000,
              width = 3000,
              margin = 0.05,
-             main = "all genes",
+             main = "All genes",
              main.cex = 1.5)
 
 CG_comp <- list(GSM = omega_CG$Comp_Key, JungEtAl = JungEtAl_RS_CG$Comp_Key)
 
 venn.diagram(CG_comp, 
              fill = c("dodgerblue", "goldenrod1"),
+             imagetype = "png",
              filename = "../matome/JungEtAl_comp_CG.png",
              height = 3000,
              width = 3000,
              margin = 0.05,
-             main = "cancer genes",
+             main = "Cancer genes",
              main.cex = 1.5)
 
 

@@ -53,8 +53,8 @@ g_acceptor <- ggplot(total_pos_fdr_acceptor,
                      aes(x = Rel_Pos2, y = pfdr)) +
   ggtitle("Acceptor") +
   labs(x = "Intron Position", y = "Position-Wise FDR") +
-  geom_rect(xmin = 0, xmax = 15.5, ymin = -Inf, ymax = Inf, alpha = 0.002, fill = "#e41a1c") +
-  geom_rect(xmin = 15.5, xmax = 21, ymin = -Inf, ymax = Inf, alpha = 0.002, fill = "#377eb8") +
+  geom_rect(xmin = 0, xmax = 15.5, ymin = -Inf, ymax = Inf, alpha = 0.005, fill = "#e41a1c") +
+  geom_rect(xmin = 15.5, xmax = 21, ymin = -Inf, ymax = Inf, alpha = 0.005, fill = "#377eb8") +
   geom_bar(fill = "#984ea3", stat = "identity") +
   ylim(c(0, 0.8)) +
   theme_bw() +
@@ -69,7 +69,7 @@ g_acceptor <- ggplot(total_pos_fdr_acceptor,
 plot_grid(g_donor, g_acceptor, ncol = 2, align = "h")
 
 
-ggsave("../matome/position_fdr.png", width = 8, height = 3, unit = "in")
+ggsave("../matome/position_fdr.pdf", width = 8, height = 3, unit = "in")
 
 ##########
 
@@ -94,8 +94,8 @@ g_donor_2 <- ggplot(df_donor,
   geom_bar(stat = "identity", position = "dodge") +
   ggtitle("Donor") +
   labs(x = "Intron Position", y = "Count") +
-  geom_rect(xmin = 0, xmax = 5.5, ymin = -Inf, ymax = Inf, alpha = 0.002, fill = "#377eb8") +
-  geom_rect(xmin = 5.5, xmax = 21, ymin = -Inf, ymax = Inf, alpha = 0.002, fill = "#e41a1c") +
+  geom_rect(xmin = 0, xmax = 5.5, ymin = -Inf, ymax = Inf, alpha = 0.005, fill = "#377eb8") +
+  geom_rect(xmin = 5.5, xmax = 21, ymin = -Inf, ymax = Inf, alpha = 0.005, fill = "#e41a1c") +
   theme_bw() +
   theme(panel.grid.major.x = element_blank()) +
   scale_fill_brewer(palette = "Dark2") +
@@ -157,6 +157,6 @@ g_donor_acceptor_2 <- plot_grid(g_donor_2, g_acceptor_2, ncol = 2, align = "h")
 
 plot_grid(g_donor_acceptor_2, g_legend(g_dummy_for_legend), ncol = 1, rel_heights = c(1, 0.2))
 
-ggsave("../matome/position_fpnum.png", width = 8, height = 3, unit = "in")
+ggsave("../matome/position_fpnum.pdf", width = 8, height = 3, unit = "in")
 
 

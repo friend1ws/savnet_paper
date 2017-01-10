@@ -13,5 +13,5 @@ ggplot(omega_FDR, aes(x = Cancer_Type, y = FDR)) +
   theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))
 
 
-ggsave("../matome/cancer_type_fdr.png", width = 10, height = 5)
+ggsave("../matome/cancer_type_fdr.pdf", width = 10, height = 5)
 

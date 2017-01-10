@@ -30,7 +30,7 @@ Rscript subscript_matome/motif_dist_creation.R
 
 Rscript subscript_matome/multiple_events.R
 
-Rscript subscript_matome/count_summary.R
+Rscript subscript_matome/count_summary2.R
 
 Rscript subscript_matome/fdr_summary.R
 
@@ -43,6 +43,8 @@ Rscript subscript_matome/mes_hbond_spidex.fig.R
 Rscript subscript_matome/alt_junc_pos.R
 
 Rscript subscript_matome/JungEtAl_venn.R
+
+Rscript subscript_matome/multi_splice_mutation.R
 
 
 <<_COM_

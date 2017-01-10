@@ -149,7 +149,7 @@ ggplot(splicing_mutation_count, aes(x = Mutation_Type2, y = count, fill = Splici
   guides(fill=guide_legend(nrow=2,byrow=TRUE))
 
 # ggsave("category_count.png", width = 8, height = 4)
-ggsave("../matome/category_count.png", width = 12, height = 4)
+ggsave("../matome/category_count.pdf", width = 12, height = 4)
 
 
 splicing_mutation_count_simple <- splicing_mutation %>%
@@ -171,7 +171,7 @@ ggplot(splicing_mutation_count_simple, aes(x = Mutation_Type3, y = count, fill =
   guides(fill=guide_legend(nrow=2,byrow=TRUE))
 
 # ggsave("category_count.png", width = 8, height = 4)
-ggsave("../matome/category_count_simple.png", width = 12, height = 3)
+ggsave("../matome/category_count_simple.pdf", width = 12, height = 3)
 
 
 write.table(splicing_mutation %>% 
