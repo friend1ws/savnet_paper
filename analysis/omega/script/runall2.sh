@@ -14,7 +14,7 @@ Rscript subscript_matome/add_mes_score.R ../matome/omega.motif_summary.txt ../ma
 
 python subscript_matome/check_inframe.py ../matome/omega.genomon_splicing_mutation.result.txt ../matome/gene.inframe_summary.txt
 
-python subscript_matome/summarize_mut_count.py ../matome/omega.mut_count.txt
+python subscript_matome/summarize_mut_count.py ../matome/omega.genomon_splicing_mutation.result.txt ../gsm_out/gsm_file_list ../matome/omega.mut_count.txt
 
 python subscript_matome/check_position_fdr.py ../gsm_out/d5.15_a15.5_8_ka/ 3.0 > ../matome/position_fdr.txt
 
