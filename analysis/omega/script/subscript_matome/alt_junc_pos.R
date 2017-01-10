@@ -78,5 +78,5 @@ p_dc_ac_dd_ad_xl <- plot_grid(p_dc_ac, p_dd_ad, xlabel, ncol = 1, align = "v", r
 plot_grid(ylabel, p_dc_ac_dd_ad_xl, ncol = 2, align = "h", rel_widths = c(0.05, 1))
 
 
-ggsave("../matome/alt_junc_pos.png", width = 8, height = 6)
+ggsave("../matome/alt_junc_pos.pdf", width = 8, height = 6)
 

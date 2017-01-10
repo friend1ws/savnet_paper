@@ -103,7 +103,7 @@ p_dc <- ggplot(snv_motif_count_dc,
   facet_wrap( ~ Rel_Pos2, nrow = 1, drop = FALSE) +
   labs(x = "Reference base", y = "SASM count", fill = "Alternative base") +
   theme_minimal() +
-  ylim(c(0, 750)) +
+  ylim(c(0, 700)) +
   ggtitle("Donor creation") +
   theme(axis.text.x = element_text(size = rel(1)),
         axis.text.y = element_text(size = rel(1)),
@@ -138,7 +138,7 @@ p_ac <- ggplot(snv_motif_count_ac,
   facet_wrap( ~ Rel_Pos2, nrow = 1) +
   labs(x = "Reference base", y = "SASM count", fill = "Alternative base") +
   theme_minimal() +
-  ylim(c(0, 750)) +
+  ylim(c(0, 250)) +
   ggtitle("Acceptor creation") +
   theme(axis.text.x = element_text(size = rel(1)),
         axis.text.y = element_text(size = rel(1)),
@@ -179,7 +179,7 @@ p_ac_dc <- plot_grid(p_dc, p_ac, align = "h", rel_widths = c(1, 0.9))
 
 plot_grid(p_ac_dc, g_legend(p_dummy_for_legend), ncol = 1, rel_heights = c(1, 0.1))
 
-ggsave("../matome/snv_motif_dist_creation.pdf", width = 10, height = 4)
+ggsave("../matome/snv_motif_dist_creation.pdf", width = 10, height = 3.3)
 
 
 
