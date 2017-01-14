@@ -195,5 +195,33 @@ plot_grid(plot_grid(p_tobacco, p_uv, p_pole, nrow = 1), g_legend(p_dummy_for_leg
 ggsave(paste("../output/rel_sp_ratio_ctype.pdf", sep = ""), width = 10, height = 7.5)
 
 
+##########
+library(pmsignature)
+
+
+my_sig_num <- read.table("yshira_sig_num.txt", sep = " ", header = FALSE, stringsAsFactors = FALSE)
+
+get_plot <- function(sig_num, title) {
+  selected_key <- mem_info_all %>% filter(COSM_ID == as.character(sig_num)) %>% filter(Corr == max(Corr)) 
+  sig_num <- my_sig_num[my_sig_num[,1] == selected_key$Cancer_Type, 2]
+  load(paste("../output/", selected_key$Cancer_Type, "/pmsignature/ind.", sig_num, ".Rdata", sep = ""))
+  visPMSignature(resultForSave[[1]], selected_key$Sig_Num, charSize = 2.5) + ggtitle(title) + theme(panel.background = element_blank())
+}
+
+p_age <- get_plot(1, "Age")
+p_appobec <- get_plot(13, "APOBEC")
+p_tobacco <- get_plot(4, "Tobacco")
+p_mmr <- get_plot(6, "MMR defect")
+p_uv <- get_plot(7, "Ultraviolet")
+p_pole1 <- get_plot(31, "POLE1")
+p_pole2 <- get_plot(32, "POLE2")
+p_ms <- get_plot(21, "Microsatellite")
+
+
+theme_set(theme_gray())
+
+plot_grid(p_age, p_appobec, p_tobacco, p_mmr, p_uv, p_pole1, p_pole2, p_ms, nrow = 2)
+
+ggsave("../output/pmsignature_list.pdf", width = 8, height = 3.2)
 
 
