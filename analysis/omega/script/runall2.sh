@@ -34,7 +34,7 @@ Rscript subscript_matome/count_summary2.R
 
 Rscript subscript_matome/fdr_summary.R
 
-Rscript subscript_matome/cancer_gene_summary.R 
+Rscript subscript_matome/cancer_gene_summary2.R 
 
 Rscript subscript_matome/cancer_gene_ratio.R
 
@@ -46,6 +46,7 @@ Rscript subscript_matome/JungEtAl_venn.R
 
 Rscript subscript_matome/multi_splice_mutation.R
 
+Rscript subscript_matome/alt_score_diff.R
 
 <<_COM_
 

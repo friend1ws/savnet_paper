@@ -101,48 +101,25 @@ score_creation <- data.frame(diff_score = c(mut_info_dc$mes_wt - mes_org_dc,
                                         mut_info_dc$hbond_mt - hb_score_org_dc, 
                                         mut_info_ac$mes_wt - mes_org_ac,
                                         mut_info_ac$mes_mt - mes_org_ac),
-                         is_mutation = factor(c(rep("wt", nrow(mut_info_dc)),
-                                             rep("mt", nrow(mut_info_dc)),
-                                             rep("wt", nrow(mut_info_dc)),
-                                             rep("mt", nrow(mut_info_dc)),
-                                             rep("wt", nrow(mut_info_ac)),
-                                             rep("mt", nrow(mut_info_ac))),
-                                           levels = c("wt", "mt")),
+                         is_mutation = factor(c(rep("WT", nrow(mut_info_dc)),
+                                             rep("MT", nrow(mut_info_dc)),
+                                             rep("WT", nrow(mut_info_dc)),
+                                             rep("MT", nrow(mut_info_dc)),
+                                             rep("WT", nrow(mut_info_ac)),
+                                             rep("MT", nrow(mut_info_ac))),
+                                           levels = c("WT", "MT")),
                          score_type = factor(c(rep("mes", 2 * nrow(mut_info_dc)),
                                                rep("hbond", 2 * nrow(mut_info_dc)),
                                                rep("mes", 2 * nrow(mut_info_ac))),
                                              levels = c("mes", "hbond")),
-                         is_dc = factor(c(rep("donor", 4 * nrow(mut_info_dc)),
-                                          rep("acceptor", 2 * nrow(mut_info_ac))),
-                                        levels = c("donor", "acceptor"))
+                         is_da = factor(c(rep("Donor", 4 * nrow(mut_info_dc)),
+                                          rep("Acceptor", 2 * nrow(mut_info_ac))),
+                                        levels = c("Donor", "Acceptor")),
+                         is_dc = factor(rep("Creation", 4 * nrow(mut_info_dc) + 2 * nrow(mut_info_ac)),
+                                        levels = c("Creation", "Disruption"))   
                          )
 
 
-ggplot(score_creation %>% filter(score_type == "mes"), aes(x = is_mutation, y = diff_score, fill = is_mutation)) + 
-  geom_boxplot() +
-  ylim(c(-25, 25)) +
-  labs(x = "", y = "Diff. of MaxEnt score between \nalternative and authentic splice sites") +
-  theme_bw() +
-  facet_grid(.~is_dc) +
-  scale_fill_brewer(palette = "Accent") +
-  guides(fill = FALSE) 
-
-
-ggsave("../matome/diff_mes_creation.png", width = 6, height = 4)
-
-
-ggplot(score_creation %>% filter(score_type == "hbond"), aes(x = is_mutation, y = diff_score, fill = is_mutation)) + 
-  geom_boxplot() +
-  ylim(c(-20, 20)) +
-  labs(x = "", y = "Diff. of H-bond score between \nalternative and authentic splice sites") +
-  theme_bw() +
-  scale_fill_brewer(palette = "Accent") +
-  guides(fill = FALSE) 
-
-ggsave("../matome/diff_hb_creation.png", width = 3, height = 4)
-
-  
-                                    
 ########
 # donor disruption
 
@@ -201,44 +178,72 @@ score_disruption <- data.frame(diff_score = c(mes_alt_dd - mut_info_dd$mes_wt,
                                               hb_score_alt_dd - mut_info_dd$hbond_mt,
                                               mes_alt_ad - mut_info_ad$mes_wt,
                                               mes_alt_ad - mut_info_ad$mes_mt),
-                             is_mutation = factor(c(rep("wt", nrow(mut_info_dd)),
-                                                    rep("mt", nrow(mut_info_dd)),
-                                                    rep("wt", nrow(mut_info_dd)),
-                                                    rep("mt", nrow(mut_info_dd)),
-                                                    rep("wt", nrow(mut_info_ad)),
-                                                    rep("mt", nrow(mut_info_ad))),
-                                                  levels = c("wt", "mt")),
+                             is_mutation = factor(c(rep("WT", nrow(mut_info_dd)),
+                                                    rep("MT", nrow(mut_info_dd)),
+                                                    rep("WT", nrow(mut_info_dd)),
+                                                    rep("MT", nrow(mut_info_dd)),
+                                                    rep("WT", nrow(mut_info_ad)),
+                                                    rep("MT", nrow(mut_info_ad))),
+                                                  levels = c("WT", "MT")),
                              score_type = factor(c(rep("mes", 2 * nrow(mut_info_dd)),
                                                    rep("hbond", 2 * nrow(mut_info_dd)),
                                                    rep("mes", 2 * nrow(mut_info_ad))),
                                                  levels = c("mes", "hbond")),
-                             is_dc = factor(c(rep("donor", 4 * nrow(mut_info_dd)),
-                                              rep("acceptor", 2 * nrow(mut_info_ad))),
-                                            levels = c("donor", "acceptor"))
+                             is_da = factor(c(rep("Donor", 4 * nrow(mut_info_dd)),
+                                              rep("Acceptor", 2 * nrow(mut_info_ad))),
+                                            levels = c("Donor", "Acceptor")),
+                             is_dc = factor(rep("Disruption", 4 * nrow(mut_info_dd) + 2 * nrow(mut_info_ad)),
+                                            levels = c("Creation", "Disruption"))
+
 )
 
 
-ggplot(score_disruption %>% filter(score_type == "mes"), 
-       aes(x = is_mutation, y = diff_score, fill = is_mutation)) + 
-  geom_boxplot() +
+ggplot(rbind(score_creation, score_disruption) %>% filter(score_type == "mes"), aes(x = is_mutation, y = diff_score, fill = is_mutation)) +
+  geom_boxplot(outlier.size = 0.6, size = 0.3) +
   ylim(c(-25, 25)) +
   labs(x = "", y = "Diff. of MaxEnt score between \nalternative and authentic splice sites") +
-  theme_bw() +
-  facet_grid(.~is_dc) +
-  scale_fill_brewer(palette = "Accent") +
-  guides(fill = FALSE) 
+  theme_minimal() +
+  facet_grid(is_dc~is_da) +
+  scale_fill_manual(values = c("WT" = "#ccebc5", "MT" = "#bc80bd")) +
+  guides(fill = FALSE)
 
 
-ggsave("../matome/diff_mes_disruption.png", width = 6, height = 4)
+ggsave("../matome/alt_diff_mes_creation_disruption.pdf", width = 4, height = 4)
 
 
-ggplot(score_disruption %>% filter(score_type == "hbond"), aes(x = is_mutation, y = diff_score, fill = is_mutation)) + 
-  geom_boxplot() +
+ggplot(rbind(score_creation, score_disruption) %>% filter(score_type == "hbond"), aes(x = is_mutation, y = diff_score, fill = is_mutation)) +
+  geom_boxplot(outlier.size = 0.6, size = 0.3) +
   ylim(c(-20, 20)) +
   labs(x = "", y = "Diff. of H-bond score between \nalternative and authentic splice sites") +
-  theme_bw() +
-  scale_fill_brewer(palette = "Accent") +
-  guides(fill = FALSE) 
+  theme_minimal() +
+  facet_grid(is_dc~is_da) +
+  scale_fill_manual(values = c("WT" = "#ccebc5", "MT" = "#bc80bd")) +
+  guides(fill = FALSE)
 
-ggsave("../matome/diff_hb_disruption.png", width = 3, height = 4)
+ggsave("../matome/alt_diff_hb_creation_disruption.pdf", width = 2.5, height = 4)
+
+
+# ggplot(score_disruption %>% filter(score_type == "mes"), 
+#        aes(x = is_mutation, y = diff_score, fill = is_mutation)) + 
+#   geom_boxplot() +
+#   ylim(c(-25, 25)) +
+#   labs(x = "", y = "Diff. of MaxEnt score between \nalternative and authentic splice sites") +
+#   theme_minimal() +
+#   facet_grid(.~is_da) +
+#   scale_fill_manual(values = c("WT" = "#ccebc5", "MT" = "#bc80bd")) +
+#   guides(fill = FALSE) 
+
+
+# ggsave("../matome/alt_diff_mes_disruption.pdf", width = 6, height = 4)
+
+
+# ggplot(score_disruption %>% filter(score_type == "hbond"), aes(x = is_mutation, y = diff_score, fill = is_mutation)) + 
+#   geom_boxplot() +
+#   ylim(c(-20, 20)) +
+#   labs(x = "", y = "Diff. of H-bond score between \nalternative and authentic splice sites") +
+#   theme_minimal() +
+#   scale_fill_manual(values = c("WT" = "#ccebc5", "MT" = "#bc80bd")) +
+#   guides(fill = FALSE) 
+
+# ggsave("../matome/alt_diff_hb_disruption.pdf", width = 3, height = 4)
 

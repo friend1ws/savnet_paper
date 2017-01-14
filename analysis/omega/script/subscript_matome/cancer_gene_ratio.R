@@ -3,78 +3,121 @@ library(ggplot2)
 library(stringr)
 library(tidyr)
 
-cancer_gene <- read.table("/home/yshira/mysoftware/sv_utils/cancer_gene/cancer_gene.txt", sep = "\t", stringsAsFactors = FALSE) %>% 
-  filter(V2 != "---" | V3 != "---") %>%
-  filter(V2 != "---" | V3 != "T") %>% 
-  select(gene = V1)
+cancer_gene <- read.table("/home/yshira/mysoftware/sv_utils/cancer_gene/vogelstein_science_2013.txt", 
+    sep = "\t", header = TRUE, stringsAsFactors = FALSE)
+
+  
 
 gene_list <- read.table("/home/yshira/mysoftware/sv_utils/resource/refGene.txt.gz", sep="\t", stringsAsFactors = FALSE) %>% 
   filter(substring(V2, 0, 3) == "NM_") %>%
-  select(gene = V13) %>% distinct(gene) %>% mutate(cancer_gene = ifelse(gene %in% cancer_gene$gene, "CG", "nonCG")) 
+  select(gene = V13) %>% distinct(gene) %>% left_join(cancer_gene, key = "gene") 
+gene_list$classification[is.na(gene_list$classification)] <- "NonCG"
+
 
 mut_info <- read.table("../matome/omega.mutation.merged.txt", sep = "\t", header = TRUE, quote = "", stringsAsFactors = FALSE) %>%
   filter(!str_detect(Gene.refGene, "-") & !str_detect(Gene.refGene, ",")) %>%
-  full_join(gene_list, by = c("Gene.refGene" = "gene")) %>%
-  filter(!is.na(cancer_gene))
+  inner_join(gene_list, by = c("Gene.refGene" = "gene")) 
 
 
-syn_info <- mut_info %>% 
-  filter(Func.refGene == "exonic" & ExonicFunc.refGene == "synonymous SNV") %>% 
-  # select(Sample_Name, Gene.refGene, Func.refGene, ExonicFunc.refGene, cancer_gene) %>% distinct() %>%
-  group_by(cancer_gene) %>% summarize(count = n()) %>%
-  spread(key = cancer_gene, value = count) %>% mutate(ratio = CG / (CG + nonCG))
-  
 
-nonsyn_info <- mut_info %>% 
-  filter(Func.refGene == "exonic" & ExonicFunc.refGene == "nonsynonymous SNV") %>% 
-  # select(Sample_Name, Gene.refGene, Func.refGene, ExonicFunc.refGene, cancer_gene) %>% distinct() %>%
-  group_by(cancer_gene) %>% summarize(count = n()) %>%
-  spread(key = cancer_gene, value = count) %>% mutate(ratio = CG / (CG + nonCG))
+mut_func <- rep("Other", nrow(mut_info))
+mut_func[mut_info$Func.refGene == "exonic" & mut_info$ExonicFunc.refGene == "synonymous SNV"] <- "Silent"
+mut_func[mut_info$Func.refGene == "exonic" & mut_info$ExonicFunc.refGene == "nonsynonymous SNV"] <- "Missense"
+mut_func[mut_info$Func.refGene == "exonic" & mut_info$ExonicFunc.refGene == "stopgain"] <- "Nonsense"
+mut_func[mut_info$Func.refGene == "exonic" & 
+           mut_info$ExonicFunc.refGene %in% c("frameshift deletion", "frameshift insertion")] <- "Frameshift indel"
+mut_func[mut_info$Func.refGene == "exonic" & 
+           mut_info$ExonicFunc.refGene %in% c("nonframeshift deletion", "nonframeshift insertion")] <- "Inframe indel"
 
-none_info <- mut_info %>% 
-  filter(Func.refGene == "exonic" & ExonicFunc.refGene == "stopgain") %>% 
-  # select(Sample_Name, Gene.refGene, Func.refGene, ExonicFunc.refGene, cancer_gene) %>% distinct() %>%
-  group_by(cancer_gene) %>% summarize(count = n()) %>%
-  spread(key = cancer_gene, value = count) %>% mutate(ratio = CG / (CG + nonCG))
+mut_info$mut_func <- mut_func
 
-lof_info <- mut_info %>% 
-  filter(Func.refGene == "exonic" & ExonicFunc.refGene %in% c("stopgain", "frameshift deletion", "frameshift insertion")) %>% 
-  # select(Sample_Name, Gene.refGene, Func.refGene, ExonicFunc.refGene, cancer_gene) %>% distinct() %>%
-  group_by(cancer_gene) %>% summarize(count = n()) %>%
-  spread(key = cancer_gene, value = count) %>% mutate(ratio = CG / (CG + nonCG))
+mut_cg_info <- mut_info %>% 
+  group_by(mut_func, classification) %>% summarize(count = n()) %>%
+  spread(key = classification, value = count) %>%
+  mutate(Oncogene_ratio = Oncogene / (NonCG + Oncogene + TSG),
+         TSG_ratio = TSG / (NonCG + Oncogene + TSG))
 
-sp_info <- mut_info %>% 
-  filter(str_detect(Func.refGene, "splicing")) %>% 
-  # select(Sample_Name, Gene.refGene, Func.refGene, ExonicFunc.refGene, cancer_gene) %>% distinct() %>%
-  group_by(cancer_gene) %>% summarize(count = n()) %>%
-  spread(key = cancer_gene, value = count) %>% mutate(ratio = CG / (CG + nonCG))
+TSG_ratio_base <- mut_cg_info$TSG_ratio[mut_cg_info$mut_func == "Silent"]
+Oncogene_ratio_base <- mut_cg_info$Oncogene_ratio[mut_cg_info$mut_func == "Silent"]
+
+mut_cg_info <- mut_cg_info %>%
+  mutate(Oncogene_pV = 1 - pbinom(Oncogene - 1, NonCG + Oncogene + TSG, Oncogene_ratio_base),
+         TSG_pV = 1 - pbinom(TSG - 1, NonCG + Oncogene + TSG, TSG_ratio_base)) %>%
+  mutate(Oncogene_log_pV = ifelse(Oncogene_pV > 0, -log10(Oncogene_pV), 10),
+         TSG_log_pV = ifelse(TSG_pV > 0, -log10(TSG_pV), 10))
 
 
-gsm_info <- mut_info %>% 
+gsm_cg_info <- mut_info %>% 
   filter(GSM != "no-change") %>% 
-  group_by(GSM, cancer_gene) %>% summarize(count = n()) %>%
-  spread(key = cancer_gene, value = count) %>% mutate(ratio = CG / (CG + nonCG))
+  group_by(GSM, classification) %>% summarize(count = n()) %>%
+  spread(key = classification, value = count) %>%
+  mutate(Oncogene_ratio = Oncogene / (NonCG + Oncogene + TSG),
+         TSG_ratio = TSG / (NonCG + Oncogene + TSG))
 
+gsm_cg_info <- gsm_cg_info %>%
+  mutate(Oncogene_pV = 1 - pbinom(Oncogene - 1, NonCG + Oncogene + TSG, Oncogene_ratio_base),
+         TSG_pV = 1 - pbinom(TSG - 1, NonCG + Oncogene + TSG, TSG_ratio_base)) %>%
+  mutate(Oncogene_log_pV = ifelse(Oncogene_pV > 0, -log10(Oncogene_pV), 10),
+         TSG_log_pV = ifelse(TSG_pV > 0, -log10(TSG_pV), 10))
+
+gsm_cg_info$mut_func <- gsm_cg_info$GSM
 
 type_order <- c("silent", "missense", "loss-of-function",
                 "exon-skip", "alternative-5'-splice-site", "alternative-3'-splice-site", 
                 "intron-retention", "complex")
 
-cg_ratio <- data.frame(
-  type = factor(type_order, levels = rev(type_order)),
-  ratio = c(syn_info$ratio, nonsyn_info$ratio, lof_info$ratio,
-            unlist(lapply(type_order[4:8], function(x) {as.numeric(gsm_info[gsm_info$GSM == x, "ratio"])}))),
-  is_gsm = c(rep("non_gsm", 3), rep("gsm", 5)))
+
+cg_info <- rbind(mut_cg_info, gsm_cg_info)
+
+cg_info$mut_func[cg_info$mut_func == "alternative-5'-splice-site"] <- "alternative-splice-site"
+cg_info$mut_func[cg_info$mut_func == "alternative-3'-splice-site"] <- "alternative-splice-site"
 
 
-ggplot(cg_ratio, aes(x = type, y = ratio, fill = is_gsm)) + 
-  geom_bar(stat = "identity")  + 
+cg_info$mut_func2 <- factor(cg_info$mut_func,
+                            levels = rev(c("Silent", "Missense", "Nonsense", "Inframe indel", "Frameshift indel", "Other",
+                                       "exon-skip", "alternative-splice-site", "intron-retention", "complex")),
+                            labels = rev(c("Silent", "Missense", "Nonsense", "Inframe indel", "Frameshift indel", "Other",
+                                       "Exon skip", "Alternative splice site", "Intron retention", "Complex")))
+cg_info$is_gsm <- ifelse(is.na(cg_info$GSM), "non_gsm", "gsm")
+
+
+cg_info_proc <- cg_info %>% gather(key = class_statistics, value = value, Oncogene_ratio, TSG_ratio, Oncogene_log_pV, TSG_log_pV) %>% 
+  select(mut_func2, class_statistics, value)
+
+cg_info_proc$classification <- ifelse(cg_info_proc$class_statistics %in% c("Oncogene_ratio", "Oncogene_log_pV"), "Oncogene", "TSG")
+cg_info_proc$statistics <- ifelse(cg_info_proc$class_statistics %in% c("Oncogene_ratio", "TSG_ratio"), "ratio", "log_pV")
+
+
+cg_info_proc$is_gsm <- ifelse(cg_info$mut_func2 %in% 
+                                c("Exon skip", "Alternative splice site",
+                                  "Intron retention", "Complex"), "gsm", "non_gsm")
+
+
+ggplot(cg_info_proc %>% filter(!(mut_func2 %in% c("Other")) & statistics == "ratio"),
+       aes(x = mut_func2, y = value, fill = mut_func2)) + 
+  geom_bar(stat = "identity", position = "dodge")  + 
   coord_flip() +
   labs(x = "", y = "Cancer gene ratio") +
   theme_minimal() +
-  scale_fill_manual(values = c(gsm = "#33a02c", non_gsm = "#b2df8a")) +
+  facet_grid(.~classification, scales = "free") +
+  scale_fill_manual(values = c("#fed9a6", "#decbe4", "#ffffcc", "#fbb4ae", rep("#b2df8a", 5))) +
+  # scale_fill_manual(values = c(gsm = "#33a02c", non_gsm = "#b2df8a")) +
   guides(fill = FALSE)
 
 
-ggsave("../matome/cancer_gene_ratio.png", width = 6, height = 4)
+ggsave("../matome/cancer_gene_ratio.pdf", width = 8, height = 3)
+
+
+ggplot(cg_info_proc %>% filter(!(mut_func2 %in% c("Silent", "Other")) & statistics == "log_pV"),
+       aes(x = mut_func2, y = value, fill = mut_func2)) + 
+  geom_bar(stat = "identity", position = "dodge")  + 
+  coord_flip() +
+  labs(x = "", y = "log10(P-value)") +
+  theme_minimal() +
+  facet_grid(.~classification, scales = "free") +
+  scale_fill_manual(values = c("#fed9a6", "#decbe4", "#ffffcc", "#fbb4ae", rep("#b2df8a", 4))) +
+  guides(fill = FALSE)
+
+
+ggsave("../matome/cancer_gene_pV.pdf", width = 8, height = 2.8)
 

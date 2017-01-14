@@ -8,23 +8,25 @@ allele_count <- allele_count %>%
   mutate(ratio = Intron_Retention_Positive / (Intron_Retention_Negative + Intron_Retention_Positive))
 
 allele_count$Mutation_Type2 <- allele_count$Mutation_Type
-allele_count$Mutation_Type[allele_count$Mutation_Type == "splicing acceptor disruption"] <- "acceptor"
-allele_count$Mutation_Type[allele_count$Mutation_Type == "splicing donor disruption"] <- "donor"
-
+allele_count$Mutation_Type2[allele_count$Mutation_Type == "splicing acceptor disruption"] <- "Acceptor"
+allele_count$Mutation_Type2[allele_count$Mutation_Type == "splicing donor disruption"] <- "Donor"
+allele_count$Mutation_Type2 = factor(allele_count$Mutation_Type2, levels = c("Donor", "Acceptor"))
 
 a <- hist(allele_count$ratio, breaks = seq(0, 1, 0.05))
 write.table(data.frame(mids = a$mids, counts = a$counts), "../output/IR_VAF.txt", quote = FALSE, row.names = FALSE, sep = "\t")
 
 ggplot(allele_count %>% filter(! is.na(ratio)),
-       aes(x = ratio, fill = Mutation_Type2)) +
+       aes(x = ratio)) +
   geom_histogram(bins = 50, alpha = 0.5, position="stack") +
-  labs(x = "Variant Allele Frequency", fill = "disrupted splicing motif") +
-  ggtitle("Intron Retention Variant Allele Frequency") +
-  theme_bw() +
-  theme(legend.position = "bottom") +
-  scale_fill_discrete(labels = c("donor", "acceptor"))
+  labs(x = "Variant Allele Frequency", y = "Frequency") +
+  # ggtitle("Intron Retention Variant Allele Frequency") +
+  facet_grid(.~Mutation_Type2, scales = "free_y") +
+  theme_minimal() +
+  guides(fill = FALSE)
+  # theme(legend.position = "bottom") +
+  # scale_fill_discrete(labels = c("donor", "acceptor"))
 
 
-ggsave("../output/IR_VAF.png", width = 6, height = 4.5)
+ggsave("../output/IR_VAF.pdf", width = 6, height = 2.5)
 
 

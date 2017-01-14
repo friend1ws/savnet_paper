@@ -54,7 +54,10 @@ splicing_mut_info_filt[
 splicing_mut_info_filt$GenomonSplicingMutation <-
   factor(splicing_mut_info_filt$GenomonSplicingMutation,
          levels = c("exon-skip", "alternative-5'-splice-site", "alternative-3'-splice-site",
-                    "intron-retention", "complex", "no-change"))
+                    "intron-retention", "complex", "no-change"),
+         labels = c("Exon skip", "Alternative 5' splice site", "Alternative 3' splice site",
+                    "Intron retention", "Complex", "No change"))
+ 
 
 
 ##########
@@ -85,11 +88,11 @@ pos_colour <- rep("grey30", 10)
 pos_colour[4:5] <- "red"
 
 p_donor_count <- ggplot(splicing_mut_info_filt_snv_count %>% 
-                          filter(Type_Motif == "donor", GenomonSplicingMutation != "no-change"), 
+                          filter(Type_Motif == "donor", GenomonSplicingMutation != "No change"), 
                         aes(x = Rel_Start_Motif, y = count, fill = GenomonSplicingMutation)) + 
   geom_bar(stat = "identity") +
-  labs(x = "", fill = "") +
-  ggtitle("donor") +
+  labs(x = "", y = "SASM count", fill = "") +
+  ggtitle("Donor") +
   scale_fill_brewer(palette = "Pastel1") +
   theme_minimal() +
   theme(axis.text.x = element_text(colour = pos_colour, size = rel(1.5)),
@@ -105,11 +108,11 @@ p_donor_count <- ggplot(splicing_mut_info_filt_snv_count %>%
 
 
 p_donor_ratio <- ggplot(splicing_mut_info_filt_snv_ratio %>% 
-         filter(Type_Motif == "donor", GenomonSplicingMutation != "no-change"), 
+         filter(Type_Motif == "donor", GenomonSplicingMutation != "No change"), 
        aes(x = Rel_Start_Motif, y = ratio, fill = GenomonSplicingMutation)) + 
   geom_bar(stat = "identity") +
-  labs(x = "", fill = "") +
-  ggtitle("donor") +
+  labs(x = "", y = "SASM ratio", fill = "") +
+  ggtitle("Donor") +
   ylim(c(0, 0.30)) +
   scale_fill_brewer(palette = "Pastel1") +
   theme_minimal() +
@@ -131,11 +134,11 @@ pos_colour[5:6] <- "red"
   
 
 p_acceptor_count <- ggplot(splicing_mut_info_filt_snv_count %>% 
-                             filter(Type_Motif == "acceptor", GenomonSplicingMutation != "no-change"), 
+                             filter(Type_Motif == "acceptor", GenomonSplicingMutation != "No change"), 
                            aes(x = Rel_Start_Motif, y = count, fill = GenomonSplicingMutation)) + 
   geom_bar(stat = "identity") +
-  labs(x = "", fill = "") +
-  ggtitle("acceptor") +
+  labs(x = "", y = "SASM count", fill = "") +
+  ggtitle("Acceptor") +
   scale_fill_brewer(palette = "Pastel1") +
   theme_minimal() +
   theme(axis.text.x = element_text(colour = pos_colour, size = rel(1.5)),
@@ -151,11 +154,11 @@ p_acceptor_count <- ggplot(splicing_mut_info_filt_snv_count %>%
 
 
 p_acceptor_ratio <- ggplot(splicing_mut_info_filt_snv_ratio %>% 
-         filter(Type_Motif == "acceptor", GenomonSplicingMutation != "no-change"), 
+         filter(Type_Motif == "acceptor", GenomonSplicingMutation != "No change"), 
        aes(x = Rel_Start_Motif, y = ratio, fill = GenomonSplicingMutation)) + 
   geom_bar(stat = "identity") +
-  labs(x = "", fill = "") +
-  ggtitle("acceptor") +
+  labs(x = "", y = "SASM ratio", fill = "") +
+  ggtitle("Acceptor") +
   ylim(c(0, 0.30)) +
   scale_fill_brewer(palette = "Pastel1") +
   theme_minimal() +
@@ -181,7 +184,7 @@ g_legend <- function(a.gplot){
 
 
 p_dummy_for_legend <- ggplot(splicing_mut_info_filt_snv_ratio %>%
-                               filter(GenomonSplicingMutation != "no-change"), 
+                               filter(GenomonSplicingMutation != "No change"), 
                              aes(x = Rel_Start_Motif, y = ratio, fill = GenomonSplicingMutation)) + 
   geom_bar(stat = "identity") +
   labs(x = "", fill = "") +
@@ -271,11 +274,11 @@ write.table(splicing_mut_info_filt_indel_ratio,
 
 
 p_donor_indel_count <- ggplot(splicing_mut_info_filt_indel_count %>% 
-         filter(Type_Motif == "donor", GenomonSplicingMutation != "no-change"), 
+         filter(Type_Motif == "donor", GenomonSplicingMutation != "No change"), 
        aes(x = Indel_Type, y = count, fill = GenomonSplicingMutation)) + 
   geom_bar(stat = "identity") +
-  ggtitle("donor") +
-  labs(x = "") +
+  ggtitle("Donor") +
+  labs(x = "", y = "SASM count") +
   scale_fill_brewer(palette = "Pastel1") +
   theme_minimal() +
   theme(axis.text.x = element_text(colour = pos_colour, size = rel(1.5)),
@@ -290,12 +293,12 @@ p_donor_indel_count <- ggplot(splicing_mut_info_filt_indel_count %>%
   guides(fill = FALSE)
 
 p_donor_indel_ratio <- ggplot(splicing_mut_info_filt_indel_ratio %>% 
-                                filter(Type_Motif == "donor", GenomonSplicingMutation != "no-change"), 
+                                filter(Type_Motif == "donor", GenomonSplicingMutation != "No change"), 
                               aes(x = Indel_Type, y = ratio, fill = GenomonSplicingMutation)) + 
   geom_bar(stat = "identity") +
   scale_fill_brewer(palette = "Pastel1") +
-  ggtitle("donor") +
-  labs(x = "") +
+  ggtitle("Donor") +
+  labs(x = "", y = "SASM ratio") +
   theme_minimal() +
   theme(axis.text.x = element_text(colour = pos_colour, size = rel(1.5)),
         axis.text.y = element_text(size = rel(1.2)),
@@ -309,12 +312,12 @@ p_donor_indel_ratio <- ggplot(splicing_mut_info_filt_indel_ratio %>%
   guides(fill = FALSE)
 
 p_acceptor_indel_count <- ggplot(splicing_mut_info_filt_indel_count %>% 
-                                filter(Type_Motif == "acceptor", GenomonSplicingMutation != "no-change"), 
+                                filter(Type_Motif == "acceptor", GenomonSplicingMutation != "No change"), 
                               aes(x = Indel_Type, y = count, fill = GenomonSplicingMutation)) + 
   geom_bar(stat = "identity") +
   scale_fill_brewer(palette = "Pastel1") +
-  ggtitle("acceptor") +
-  labs(x = "") +
+  ggtitle("Acceptor") +
+  labs(x = "", y = "SASM count") +
   theme_minimal() +
   theme(axis.text.x = element_text(colour = pos_colour, size = rel(1.5)),
         axis.text.y = element_text(size = rel(1.2)),
@@ -328,13 +331,13 @@ p_acceptor_indel_count <- ggplot(splicing_mut_info_filt_indel_count %>%
   guides(fill = FALSE)
 
 p_acceptor_indel_ratio <- ggplot(splicing_mut_info_filt_indel_ratio %>% 
-                                filter(Type_Motif == "acceptor", GenomonSplicingMutation != "no-change"), 
+                                filter(Type_Motif == "acceptor", GenomonSplicingMutation != "No change"), 
                               aes(x = Indel_Type, y = ratio, fill = GenomonSplicingMutation)) + 
   geom_bar(stat = "identity") +
   scale_fill_brewer(palette = "Pastel1") +
-  ggtitle("acceptor") +
+  ggtitle("Acceptor") +
   theme_minimal() +
-  labs(x = "") +
+  labs(x = "", y = "SASM ratio") +
   theme(axis.text.x = element_text(colour = pos_colour, size = rel(1.5)),
         axis.text.y = element_text(size = rel(1.2)),
         axis.title = element_text(size = rel(1.2)),

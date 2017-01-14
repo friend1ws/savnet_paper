@@ -34,12 +34,12 @@ for(pos in 1:9) {
   base_ratio_mat <- base_count_mat / rowSums(base_count_mat)
   pwm <- makePWM(t(base_ratio_mat))
  
-  png(paste("../output/motif_diff/donor_disruption_", pos, "_normal.png", sep =""))
-  seqLogo(pwm, ic.scale = TRUE)
+  pdf(paste("../output/motif_diff/donor_disruption_", pos, "_normal.pdf", sep =""))
+  seqLogo(pwm, ic.scale = TRUE, xaxis = FALSE, yaxis = FALSE)
   dev.off()
  
-  png(paste("../output/motif_diff_ns/donor_disruption_", pos, "_normal.png", sep =""))
-  seqLogo(pwm, ic.scale = FALSE)
+  pdf(paste("../output/motif_diff_ns/donor_disruption_", pos, "_normal.pdf", sep =""))
+  seqLogo(pwm, ic.scale = FALSE, xaxis = FALSE, yaxis = FALSE)
   dev.off()
  
   motif_sub <- splicing_mutation %>% 
@@ -59,12 +59,12 @@ for(pos in 1:9) {
   base_ratio_mat <- base_count_mat / rowSums(base_count_mat)
   pwm <- makePWM(t(base_ratio_mat))
   
-  png(paste("../output/motif_diff/donor_disruption_", pos, "_abnormal.png", sep =""))
-  seqLogo(pwm, ic.scale = TRUE)
+  pdf(paste("../output/motif_diff/donor_disruption_", pos, "_abnormal.pdf", sep =""))
+  seqLogo(pwm, ic.scale = TRUE, xaxis = FALSE, yaxis = FALSE)
   dev.off()
 
-  png(paste("../output/motif_diff_ns/donor_disruption_", pos, "_abnormal.png", sep =""))
-  seqLogo(pwm, ic.scale = FALSE)
+  pdf(paste("../output/motif_diff_ns/donor_disruption_", pos, "_abnormal.pdf", sep =""))
+  seqLogo(pwm, ic.scale = FALSE, xaxis = FALSE, yaxis = FALSE)
   dev.off()
 
 }
@@ -90,12 +90,12 @@ for(pos in 1:7) {
   base_ratio_mat <- base_count_mat / rowSums(base_count_mat)
   pwm <- makePWM(t(base_ratio_mat))
   
-  png(paste("../output/motif_diff/acceptor_disruption_", pos, "_normal.png", sep =""))
-  seqLogo(pwm, ic.scale = TRUE)
+  pdf(paste("../output/motif_diff/acceptor_disruption_", pos, "_normal.pdf", sep =""))
+  seqLogo(pwm, ic.scale = TRUE, xaxis = FALSE, yaxis = FALSE)
   dev.off()
 
-  png(paste("../output/motif_diff_ns/acceptor_disruption_", pos, "_normal.png", sep =""))
-  seqLogo(pwm, ic.scale = FALSE)
+  pdf(paste("../output/motif_diff_ns/acceptor_disruption_", pos, "_normal.pdf", sep =""))
+  seqLogo(pwm, ic.scale = FALSE, xaxis = FALSE, yaxis = FALSE)
   dev.off()
 
 
@@ -117,12 +117,12 @@ for(pos in 1:7) {
   base_ratio_mat <- base_count_mat / rowSums(base_count_mat)
   pwm <- makePWM(t(base_ratio_mat))
   
-  png(paste("../output/motif_diff/acceptor_disruption_", pos, "_abnormal.png", sep =""))
-  seqLogo(pwm, ic.scale = TRUE)
+  pdf(paste("../output/motif_diff/acceptor_disruption_", pos, "_abnormal.pdf", sep =""))
+  seqLogo(pwm, ic.scale = TRUE, xaxis = FALSE, yaxis = FALSE)
   dev.off()
   
-  png(paste("../output/motif_diff_ns/acceptor_disruption_", pos, "_abnormal.png", sep =""))
-  seqLogo(pwm, ic.scale = FALSE)
+  pdf(paste("../output/motif_diff_ns/acceptor_disruption_", pos, "_abnormal.pdf", sep =""))
+  seqLogo(pwm, ic.scale = FALSE, xaxis = FALSE, yaxis = FALSE)
   dev.off()
 
 }
