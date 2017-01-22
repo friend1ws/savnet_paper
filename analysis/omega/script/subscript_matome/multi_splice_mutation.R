@@ -1,6 +1,8 @@
 library(ggplot2)
 library(dplyr)
 
+source("subscript_matome/plot_config.R")
+
 splicing_margin <- 0.1
 splicing_wide_margin <- 300
 
@@ -12,11 +14,14 @@ splicing_mutation <- read.table("../matome/omega.genomon_splicing_mutation.resul
 splicing_mutation[splicing_mutation$Splicing_Class == "intronic-alternative-5'-splice-site", "Splicing_Class"] <- "alternative-5'-splice-site"
 splicing_mutation[splicing_mutation$Splicing_Class == "intronic-alternative-3'-splice-site", "Splicing_Class"] <- "alternative-3'-splice-site"
 splicing_mutation[splicing_mutation$Splicing_Class == "opposite-side-intron-retention", "Splicing_Class"] <- "intron-retention"
-splicing_mutation[splicing_mutation$Splicing_Class == "exon-skip", "Splicing_Class"] <- "exon_skip"
-splicing_mutation[splicing_mutation$Splicing_Class == "alternative-5'-splice-site", "Splicing_Class"] <- "alternative_5_splice_site"
-splicing_mutation[splicing_mutation$Splicing_Class == "alternative-3'-splice-site", "Splicing_Class"] <- "alternative_3_splice_site"
-splicing_mutation[splicing_mutation$Splicing_Class == "intron-retention", "Splicing_Class"] <- "intron_retention"
 
+splicing_mutation$Splicing_Class <-
+  factor(splicing_mutation$Splicing_Class,
+         levels = c("exon-skip", "alternative-5'-splice-site",
+                    "alternative-3'-splice-site",
+                    "intron-retention"),
+         labels = c("Exon skip", "Alternative 5' splice site",
+                    "Alternative 3' splice site", "Intron retention"))
 
 ##########
 # function
@@ -49,7 +54,7 @@ get_print_info <- function(gene_symbol, mutation_key) {
     sp_start <- as.numeric(sp_start_end[1])
     sp_end <- as.numeric(sp_start_end[2]) 
 
-    if (sp_mut_filt[i, "Splicing_Class"] == "intron_retention") {
+    if (sp_mut_filt[i, "Splicing_Class"] == "Intron retention") {
       sp_start <- sp_start - 10
       sp_end <- sp_end + 10
     }  
@@ -214,15 +219,8 @@ get_print_info <- function(gene_symbol, mutation_key) {
   print_info <- print_info + geom_point(data = mut_line, aes(x = x, y = y), colour = "red", shape = 4)
 
   print_info <- print_info + geom_segment(data = splicing_line, aes(x = x, xend = xend, y = y, yend = yend, colour = splicing_class)) +
-    scale_colour_manual(values = c(exon_skip = "#fbb4ae",
-                                   alternative_5_splice_site = "#b3cde3",
-                                   alternative_3_splice_site = "#ccebc5", 
-                                   intron_retention = "#decbe4"),
-                        labels = c("Exon skip",
-                                   "Alternative 5' splice site",
-                                   "Alternative 3' splice site",
-                                   "Intron retention")) 
-  
+    scale_colour_manual(values = splicing_class_colour)
+
            
   return(print_info)                        
   

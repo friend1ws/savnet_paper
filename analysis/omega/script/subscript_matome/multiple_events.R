@@ -1,6 +1,7 @@
-
 library(dplyr)
 library(ggplot2)
+
+source("subscript_matome/plot_config.R")
 
 splicing_mutation <- read.table("../matome/omega.genomon_splicing_mutation.result.txt", 
                                 header = TRUE, sep = "\t", as.is=TRUE, quote="", stringsAsFactors = FALSE)
@@ -17,14 +18,13 @@ multiple_effect_count <- multiple_effect %>%
 multiple_effect_count$splice_count2 <- factor(multiple_effect_count$splice_count, levels = 1:max(multiple_effect_count$splice_count))
 
 ggplot(multiple_effect_count, aes(x = splice_count2, y = log10(count + 1))) + 
-  geom_bar(stat = "identity") + 
-  labs(x = "Associated splicing count", y = "log10(Mutation count + 1)") +
+  geom_bar(stat = "identity", fill = "#2166ac") + 
+  labs(x = "Associated splicing event count", y = "log10(mutation count + 1)") +
   # scale_y_log10() +
-  theme_minimal() +
-  theme(axis.text = element_text(size = rel(1.2)),
-        axis.title = element_text(size = rel(1.2)))
+  my_theme() +
+  scale_y_continuous(expand = c(0, 0))
 
-ggsave("../matome/multi_event.pdf", width = 4, height = 6)
+ggsave("../matome/multi_event.pdf", width = 3, height = 3)
 
 
 splicing_multiple_mut <- splicing_mutation %>% 
@@ -40,9 +40,9 @@ splicing_multiple_mut_count <- splicing_multiple_mut %>%
 
 ggplot(splicing_multiple_mut_count, aes(x = mut_count, y = count)) + 
   geom_bar(stat = "identity") + 
-  labs(x = "#associated mutations", y = "#splicing events") +
+  labs(x = "Associated mutation count", y = "log10(splicing event count)") +
   scale_y_log10() +
-  theme_minimal() +
+  my_theme() +
   theme(axis.text = element_text(size = rel(1.2)),
         axis.title = element_text(size = rel(1.2)))
 
