@@ -3,6 +3,7 @@ library(ggplot2)
 library(cowplot)
 library(tidyr)
 
+source("../../script/subscript_matome/plot_config.R")
 
 mem_info <- read.table("../output/omega.mut_membership.result.txt", sep = "\t", header = TRUE) %>%
   filter(Is_GSM == "TRUE") 
@@ -28,11 +29,10 @@ pos_colour[4:5] <- "red"
 
 p_donor <- ggplot(mem_info %>% filter(Splice_Site == "donor"), aes(x = Splice_Pos, y = Membership_Sum, fill = Sig_Type)) + 
   geom_bar(stat = "identity") +
-  ggtitle("donor") +
-  scale_fill_manual(values = c("Age" = "#e41a1c", "APOBEC" = "#377eb8", "Tobacco" = "#4daf4a", "MMR defect" = "#984ea3",
-                               "Ultraviolet" =  "#ff7f00", "POLE" = "#ffff33", "Microsatellite" = "#a65628", "Other" = "#f781bf")) +
+  ggtitle("Donor") +
+  scale_fill_manual(values = signature_colour) +
   labs(x = "", y = "Signature membership", fill = "") +
-  theme_minimal() +
+  my_theme() +
   theme(axis.text.x = element_text(colour = pos_colour, size = rel(1.5)),
         axis.text.y = element_text(size = rel(1.2)),
         axis.title = element_text(size = rel(1.2)),
@@ -42,6 +42,7 @@ p_donor <- ggplot(mem_info %>% filter(Splice_Site == "donor"), aes(x = Splice_Po
         legend.position = "bottom") +
   scale_x_discrete(limits = 1:9, 
                    labels = c("M", "A", "G", "G", "T", "R", "A", "G", "T")) +
+  scale_y_continuous(expand = c(0, 0)) +
   guides(fill = FALSE)
 
 
@@ -51,11 +52,10 @@ pos_colour[5:6] <- "red"
 
 p_acceptor <- ggplot(mem_info %>% filter(Splice_Site == "acceptor"), aes(x = Splice_Pos, y = Membership_Sum, fill = Sig_Type)) + 
   geom_bar(stat = "identity") +
-  ggtitle("acceptor") +
-  scale_fill_manual(values = c("Age" = "#e41a1c", "APOBEC" = "#377eb8", "Tobacco" = "#4daf4a", "MMR defect" = "#984ea3",
-                               "Ultraviolet" =  "#ff7f00", "POLE" = "#ffff33", "Microsatellite" = "#a65628", "Other" = "#f781bf")) +
+  ggtitle("Acceptor") +
+  scale_fill_manual(values = signature_colour) +
   labs(x = "", y = "Signature membership", fill = "") +
-  theme_minimal() +
+  my_theme() +
   theme(axis.text.x = element_text(colour = pos_colour, size = rel(1.5)),
         axis.text.y = element_text(size = rel(1.2)),
         axis.title = element_text(size = rel(1.2)),
@@ -65,6 +65,7 @@ p_acceptor <- ggplot(mem_info %>% filter(Splice_Site == "acceptor"), aes(x = Spl
         legend.position = "bottom") +
   scale_x_discrete(limits = 1:7, 
                    labels = c("Y", "Y", "N", "C", "A", "G", "G")) +
+  scale_y_continuous(expand = c(0, 0)) +
   guides(fill = FALSE)
 
 
@@ -79,8 +80,7 @@ g_legend <- function(a.gplot){
 p_dummy_for_legend <- ggplot(mem_info, aes(x = Splice_Pos, y = Membership_Sum, fill = Sig_Type)) + 
   geom_bar(stat = "identity") +
   labs(x = "", fill = "") +
-  scale_fill_manual(values = c("Age" = "#e41a1c", "APOBEC" = "#377eb8", "Tobacco" = "#4daf4a", "MMR defect" = "#984ea3",
-                               "Ultraviolet" =  "#ff7f00", "POLE" = "#ffff33", "Microsatellite" = "#a65628", "Other" = "#f781bf")) +
+  scale_fill_manual(values = signature_colour) +
   theme(legend.position = "bottom") +
   guides(fill = guide_legend(nrow=2, byrow=TRUE))
 
@@ -131,15 +131,16 @@ gsm_ratio <- sig2mem %>% left_join(sig2mem_all, by = c("Sig_Type")) %>%
 
 ggplot(gsm_ratio %>% filter(Sig_Type != "Other"), aes(x = Sig_Type, y = gsm_ratio, fill = Sig_Type)) + 
   geom_bar(stat = "identity") + coord_flip() +
-  theme_minimal() +
+  my_theme() +
   labs(x = "", y = "Relative splicing mutation ratio", fill = "") +
   theme(legend.position = "bottom") +
   scale_x_discrete(limits = rev(sig_type_order[1:7])) +
-  scale_fill_manual(values = c("Age" = "#e41a1c", "APOBEC" = "#377eb8", "Tobacco" = "#4daf4a", "MMR defect" = "#984ea3",
-                               "Ultraviolet" =  "#ff7f00", "POLE" = "#ffff33", "Microsatellite" = "#a65628", "Other" = "#f781bf"))
+  scale_y_continuous(expand = c(0, 0)) +
+  scale_fill_manual(values = signature_colour) +
+  guides(fill = FALSE)
 
  
-ggsave("../output/rel_sp_ratio.pdf", width = 6, height = 3)
+ggsave("../output/rel_sp_ratio.pdf", width = 6, height = 2.5)
 
 
 
@@ -170,14 +171,14 @@ for(i in 1:length(ctype_vec)) {
 
   tp <- ggplot(gsm_ratio, aes(x = Sig_Type, y = gsm_ratio, fill = Sig_Type)) + 
     geom_bar(stat = "identity") + coord_flip() +
-    theme_minimal() +
+    my_theme() +
     ggtitle(ctype) + 
     # scale_fill_brewer(palette = "Set1") +
     labs(x = "", y = "Relative splicing mutation ratio", fill = "") +
     theme(legend.position = "bottom") +
     scale_x_discrete(limits = rev(sig_type_order[sig_type_order %in% gsm_ratio$Sig_Type])) +
-    scale_fill_manual(values = c("Age" = "#e41a1c", "APOBEC" = "#377eb8", "Tobacco" = "#4daf4a", "MMR defect" = "#984ea3",
-                                 "Ultraviolet" =  "#ff7f00", "POLE" = "#ffff33", "Microsatellite" = "#a65628", "Other" = "#f781bf")) +
+    scale_y_continuous(expand = c(0, 0)) +
+    scale_fill_manual(values = signature_colour) +
     guides(fill = FALSE)
 
   p_ctype[[i]] <- tp
@@ -190,9 +191,9 @@ p_tobacco <- plot_grid(p_ctype[[1]], p_ctype[[2]], nrow = 2)
 p_uv <- plot_grid(p_ctype[[3]], p_ctype[[4]], nrow = 2)
 p_pole <- plot_grid(p_ctype[[5]], p_ctype[[6]], nrow = 2)
 
-plot_grid(plot_grid(p_tobacco, p_uv, p_pole, nrow = 1), g_legend(p_dummy_for_legend), ncol = 1, rel_heights = c(1, 0.1))
+plot_grid(p_tobacco, p_uv, p_pole, nrow = 1)
 
-ggsave(paste("../output/rel_sp_ratio_ctype.pdf", sep = ""), width = 10, height = 7.5)
+ggsave(paste("../output/rel_sp_ratio_ctype.pdf", sep = ""), width = 10, height = 4)
 
 
 ##########
@@ -222,6 +223,6 @@ theme_set(theme_gray())
 
 plot_grid(p_age, p_appobec, p_tobacco, p_mmr, p_uv, p_pole1, p_pole2, p_ms, nrow = 2)
 
-ggsave("../output/pmsignature_list.pdf", width = 8, height = 3.2)
+ggsave("../output/pmsignature_list.pdf", width = 8, height = 3.2) 
 
 
