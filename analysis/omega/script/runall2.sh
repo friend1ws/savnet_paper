@@ -23,7 +23,7 @@ python subscript_matome/check_alt_junc.py ../matome/omega.genomon_splicing_mutat
 python subscript_matome/merge_mut.py ../matome/omega.genomon_splicing_mutation.result.txt ../gsm_out/gsm_file_list/ > ../matome/omega.mutation.merged.txt
 
 
-Rscript subscript_matome/category2.R 
+Rscript subscript_matome/category3.R 
 
 # Rscript subscript_matome/motif_dist.R
 Rscript subscript_matome/motif_dist_creation.R

@@ -2,6 +2,8 @@ library(dplyr)
 library(ggplot2)
 library(ggrepel)
 
+source("subscript_matome/plot_config.R")
+
 # splicing_mutation <- read.table("../matome/omega.genomon_splicing_mutation.result.txt", header = TRUE, sep = "\t", as.is=TRUE, quote="", stringsAsFactors = FALSE)
 mut_count <- read.table("../matome/omega.mut_count.txt", sep = "\t", header = TRUE, stringsAsFactors = FALSE)
 
@@ -28,15 +30,15 @@ mut_count$Cancer_Type <- factor(mut_count$Cancer_Type, levels = sv_count_median$
 ggplot(mut_count, aes(x = Cancer_Type, y = SASM_Count)) + 
   geom_point(position = position_jitter(width = 0.4, height = 0.3), colour = "#fc8d59", alpha = 0.2) +
   geom_boxplot(outlier.colour = NA, fill = "#3288bd") +
-  theme_minimal() +
-  ylim(c(-0.2, 8)) +
+  my_theme() +
   labs(y = "SASM Count", x = "Cancer type") +
   theme(axis.text = element_text(size = rel(1.2)),
         axis.title = element_text(size = rel(1.5)),
         axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5),
         axis.title.x = element_blank(),
         legend.text = element_text(size = rel(1.2)),
-        legend.title = element_text(size = rel(1.5)))
+        legend.title = element_text(size = rel(1.5))) +
+  scale_y_continuous(limit = c(-0.2, 8))
 
 ggsave("../matome/count_summary.pdf", width = 10, height = 6)
 
@@ -52,9 +54,11 @@ ggplot(mut_count_median) +
   geom_text_repel(data = mut_count_median %>% filter(SASM_Count_Median > 0), 
                   aes(x = Mut_Count_Median, y = SASM_Count_Median, label = Cancer_Type)) +
   labs(x = "Median mutation count", y = "Median SASM count") +
-  theme_bw() +
+  my_theme() +
   theme(axis.text = element_text(size = rel(1.2)),
-        axis.title = element_text(size = rel(1.5)))
+        axis.title = element_text(size = rel(1.5))) +
+  scale_x_continuous(expand = c(0, 0)) +
+  scale_y_continuous(expand = c(0, 0))
 
 ggsave("../matome/mut2spmut_median.pdf", width = 8, height = 8)
 
@@ -71,9 +75,11 @@ ggplot(mut_count_trmean) +
   geom_text_repel(data = mut_count_trmean, 
                   aes(x = Mut_Count_Mean, y = SASM_Count_Mean, label = Cancer_Type)) +
   labs(x = "Trucated mean mutation count", y = "Truncated mean SASM count") +
-  theme_bw() +
+  my_theme() +
   theme(axis.text = element_text(size = rel(1.2)),
-        axis.title = element_text(size = rel(1.5)))
+        axis.title = element_text(size = rel(1.5))) +
+  scale_x_continuous(expand = c(0, 0)) +
+  scale_y_continuous(expand = c(0, 0))
 
 ggsave("../matome/mut2spmut_trmean.pdf", width = 8, height = 8)
 
