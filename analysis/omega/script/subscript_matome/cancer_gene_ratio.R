@@ -3,6 +3,8 @@ library(ggplot2)
 library(stringr)
 library(tidyr)
 
+source("subscript_matome/plot_config.R")
+
 cancer_gene <- read.table("/home/yshira/mysoftware/sv_utils/cancer_gene/vogelstein_science_2013.txt", 
     sep = "\t", header = TRUE, stringsAsFactors = FALSE)
 
@@ -69,15 +71,15 @@ type_order <- c("silent", "missense", "loss-of-function",
 
 cg_info <- rbind(mut_cg_info, gsm_cg_info)
 
-cg_info$mut_func[cg_info$mut_func == "alternative-5'-splice-site"] <- "alternative-splice-site"
-cg_info$mut_func[cg_info$mut_func == "alternative-3'-splice-site"] <- "alternative-splice-site"
+# cg_info$mut_func[cg_info$mut_func == "alternative-5'-splice-site"] <- "alternative-splice-site"
+# cg_info$mut_func[cg_info$mut_func == "alternative-3'-splice-site"] <- "alternative-splice-site"
 
 
 cg_info$mut_func2 <- factor(cg_info$mut_func,
                             levels = rev(c("Silent", "Missense", "Nonsense", "Inframe indel", "Frameshift indel", "Other",
-                                       "exon-skip", "alternative-splice-site", "intron-retention", "complex")),
+                                       "exon-skip", "alternative-5'-splice-site", "alternative-3'-splice-site", "intron-retention", "complex")),
                             labels = rev(c("Silent", "Missense", "Nonsense", "Inframe indel", "Frameshift indel", "Other",
-                                       "Exon skip", "Alternative splice site", "Intron retention", "Complex")))
+                                       "Exon skip", "Alternative 5' splice site", "Alternative 3' splice site", "Intron retention", "Complex")))
 cg_info$is_gsm <- ifelse(is.na(cg_info$GSM), "non_gsm", "gsm")
 
 
@@ -93,31 +95,37 @@ cg_info_proc$is_gsm <- ifelse(cg_info$mut_func2 %in%
                                   "Intron retention", "Complex"), "gsm", "non_gsm")
 
 
-ggplot(cg_info_proc %>% filter(!(mut_func2 %in% c("Other")) & statistics == "ratio"),
+ggplot(cg_info_proc %>% filter(!(mut_func2 %in% c("Inframe indel", "Frameshift indel", "Other")) & statistics == "ratio"),
        aes(x = mut_func2, y = value, fill = mut_func2)) + 
   geom_bar(stat = "identity", position = "dodge")  + 
   coord_flip() +
   labs(x = "", y = "Cancer gene ratio") +
-  theme_minimal() +
+  my_theme() +
+  theme(strip.text.x = element_text(size = rel(1.2), angle = 0, hjust = 0),
+        panel.spacing.x=unit(1.2, "lines")) +
   facet_grid(.~classification, scales = "free") +
-  scale_fill_manual(values = c("#fed9a6", "#decbe4", "#ffffcc", "#fbb4ae", rep("#b2df8a", 5))) +
+  scale_fill_manual(values = splicing_class_colour) +
   # scale_fill_manual(values = c(gsm = "#33a02c", non_gsm = "#b2df8a")) +
+  scale_y_continuous(expand = c(0, 0)) +
   guides(fill = FALSE)
 
 
-ggsave("../matome/cancer_gene_ratio.pdf", width = 8, height = 3)
+ggsave("../matome/cancer_gene_ratio.pdf", width = 8, height = 2.2)
 
 
-ggplot(cg_info_proc %>% filter(!(mut_func2 %in% c("Silent", "Other")) & statistics == "log_pV"),
+ggplot(cg_info_proc %>% filter(!(mut_func2 %in% c("Silent", "Inframe indel", "Frameshift indel", "Other")) & statistics == "log_pV"),
        aes(x = mut_func2, y = value, fill = mut_func2)) + 
   geom_bar(stat = "identity", position = "dodge")  + 
   coord_flip() +
   labs(x = "", y = "log10(P-value)") +
-  theme_minimal() +
+  my_theme() +
+  theme(strip.text.x = element_text(size = rel(1.2), angle = 0, hjust = 0),
+        panel.spacing.x=unit(1.2, "lines")) +
   facet_grid(.~classification, scales = "free") +
-  scale_fill_manual(values = c("#fed9a6", "#decbe4", "#ffffcc", "#fbb4ae", rep("#b2df8a", 4))) +
+  scale_fill_manual(values = splicing_class_colour) +
+  scale_y_continuous(expand = c(0, 0)) +
   guides(fill = FALSE)
 
 
-ggsave("../matome/cancer_gene_pV.pdf", width = 8, height = 2.8)
+ggsave("../matome/cancer_gene_pV.pdf", width = 8, height = 2.0)
 

@@ -3,6 +3,8 @@ library(ggplot2)
 library(tidyr)
 library(cowplot)
 
+source("subscript_matome/plot_config.R")
+
 ##########
 # gene summary
 splicing_mutation <- read.table("../matome/omega.genomon_splicing_mutation.result.txt", header = TRUE, sep = "\t", as.is=TRUE, quote="", stringsAsFactors = FALSE)
@@ -100,15 +102,15 @@ sasm_type_info_proc$Gene_Symbol2 <- factor(sasm_type_info_proc$Gene_Symbol,
 
 
 sasm_type_info_proc$mut_type <- factor(sasm_type_info_proc$mut_type,
-                                      levels = c("motif_disruption_C", "motif_disruption_N", "motif_creation"),
-                                      labels = c("Disruption (C)", "Disruption (N)", "Creation"))
+                                      levels = rev(c("motif_disruption_C", "motif_disruption_N", "motif_creation")),
+                                      labels = rev(c("Canonical site disruption", "Noncanonical site disruption", "Creation")))
 
 
 p_sasmtype <- ggplot(sasm_type_info_proc, aes(x = Gene_Symbol2, y = ratio, fill = mut_type)) + 
   geom_bar(stat = "identity") + 
-  ggtitle("SASM type") +
+  ggtitle("Mutation type") +
   coord_flip() + theme_minimal() +
-  labs(x = "", y = "Ratio", fill = "") +
+  labs(x = "", y = "Relative frequency", fill = "Mutation type") +
   theme_minimal() +
   theme(
     axis.text.x = element_text(angle = 90, hjust = 1, size = rel(1.0)),
@@ -116,7 +118,8 @@ p_sasmtype <- ggplot(sasm_type_info_proc, aes(x = Gene_Symbol2, y = ratio, fill 
     panel.grid.major.y = element_blank(),
     panel.grid.minor.y = element_blank(),
     legend.position = "bottom") +
-  scale_fill_brewer(palette = "Pastel2")
+  scale_fill_manual(breaks = c("Canonical site disruption", "Noncanonical site disruption", "Creation"),
+                    values = c("Canonical site disruption" = "#a6d854", "Noncanonical site disruption" = "#ffd92f", "Creation" = "#e78ac3"))
 
 
 
@@ -173,24 +176,26 @@ sp_class_info_proc$Gene_Symbol2 <- factor(sp_class_info_proc$Gene_Symbol,
                                          levels = splicing_mutation_count_total$Gene_Symbol)
 
 sp_class_info_proc$splice_class2 <- factor(sp_class_info_proc$splice_class,
-                                          levels = c("exon-skip", "alternative-5'-splice-site",
-                                                     "alternative-3'-splice-site", "intron-retention"),
-                                          labels = c("Exon skip", "Alternative 5' splice-site",
-                                                     "Alternative 3' splice-site", "Intron retention"))
+                                          levels = rev(c("exon-skip", "alternative-5'-splice-site",
+                                                     "alternative-3'-splice-site", "intron-retention")),
+                                          labels = rev(c("Exon skip", "Alternative 5' splice site",
+                                                     "Alternative 3' splice site", "Intron retention")))
 
 
 p_spliceclass <- ggplot(sp_class_info_proc, aes(x = Gene_Symbol2, y = ratio, fill = splice_class2)) + 
   geom_bar(stat = "identity") + 
   coord_flip() + theme_minimal() +
   ggtitle("Splcing class") +
-  labs(x = "", y = "Ratio", fill = "") +
+  labs(x = "", y = "Relative frequency", fill = "Splicing class") +
   theme(
     axis.text.x = element_text(angle = 90, hjust = 1, size = rel(1.0)),
     axis.text.y = element_text(size = rel(1.0), colour =  gene_colour),
     panel.grid.major.y = element_blank(),
     panel.grid.minor.y = element_blank(),
     legend.position = "bottom") +
-  scale_fill_brewer(palette = "Pastel1")
+  scale_fill_manual(values = splicing_class_colour, 
+                    breaks = c("Exon skip", "Alternative 5' splice site",
+                              "Alternative 3' splice site", "Intron retention"))
 
 
 g_legend <- function(a.gplot){
