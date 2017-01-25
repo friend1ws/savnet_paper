@@ -18,7 +18,7 @@ multiple_effect_count <- multiple_effect %>%
 multiple_effect_count$splice_count2 <- factor(multiple_effect_count$splice_count, levels = 1:max(multiple_effect_count$splice_count))
 
 ggplot(multiple_effect_count, aes(x = splice_count2, y = log10(count + 1))) + 
-  geom_bar(stat = "identity", fill = "#2166ac") + 
+  geom_bar(stat = "identity", fill = "#6baed6") + 
   labs(x = "Associated splicing event count", y = "log10(mutation count + 1)") +
   # scale_y_log10() +
   my_theme() +

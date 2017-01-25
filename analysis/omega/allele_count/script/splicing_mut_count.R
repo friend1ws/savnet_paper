@@ -3,6 +3,8 @@ library(tidyr)
 library(ggplot2)
 library(cowplot)
 
+source("../../script/subscript_matome/plot_config.R")
+
 splicing_mut_info <- read.table("../output/omega.splicing_mutation.info.txt", header = TRUE, sep = "\t", 
                                 as.is=TRUE, quote="", stringsAsFactors = FALSE)
 
@@ -93,8 +95,8 @@ p_donor_count <- ggplot(splicing_mut_info_filt_snv_count %>%
   geom_bar(stat = "identity") +
   labs(x = "", y = "SASM count", fill = "") +
   ggtitle("Donor") +
-  scale_fill_brewer(palette = "Pastel1") +
-  theme_minimal() +
+  scale_fill_manual(values = splicing_class_colour) +
+  my_theme() +
   theme(axis.text.x = element_text(colour = pos_colour, size = rel(1.5)),
         axis.text.y = element_text(size = rel(1.2)),
         axis.title = element_text(size = rel(1.2)),
@@ -104,6 +106,7 @@ p_donor_count <- ggplot(splicing_mut_info_filt_snv_count %>%
         legend.position = "bottom") +
   scale_x_discrete(limits = 1:9, 
                    labels = c("M", "A", "G", "G", "T", "R", "A", "G", "T")) +
+  scale_y_continuous(expand = c(0, 0), limit = c(0, 3000)) + 
   guides(fill = FALSE)
 
 
@@ -112,10 +115,8 @@ p_donor_ratio <- ggplot(splicing_mut_info_filt_snv_ratio %>%
        aes(x = Rel_Start_Motif, y = ratio, fill = GenomonSplicingMutation)) + 
   geom_bar(stat = "identity") +
   labs(x = "", y = "SASM ratio", fill = "") +
-  ggtitle("Donor") +
-  ylim(c(0, 0.30)) +
-  scale_fill_brewer(palette = "Pastel1") +
-  theme_minimal() +
+  scale_fill_manual(values = splicing_class_colour) +
+  my_theme() +
   theme(axis.text.x = element_text(colour = pos_colour, size = rel(1.5)),
         axis.text.y = element_text(size = rel(1.2)),
         axis.title = element_text(size = rel(1.2)),
@@ -125,6 +126,7 @@ p_donor_ratio <- ggplot(splicing_mut_info_filt_snv_ratio %>%
         legend.position = "bottom") +
   scale_x_discrete(limits = 1:9, 
                    labels = c("M", "A", "G", "G", "T", "R", "A", "G", "T")) +
+  scale_y_continuous(expand = c(0, 0), limit = c(0, 0.3)) +
   guides(fill = FALSE)
   
 
@@ -139,8 +141,8 @@ p_acceptor_count <- ggplot(splicing_mut_info_filt_snv_count %>%
   geom_bar(stat = "identity") +
   labs(x = "", y = "SASM count", fill = "") +
   ggtitle("Acceptor") +
-  scale_fill_brewer(palette = "Pastel1") +
-  theme_minimal() +
+  scale_fill_manual(values = splicing_class_colour) +
+  my_theme() +
   theme(axis.text.x = element_text(colour = pos_colour, size = rel(1.5)),
         axis.text.y = element_text(size = rel(1.2)),
         axis.title = element_text(size = rel(1.2)),
@@ -150,6 +152,7 @@ p_acceptor_count <- ggplot(splicing_mut_info_filt_snv_count %>%
         legend.position = "bottom") +
   scale_x_discrete(limits = 1:7, 
                    labels = c("Y", "Y", "N", "C", "A", "G", "G")) +
+  scale_y_continuous(expand = c(0, 0), limit = c(0, 3000)) +
   guides(fill = FALSE)
 
 
@@ -158,10 +161,8 @@ p_acceptor_ratio <- ggplot(splicing_mut_info_filt_snv_ratio %>%
        aes(x = Rel_Start_Motif, y = ratio, fill = GenomonSplicingMutation)) + 
   geom_bar(stat = "identity") +
   labs(x = "", y = "SASM ratio", fill = "") +
-  ggtitle("Acceptor") +
-  ylim(c(0, 0.30)) +
-  scale_fill_brewer(palette = "Pastel1") +
-  theme_minimal() +
+  scale_fill_manual(values = splicing_class_colour) +
+  my_theme() +
   theme(axis.text.x = element_text(colour = pos_colour, size = rel(1.5)),
         axis.text.y = element_text(size = rel(1.2)),
         axis.title = element_text(size = rel(1.2)),
@@ -171,6 +172,7 @@ p_acceptor_ratio <- ggplot(splicing_mut_info_filt_snv_ratio %>%
         legend.position = "bottom") +
   scale_x_discrete(limits = 1:7, 
                    labels = c("Y", "Y", "N", "C", "A", "G", "G")) +
+  scale_y_continuous(expand = c(0, 0), limit = c(0, 0.3)) + 
   guides(fill = FALSE)
 
 
@@ -188,17 +190,21 @@ p_dummy_for_legend <- ggplot(splicing_mut_info_filt_snv_ratio %>%
                              aes(x = Rel_Start_Motif, y = ratio, fill = GenomonSplicingMutation)) + 
   geom_bar(stat = "identity") +
   labs(x = "", fill = "") +
-  scale_fill_brewer(palette = "Pastel1") +
+  scale_fill_manual(values = splicing_class_colour) +
   theme(legend.position = "bottom") +
   guides(fill = guide_legend(nrow=2, byrow=TRUE))
 
 
-p_donor_acceptor_count <- plot_grid(p_donor_count, p_acceptor_count, ncol = 2, rel_widths = c(1, 0.9), align = "h")
-p_donor_acceptor_ratio <- plot_grid(p_donor_ratio, p_acceptor_ratio, ncol = 2, rel_widths = c(1, 0.9), align = "h")
+p_donor <- plot_grid(p_donor_count, p_donor_ratio, ncol = 1, rel_heights = c(1, 0.9), align = "v")
+p_acceptor <- plot_grid(p_acceptor_count, p_acceptor_ratio, ncol = 1, rel_heights = c(1, 0.9), align = "v")
 
-plot_grid(p_donor_acceptor_count, p_donor_acceptor_ratio, g_legend(p_dummy_for_legend), ncol = 1, rel_heights = c(1, 1, 0.2))
+plot_grid(plot_grid(p_donor, p_acceptor, ncol = 2, align = "h", rel_widths = c(1, 0.9)), g_legend(p_dummy_for_legend), ncol = 1, rel_heights = c(2, 0.2))
 
-ggsave("../output/splicing_snv_ratio.pdf", width = 8, height = 5)
+# p_donor_acceptor_count <- plot_grid(p_donor_count, p_acceptor_count, ncol = 2, rel_widths = c(1, 0.9), align = "h")
+# p_donor_acceptor_ratio <- plot_grid(p_donor_ratio, p_acceptor_ratio, ncol = 2, rel_widths = c(1, 0.9), align = "h")
+# plot_grid(p_donor_acceptor_count, p_donor_acceptor_ratio, g_legend(p_dummy_for_legend), ncol = 1, rel_heights = c(1, 0.95, 0.2), align = "v")
+
+ggsave("../output/splicing_snv_ratio.pdf", width = 6, height = 5)
 
 
 ##########
@@ -279,8 +285,8 @@ p_donor_indel_count <- ggplot(splicing_mut_info_filt_indel_count %>%
   geom_bar(stat = "identity") +
   ggtitle("Donor") +
   labs(x = "", y = "SASM count") +
-  scale_fill_brewer(palette = "Pastel1") +
-  theme_minimal() +
+  scale_fill_manual(values = splicing_class_colour) +
+  my_theme() +
   theme(axis.text.x = element_text(colour = pos_colour, size = rel(1.5)),
         axis.text.y = element_text(size = rel(1.2)),
         axis.title = element_text(size = rel(1.2)),
@@ -289,6 +295,7 @@ p_donor_indel_count <- ggplot(splicing_mut_info_filt_indel_count %>%
         axis.ticks.x = element_blank(),
         legend.position = "bottom",
         strip.text = element_text(size = rel(1.2))) +
+  scale_y_continuous(expand = c(0, 0), limit = c(0, 300)) +
   guides(fill=guide_legend(nrow=2,byrow=TRUE)) +
   guides(fill = FALSE)
 
@@ -296,10 +303,9 @@ p_donor_indel_ratio <- ggplot(splicing_mut_info_filt_indel_ratio %>%
                                 filter(Type_Motif == "donor", GenomonSplicingMutation != "No change"), 
                               aes(x = Indel_Type, y = ratio, fill = GenomonSplicingMutation)) + 
   geom_bar(stat = "identity") +
-  scale_fill_brewer(palette = "Pastel1") +
-  ggtitle("Donor") +
+  scale_fill_manual(values = splicing_class_colour) +
   labs(x = "", y = "SASM ratio") +
-  theme_minimal() +
+  my_theme() +
   theme(axis.text.x = element_text(colour = pos_colour, size = rel(1.5)),
         axis.text.y = element_text(size = rel(1.2)),
         axis.title = element_text(size = rel(1.2)),
@@ -309,16 +315,17 @@ p_donor_indel_ratio <- ggplot(splicing_mut_info_filt_indel_ratio %>%
         legend.position = "bottom",
         strip.text = element_text(size = rel(1.2))) +
   guides(fill=guide_legend(nrow=2,byrow=TRUE)) +
+  scale_y_continuous(expand = c(0, 0), limit = c(0, 0.35)) +
   guides(fill = FALSE)
 
 p_acceptor_indel_count <- ggplot(splicing_mut_info_filt_indel_count %>% 
                                 filter(Type_Motif == "acceptor", GenomonSplicingMutation != "No change"), 
                               aes(x = Indel_Type, y = count, fill = GenomonSplicingMutation)) + 
   geom_bar(stat = "identity") +
-  scale_fill_brewer(palette = "Pastel1") +
+  scale_fill_manual(values = splicing_class_colour) +
   ggtitle("Acceptor") +
   labs(x = "", y = "SASM count") +
-  theme_minimal() +
+  my_theme() +
   theme(axis.text.x = element_text(colour = pos_colour, size = rel(1.5)),
         axis.text.y = element_text(size = rel(1.2)),
         axis.title = element_text(size = rel(1.2)),
@@ -327,6 +334,7 @@ p_acceptor_indel_count <- ggplot(splicing_mut_info_filt_indel_count %>%
         axis.ticks.x = element_blank(),
         legend.position = "bottom",
         strip.text = element_text(size = rel(1.2))) +
+  scale_y_continuous(expand = c(0, 0), limit = c(0, 300)) +
   guides(fill=guide_legend(nrow=2,byrow=TRUE)) +
   guides(fill = FALSE)
 
@@ -334,9 +342,8 @@ p_acceptor_indel_ratio <- ggplot(splicing_mut_info_filt_indel_ratio %>%
                                 filter(Type_Motif == "acceptor", GenomonSplicingMutation != "No change"), 
                               aes(x = Indel_Type, y = ratio, fill = GenomonSplicingMutation)) + 
   geom_bar(stat = "identity") +
-  scale_fill_brewer(palette = "Pastel1") +
-  ggtitle("Acceptor") +
-  theme_minimal() +
+  scale_fill_manual(values = splicing_class_colour) +
+  my_theme() +
   labs(x = "", y = "SASM ratio") +
   theme(axis.text.x = element_text(colour = pos_colour, size = rel(1.5)),
         axis.text.y = element_text(size = rel(1.2)),
@@ -346,14 +353,18 @@ p_acceptor_indel_ratio <- ggplot(splicing_mut_info_filt_indel_ratio %>%
         axis.ticks.x = element_blank(),
         legend.position = "bottom",
         strip.text = element_text(size = rel(1.2))) +
+  scale_y_continuous(expand = c(0, 0), limit = c(0, 0.35)) +
   guides(fill=guide_legend(nrow=2,byrow=TRUE)) +
   guides(fill = FALSE)
 
-p_donor_acceptor_indel_count <- plot_grid(p_donor_indel_count, p_acceptor_indel_count, ncol = 2, align = "h")
-p_donor_acceptor_indel_ratio <- plot_grid(p_donor_indel_ratio, p_acceptor_indel_ratio, ncol = 2, align = "h")
+# p_donor_acceptor_indel_count <- plot_grid(p_donor_indel_count, p_acceptor_indel_count, ncol = 2, align = "h")
+# p_donor_acceptor_indel_ratio <- plot_grid(p_donor_indel_ratio, p_acceptor_indel_ratio, ncol = 2, align = "h")
+# plot_grid(p_donor_acceptor_indel_count, p_donor_acceptor_indel_ratio, g_legend(p_dummy_for_legend), ncol = 1, rel_heights = c(1, 1, 0.2))
 
-plot_grid(p_donor_acceptor_indel_count, p_donor_acceptor_indel_ratio, g_legend(p_dummy_for_legend), ncol = 1, rel_heights = c(1, 1, 0.2))
+p_donor_indel <- plot_grid(p_donor_indel_count, p_donor_indel_ratio, ncol = 1, rel_heights = c(1, 0.9), align = "v")
+p_acceptor_indel <- plot_grid(p_acceptor_indel_count, p_acceptor_indel_ratio, ncol = 1, rel_heights = c(1, 0.9), align = "v")
 
+plot_grid(plot_grid(p_donor_indel, p_acceptor_indel, ncol = 2, align = "h"), g_legend(p_dummy_for_legend), ncol = 1, rel_heights = c(2, 0.2))
 
 ggsave("../output/splicing_indel_ratio.pdf", width = 8, height = 5)
 

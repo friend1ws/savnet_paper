@@ -2,6 +2,8 @@ library(dplyr)
 library(ggplot2)
 library(cowplot)
 
+source("subscript_matome/plot_config.R")
+
 gg_color_hue6 <- hcl(h = seq(15, 375, length = 7), l=65, c=100)[1:6]
 base_col <- c("A" = gg_color_hue6[3], "C" = gg_color_hue6[5], "G" = gg_color_hue6[2], "T" = gg_color_hue6[1])
 
@@ -102,8 +104,7 @@ p_dc <- ggplot(snv_motif_count_dc,
   geom_bar(stat = "identity") +
   facet_wrap( ~ Rel_Pos2, nrow = 1, drop = FALSE) +
   labs(x = "Reference base", y = "SASM count", fill = "Alternative base") +
-  theme_minimal() +
-  ylim(c(0, 700)) +
+  my_theme() +
   ggtitle("Donor creation") +
   theme(axis.text.x = element_text(size = rel(1)),
         axis.text.y = element_text(size = rel(1)),
@@ -113,6 +114,7 @@ p_dc <- ggplot(snv_motif_count_dc,
         axis.ticks.x = element_blank(),
         legend.position = "bottom") +
   scale_fill_manual(values = base_col) +
+  scale_y_continuous(expand = c(0, 0), limit = c(0, 750)) +
   guides(fill = FALSE)
 
 
@@ -137,8 +139,7 @@ p_ac <- ggplot(snv_motif_count_ac,
   geom_bar(stat = "identity") +
   facet_wrap( ~ Rel_Pos2, nrow = 1) +
   labs(x = "Reference base", y = "SASM count", fill = "Alternative base") +
-  theme_minimal() +
-  ylim(c(0, 250)) +
+  my_theme() +
   ggtitle("Acceptor creation") +
   theme(axis.text.x = element_text(size = rel(1)),
         axis.text.y = element_text(size = rel(1)),
@@ -148,6 +149,7 @@ p_ac <- ggplot(snv_motif_count_ac,
         axis.ticks.x = element_blank(),
         legend.position = "bottom") +
   scale_fill_manual(values = base_col) +
+  scale_y_continuous(expand = c(0, 0), limit = c(0, 250)) +
   guides(fill = FALSE)
 
 

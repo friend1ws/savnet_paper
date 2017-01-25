@@ -1,6 +1,8 @@
 library(dplyr)
 library(ggplot2)
 
+source("subscript_matome/plot_config.R")
+
 ##########
 # caterogy summary plot
 
@@ -160,14 +162,17 @@ ggplot(splicing_mutation_count_simple, aes(x = Mutation_Type3, y = count, fill =
   geom_bar(stat = "identity") +
   coord_flip() +
   labs(x = "", y = "splicing event count", fill = "") +
-  theme_minimal() +
+  theme_bw() +
   theme(legend.position = "bottom",
         legend.title = element_text(size = rel(1)),
         legend.text = element_text(size = rel(1)),
         axis.text = element_text(size = rel(1)),
-        axis.title = element_text(size = rel(1))
+        axis.title = element_text(size = rel(1)),
+        panel.grid.major = element_line(color= NA),
+        panel.grid.minor = element_line(color= NA) 
         ) +
   scale_fill_brewer(palette = "Pastel1") +
+  scale_y_continuous(expand = c(0, 0)) +
   guides(fill=guide_legend(nrow=2,byrow=TRUE))
 
 # ggsave("category_count.png", width = 8, height = 4)

@@ -1,13 +1,7 @@
 library(dplyr)
 library(ggplot2)
 
-splicing_class_colour <- c(
-  "Exon skip" = "#fb8072",
-  "Alternative 5' splice site" = "#80b1d3", 
-  "Alternative 3' splice site" = "#b3de69",
-  "Intron retention" = "#bebada",
-  "Complex" = "#fdb462"
-  )
+source("subscript_matome/plot_config.R")
 
 ##########
 # caterogy summary plot
@@ -149,7 +143,7 @@ ggplot(splicing_mutation_count, aes(x = Mutation_Type2, y = count, fill = Splici
   geom_bar(stat = "identity") +
   coord_flip() +
   labs(x = "", y = "Splicing event count", fill = "") +
-  theme_classic(base_family = "Helvetica") +
+  my_theme() +
   theme(legend.position = "bottom",
   ) +
   scale_fill_manual(values = splicing_class_colour) +
@@ -169,7 +163,7 @@ ggplot(splicing_mutation_count_simple, aes(x = Mutation_Type3, y = count, fill =
   geom_bar(stat = "identity") +
   coord_flip() +
   labs(x = "", y = "Splicing event count", fill = "") +
-  theme_classic(base_family = "Helvetica") +
+  my_theme() +
   theme(legend.position = "bottom",
         ) +
   scale_fill_manual(values = splicing_class_colour) +

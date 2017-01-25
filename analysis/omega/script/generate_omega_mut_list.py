@@ -9,9 +9,13 @@ sj_dir2 = sys.argv[4]
 ir_dir1 = sys.argv[5]
 ir_dir2 = sys.argv[6]
 
-mut_files = glob.glob(mut_dir + "/*.genomon.genomon_mutation.result.filt.blacklist_filtered.txt")
+
+mut_files = glob.glob(mut_dir + "/*.mutation.filt.txt")
 sj_files = glob.glob(sj_dir1 + "/*/*.SJ.out.tab") + glob.glob(sj_dir2 + "/*/*.SJ.out.tab")
 ir_files = glob.glob(ir_dir1 + "/*/*.ir_simple_count.txt") + glob.glob(ir_dir2 + "/*/*.ir_simple_count.txt")
+
+black_list = ["TCGA-BC-A112-01", "TCGA-DD-A1EG-01", "TCGA-DD-A39Y-01", "TCGA-DD-A3A0-01",
+              "TCGA-G3-A3CJ-01", "TCGA-BC-A3KG-01", "TCGA-DD-A3A1-01"]
 
 
 def get_weight(log_final_file):
@@ -29,8 +33,9 @@ def get_weight(log_final_file):
 sample2mut_file = {}
 for mut_file in sorted(mut_files):
     # sample = os.path.basename(os.path.dirname(mut_file))
-    sample = os.path.basename(mut_file).replace(".genomon.genomon_mutation.result.filt.blacklist_filtered.txt", '')
+    sample = os.path.basename(mut_file).replace(".mutation.filt.txt", "")
     sample = sample[:15]
+    if sample in black_list: continue
     sample2mut_file[sample] = mut_file
 
 sample2sj_file = {}
