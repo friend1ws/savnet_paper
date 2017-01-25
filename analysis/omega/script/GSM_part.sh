@@ -4,23 +4,31 @@
 #$ -e log/ -o log/
 
 CTYPE=$1
+D_E=$2
+D_I=$3
+A_I=$4
+A_E=$5
+C=$6
+KA=$7
 
-if [ ! -d ../output/${CTYPE} ]
+if [ $KA = 0 ]
 then
-    mkdir -p ../output/${CTYPE}
+    out_dir=../gsm_out/d${D_E}.${D_I}_a${A_I}.${A_E}_${C}/${CTYPE}
+else
+    out_dir=../gsm_out/d${D_E}.${D_I}_a${A_I}.${A_E}_${C}_ka/${CTYPE}
 fi
 
-<<_COM_
+if [ ! ${out_dir} ]
+then
+    mkdir -p ${out_dir}
+fi
 
-python generate_omega_mut_list.py \
-    ../output/${CTYPE}/mut_SJ_IR_list.txt \
-    /home/kchiba/work_directory/work_hotspot/black_list_output_min10/${CTYPE} \
-    /home/eva/genomon_out/rna_2_4_0/TCGA/${CTYPE}/star \
-    /home/eva/rawdata/tcga_rna_prev/single/output/${CTYPE}/star \
-    /home/eva/genomon_out/rna_2_4_0/TCGA/${CTYPE}/intron_retention \
-    /home/eva/rawdata/tcga_rna_prev/single/output/${CTYPE}/intron_retention \
-
-_COM_
-
-genomon_splicing_mutation ../output/${CTYPE}/mut_SJ_IR_list.txt ../output/${CTYPE}/${CTYPE} /home/yshira/mysoftware/junc_utils/resource /home/w3varann/database/GRCh37/GRCh37.fa --SJ_pooled_control_file /home/yshira/project/inframe_junc/output/control.bed.gz --IR_pooled_control_file /home/yshira/project/GIR/simple_count/TCGA/output/CTRL/control.bed.gz 
+if [ $KA = 0 ]
+then
+    echo "genomon_splicing_mutation --grc --donor_size ${D_E},${D_I} --acceptor_size ${A_I},${A_E} ../gsm_out/gsm_file_list/${CTYPE}.mut_SJ_IR_list.txt ${out_dir}/${CTYPE} /home/w3varann/database/GRCh37/GRCh37.fa --SJ_pooled_control_file ../control/SJ/output/control_2_${C}.bed.gz --IR_pooled_control_file ../control/IR/output/control_${C}.bed.gz"
+    genomon_splicing_mutation --grc --donor_size ${D_E},${D_I} --acceptor_size ${A_I},${A_E} ../gsm_out/gsm_file_list/${CTYPE}.mut_SJ_IR_list.txt ${out_dir}/${CTYPE} /home/w3varann/database/GRCh37/GRCh37.fa --SJ_pooled_control_file ../control/SJ/output/control_2_${C}.bed.gz --IR_pooled_control_file ../control/IR/output/control_${C}.bed.gz 
+else
+    echo "genomon_splicing_mutation --grc --keep_annotated --donor_size ${D_E},${D_I} --acceptor_size ${A_I},${A_E} ../gsm_out/gsm_file_list/${CTYPE}.mut_SJ_IR_list.txt ${out_dir}/${CTYPE} /home/w3varann/database/GRCh37/GRCh37.fa --SJ_pooled_control_file ../control/SJ/output/control_2_${C}.bed.gz --IR_pooled_control_file ../control/IR/output/control_${C}.bed.gz "
+    genomon_splicing_mutation --grc --keep_annotated --donor_size ${D_E},${D_I} --acceptor_size ${A_I},${A_E} ../gsm_out/gsm_file_list/${CTYPE}.mut_SJ_IR_list.txt ${out_dir}/${CTYPE} /home/w3varann/database/GRCh37/GRCh37.fa --SJ_pooled_control_file ../control/SJ/output/control_2_${C}.bed.gz --IR_pooled_control_file ../control/IR/output/control_${C}.bed.gz 
+fi
  

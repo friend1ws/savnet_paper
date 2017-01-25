@@ -5,6 +5,7 @@
 python summarize_allele_count.py \
     ../../matome/omega.genomon_splicing_mutation.result.txt \
     ../output/ \
+    /home/w3varann/database/GRCh37/GRCh37.fa \
     ../output/omega.splicing_mutation.info.txt
 
 Rscript splicing_mut_count.R

@@ -1,6 +1,8 @@
 library(ggplot2)
 library(dplyr)
 
+source("../../script/subscript_matome/plot_config.R")
+
 allele_count <- read.table("../output/omega.genomon_splicing_mutation.allele_count.txt", header = TRUE, sep = "\t", 
                            as.is=TRUE, quote="", stringsAsFactors = FALSE)
 
@@ -17,14 +19,14 @@ write.table(data.frame(mids = a$mids, counts = a$counts), "../output/IR_VAF.txt"
 
 ggplot(allele_count %>% filter(! is.na(ratio)),
        aes(x = ratio)) +
-  geom_histogram(bins = 50, alpha = 0.5, position="stack") +
+  geom_histogram(bins = 50, position="stack", fill = "#2166ac") +
   labs(x = "Variant Allele Frequency", y = "Frequency") +
   # ggtitle("Intron Retention Variant Allele Frequency") +
   facet_grid(.~Mutation_Type2, scales = "free_y") +
-  theme_minimal() +
+  my_theme() +
+  theme(strip.text.x = element_text(angle = 0, hjust = 0)) +
+  scale_y_continuous(expand = c(0, 0)) +
   guides(fill = FALSE)
-  # theme(legend.position = "bottom") +
-  # scale_fill_discrete(labels = c("donor", "acceptor"))
 
 
 ggsave("../output/IR_VAF.pdf", width = 6, height = 2.5)
