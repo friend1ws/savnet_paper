@@ -3,6 +3,8 @@ library(spliceSites)
 library(stringr)
 library(ggplot2)
 
+source("subscript_matome/plot_config.R")
+
 mes <- load.maxEnt()
 hb <- load.hbond()
 
@@ -202,7 +204,7 @@ ggplot(rbind(score_creation, score_disruption) %>% filter(score_type == "mes"), 
   geom_boxplot(outlier.size = 0.6, size = 0.3) +
   ylim(c(-25, 25)) +
   labs(x = "", y = "Diff. of MaxEnt score between \nalternative and authentic splice sites") +
-  theme_minimal() +
+  my_theme() +
   facet_grid(is_dc~is_da) +
   scale_fill_manual(values = c("WT" = "#ccebc5", "MT" = "#bc80bd")) +
   guides(fill = FALSE)
@@ -215,7 +217,7 @@ ggplot(rbind(score_creation, score_disruption) %>% filter(score_type == "hbond")
   geom_boxplot(outlier.size = 0.6, size = 0.3) +
   ylim(c(-20, 20)) +
   labs(x = "", y = "Diff. of H-bond score between \nalternative and authentic splice sites") +
-  theme_minimal() +
+  my_theme() +
   facet_grid(is_dc~is_da) +
   scale_fill_manual(values = c("WT" = "#ccebc5", "MT" = "#bc80bd")) +
   guides(fill = FALSE)
@@ -228,7 +230,7 @@ ggsave("../matome/alt_diff_hb_creation_disruption.pdf", width = 2.5, height = 4)
 #   geom_boxplot() +
 #   ylim(c(-25, 25)) +
 #   labs(x = "", y = "Diff. of MaxEnt score between \nalternative and authentic splice sites") +
-#   theme_minimal() +
+#   my_theme() +
 #   facet_grid(.~is_da) +
 #   scale_fill_manual(values = c("WT" = "#ccebc5", "MT" = "#bc80bd")) +
 #   guides(fill = FALSE) 
@@ -241,7 +243,7 @@ ggsave("../matome/alt_diff_hb_creation_disruption.pdf", width = 2.5, height = 4)
 #   geom_boxplot() +
 #   ylim(c(-20, 20)) +
 #   labs(x = "", y = "Diff. of H-bond score between \nalternative and authentic splice sites") +
-#   theme_minimal() +
+#   my_theme() +
 #   scale_fill_manual(values = c("WT" = "#ccebc5", "MT" = "#bc80bd")) +
 #   guides(fill = FALSE) 
 

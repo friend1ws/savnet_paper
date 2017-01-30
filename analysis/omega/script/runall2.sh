@@ -48,6 +48,9 @@ Rscript subscript_matome/multi_splice_mutation.R
 
 Rscript subscript_matome/alt_score_diff.R
 
+Rscript subscript_matome/position_fdr2.R 
+
+Rscript subscript/alt_score_diff.R 
 <<_COM_
 
 python summarize_motif_pos.py omega.genomon_splicing_mutation.result.perm.txt /home/w3varann/database/GRCh37/GRCh37.fa perm.motif_summary.txt
