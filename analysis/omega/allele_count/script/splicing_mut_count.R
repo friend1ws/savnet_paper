@@ -93,7 +93,7 @@ p_donor_count <- ggplot(splicing_mut_info_filt_snv_count %>%
                           filter(Type_Motif == "donor", GenomonSplicingMutation != "No change"), 
                         aes(x = Rel_Start_Motif, y = count, fill = GenomonSplicingMutation)) + 
   geom_bar(stat = "identity") +
-  labs(x = "", y = "SASM count", fill = "") +
+  labs(x = "", y = "SAV count", fill = "") +
   ggtitle("Donor") +
   scale_fill_manual(values = splicing_class_colour) +
   my_theme() +
@@ -114,7 +114,7 @@ p_donor_ratio <- ggplot(splicing_mut_info_filt_snv_ratio %>%
          filter(Type_Motif == "donor", GenomonSplicingMutation != "No change"), 
        aes(x = Rel_Start_Motif, y = ratio, fill = GenomonSplicingMutation)) + 
   geom_bar(stat = "identity") +
-  labs(x = "", y = "SASM ratio", fill = "") +
+  labs(x = "", y = "SAV ratio", fill = "") +
   scale_fill_manual(values = splicing_class_colour) +
   my_theme() +
   theme(axis.text.x = element_text(colour = pos_colour, size = rel(1.5)),
@@ -139,7 +139,7 @@ p_acceptor_count <- ggplot(splicing_mut_info_filt_snv_count %>%
                              filter(Type_Motif == "acceptor", GenomonSplicingMutation != "No change"), 
                            aes(x = Rel_Start_Motif, y = count, fill = GenomonSplicingMutation)) + 
   geom_bar(stat = "identity") +
-  labs(x = "", y = "SASM count", fill = "") +
+  labs(x = "", y = "SAV count", fill = "") +
   ggtitle("Acceptor") +
   scale_fill_manual(values = splicing_class_colour) +
   my_theme() +
@@ -160,7 +160,7 @@ p_acceptor_ratio <- ggplot(splicing_mut_info_filt_snv_ratio %>%
          filter(Type_Motif == "acceptor", GenomonSplicingMutation != "No change"), 
        aes(x = Rel_Start_Motif, y = ratio, fill = GenomonSplicingMutation)) + 
   geom_bar(stat = "identity") +
-  labs(x = "", y = "SASM ratio", fill = "") +
+  labs(x = "", y = "SAV ratio", fill = "") +
   scale_fill_manual(values = splicing_class_colour) +
   my_theme() +
   theme(axis.text.x = element_text(colour = pos_colour, size = rel(1.5)),
@@ -284,7 +284,7 @@ p_donor_indel_count <- ggplot(splicing_mut_info_filt_indel_count %>%
        aes(x = Indel_Type, y = count, fill = GenomonSplicingMutation)) + 
   geom_bar(stat = "identity") +
   ggtitle("Donor") +
-  labs(x = "", y = "SASM count") +
+  labs(x = "", y = "SAV count") +
   scale_fill_manual(values = splicing_class_colour) +
   my_theme() +
   theme(axis.text.x = element_text(colour = pos_colour, size = rel(1.5)),
@@ -304,7 +304,7 @@ p_donor_indel_ratio <- ggplot(splicing_mut_info_filt_indel_ratio %>%
                               aes(x = Indel_Type, y = ratio, fill = GenomonSplicingMutation)) + 
   geom_bar(stat = "identity") +
   scale_fill_manual(values = splicing_class_colour) +
-  labs(x = "", y = "SASM ratio") +
+  labs(x = "", y = "SAV ratio") +
   my_theme() +
   theme(axis.text.x = element_text(colour = pos_colour, size = rel(1.5)),
         axis.text.y = element_text(size = rel(1.2)),
@@ -324,7 +324,7 @@ p_acceptor_indel_count <- ggplot(splicing_mut_info_filt_indel_count %>%
   geom_bar(stat = "identity") +
   scale_fill_manual(values = splicing_class_colour) +
   ggtitle("Acceptor") +
-  labs(x = "", y = "SASM count") +
+  labs(x = "", y = "SAV count") +
   my_theme() +
   theme(axis.text.x = element_text(colour = pos_colour, size = rel(1.5)),
         axis.text.y = element_text(size = rel(1.2)),
@@ -344,7 +344,7 @@ p_acceptor_indel_ratio <- ggplot(splicing_mut_info_filt_indel_ratio %>%
   geom_bar(stat = "identity") +
   scale_fill_manual(values = splicing_class_colour) +
   my_theme() +
-  labs(x = "", y = "SASM ratio") +
+  labs(x = "", y = "SAV ratio") +
   theme(axis.text.x = element_text(colour = pos_colour, size = rel(1.5)),
         axis.text.y = element_text(size = rel(1.2)),
         axis.title = element_text(size = rel(1.2)),
