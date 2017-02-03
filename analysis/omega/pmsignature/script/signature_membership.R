@@ -129,12 +129,12 @@ gsm_ratio <- sig2mem %>% left_join(sig2mem_all, by = c("Sig_Type")) %>%
   mutate(gsm_ratio = (mem_sum / mem_sum_all) / base_ratio)
 
 
-ggplot(gsm_ratio %>% filter(Sig_Type != "Other"), aes(x = Sig_Type, y = gsm_ratio, fill = Sig_Type)) + 
+ggplot(gsm_ratio, aes(x = Sig_Type, y = gsm_ratio, fill = Sig_Type)) + 
   geom_bar(stat = "identity") + coord_flip() +
   my_theme() +
   labs(x = "", y = "Relative splicing mutation ratio", fill = "") +
   theme(legend.position = "bottom") +
-  scale_x_discrete(limits = rev(sig_type_order[1:7])) +
+  scale_x_discrete(limits = rev(sig_type_order[1:8])) +
   scale_y_continuous(expand = c(0, 0)) +
   scale_fill_manual(values = signature_colour) +
   guides(fill = FALSE)

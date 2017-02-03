@@ -30,7 +30,7 @@ for gsm_key in sorted(gsm_key):
 all_list_files = glob.glob(input_list_dir + "/*.mut_SJ_IR_list.txt")
 hout = open(output_file, 'w')
 
-print >> hout, "Cancer_Type" + '\t' + "Sample_Name" + '\t' + "SNV_Count" + '\t' + "Indel_Count" + '\t' + "SASM_Count"
+print >> hout, "Cancer_Type" + '\t' + "Sample_Name" + '\t' + "SNV_Count" + '\t' + "Indel_Count" + '\t' + "SAV_Count"
 for list_file in sorted(all_list_files):
 
     cancer_type = os.path.basename(list_file).replace(".mut_SJ_IR_list.txt", "")

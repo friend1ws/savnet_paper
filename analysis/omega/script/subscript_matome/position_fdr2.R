@@ -56,7 +56,7 @@ df_donor$Rel_Pos2 <-
                     "+6", "+7", "+8", "+9", "+10", "+11", "+12", "+13", "+14", "+15"))
 
 df_donor$Is_Original2 <- 
-  factor(df_donor$Is_Original, labels = c("Called SASM count", "Estimated false positive count"))
+  factor(df_donor$Is_Original, labels = c("Called SAV count", "Estimated false positive count"))
 
 df_region <- data.frame(
   xmin = c(0, 5.5),
@@ -76,7 +76,7 @@ g_donor_2 <- ggplot() +
   geom_vline(xintercept = 5.5, colour="#d73027", linetype = "longdash") +
   my_theme() +
   theme(panel.grid.major.x = element_blank()) +
-  scale_fill_manual(values = c("Called SASM count" = "#66bd63", "Estimated false positive count" = "#bf812d")) +
+  scale_fill_manual(values = c("Called SAV count" = "#66bd63", "Estimated false positive count" = "#bf812d")) +
   scale_x_discrete(labels = 
                      c("-5", rep("", 3), "-1", "+1", "+2", rep("", 2), "+5", rep("", 4), "+10", rep("", 4), "+15")) +
   scale_y_continuous(limits = c(0, 4000), sec.axis = sec_axis(~ . * (1 / 5000), name = "")) +
@@ -98,7 +98,7 @@ df_acceptor$Rel_Pos2 <-
                         "+6", "+7", "+8", "+9", "+10", "+11", "+12", "+13", "+14", "+15")))
 
 df_acceptor$Is_Original2 <- 
-  factor(df_acceptor$Is_Original, labels = c("Called SASM count", "Estimated false positive count"))
+  factor(df_acceptor$Is_Original, labels = c("Called SAV count", "Estimated false positive count"))
 
 g_acceptor_2 <- ggplot() + 
   geom_bar(data = df_acceptor, aes(x = Rel_Pos2, y = Total_Count, fill = Is_Original2),
@@ -110,7 +110,7 @@ g_acceptor_2 <- ggplot() +
   labs(x = "Intron position", y = "") +
   my_theme() +
   theme(panel.grid.major.x = element_blank()) +
-  scale_fill_manual(values = c("Called SASM count" = "#66bd63", "Estimated false positive count" = "#bf812d")) +
+  scale_fill_manual(values = c("Called SAV count" = "#66bd63", "Estimated false positive count" = "#bf812d")) +
   scale_x_discrete(labels = 
                      c("+15", rep("", 4), "+10", rep("", 4), "+5", 
                        rep("", 2), "+2", "+1", "-1", rep("", 3), "-5")) +
@@ -129,7 +129,7 @@ g_dummy_for_legend <-
   ggplot(df_acceptor,
          aes(x = Rel_Pos2, y = Total_Count, fill = Is_Original2)) +
   geom_bar(stat = "identity", position = "dodge") +
-  scale_fill_manual(values = c("Called SASM count" = "#66bd63", "Estimated false positive count" = "#bf812d")) +
+  scale_fill_manual(values = c("Called SAV count" = "#66bd63", "Estimated false positive count" = "#bf812d")) +
   theme(legend.position = "bottom") +
   labs(fill = "")
 

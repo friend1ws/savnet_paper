@@ -103,7 +103,7 @@ p_dc <- ggplot(snv_motif_count_dc,
        aes(x = Ref_Base, y = count, fill = Alt_Base)) +
   geom_bar(stat = "identity") +
   facet_wrap( ~ Rel_Pos2, nrow = 1, drop = FALSE) +
-  labs(x = "Reference base", y = "SASM count", fill = "Alternative base") +
+  labs(x = "Reference base", y = "SAV count", fill = "Alternative base") +
   my_theme() +
   ggtitle("Donor creation") +
   theme(axis.text.x = element_text(size = rel(1)),
@@ -138,7 +138,7 @@ p_ac <- ggplot(snv_motif_count_ac,
        aes(x = Ref_Base, y = count, fill = Alt_Base)) +
   geom_bar(stat = "identity") +
   facet_wrap( ~ Rel_Pos2, nrow = 1) +
-  labs(x = "Reference base", y = "SASM count", fill = "Alternative base") +
+  labs(x = "Reference base", y = "SAV count", fill = "Alternative base") +
   my_theme() +
   ggtitle("Acceptor creation") +
   theme(axis.text.x = element_text(size = rel(1)),
@@ -164,7 +164,7 @@ p_dummy_for_legend <- ggplot(snv_motif_count_dc,
                              aes(x = Ref_Base, y = count, fill = Alt_Base)) +
   geom_bar(stat = "identity") +
   facet_wrap( ~ Rel_Pos2, nrow = 1) +
-  labs(x = "Reference base", y = "SASM count", fill = "Alternative base") +
+  labs(x = "Reference base", y = "SAV count", fill = "Alternative base") +
   theme_minimal() +
   ggtitle("Donor disruption") +
   theme(axis.text.x = element_text(size = rel(1)),
