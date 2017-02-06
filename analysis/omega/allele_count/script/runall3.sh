@@ -10,3 +10,7 @@ python summarize_allele_count.py \
 
 Rscript splicing_mut_count.R
 
+Rscript mes_hb_diff_score2.R
+
+Rscript motif_dist3.R 
+
