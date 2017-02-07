@@ -14,3 +14,5 @@ Rscript mes_hb_diff_score2.R
 
 Rscript motif_dist3.R 
 
+Rscript motif_logo_check2.R 
+ 
