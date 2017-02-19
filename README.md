@@ -1,2 +1,2 @@
-# mutrans_paper
-resource for mutrans paper
+# savnet paper
+resource for savnet paper
