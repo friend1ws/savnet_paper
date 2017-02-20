@@ -1,0 +1,15 @@
+# ../MSI/nm.4191-S3.xlsx is from "http://www.nature.com/nm/journal/v22/n11/abs/nm.4191.html"
+
+
+# ../JungEtAl/ng.3414-S2.ST3.proc.txt is created as follows:
+1. 
+Open the ST3 sheet of ng.3414-S2.xlsx and copy from the 14,16-1215th rows and from A to M colums,
+and paste to an empty file and save it as "ng.3414-S2.ST3.proc.txt".
+
+2. 
+Open the ST12 sheet of ng.3414-S2.xlsx and copy the "List of TCGA tumor samples"
+and paste to empty file and save it as "sample_list_JungEtAl.txt".
+
+3.
+Do `python generate_target_sample.py".
+
