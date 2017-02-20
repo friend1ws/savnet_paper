@@ -1,0 +1,20 @@
+# Cancer Gene Census
+1. Download cancer gene census data from 
+2. Upload to the directory CancerGeneCensus, modify the input file path in the make_cancer_gene_census.py,
+and do `python make_cancer_gene_census.py`
+
+# YeEtAl_gene.txt
+Processed from the supplementary table (nm.4002-S7.xlsx) of the Nature Methods 2015 paper (doi:10.1038/nm.4002)
+
+# Vogelstein_Sicence_2013
+Processed from the Supplementary Table 2A of Science 2013 paper (10.1126/science.1235122)
+
+# Lawrence et al.
+1. Download the Supplementary Table 2 and 3 of Nature 2014 paper (doi:10.1038/nature12912).
+2. Upload them to the directory `LawrenceEtAl`, and do `python make_LawrenceEtAl_sig_gene.py`
+
+# merge
+Do `python merge_db.py`
+ 
+
+
