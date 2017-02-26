@@ -15,8 +15,8 @@ annot_utils boundary --donor_size 5,15 --acceptor_size 15,5 --grc ../mutation/no
 
 while read ctype
 do
-    echo "qsub remove_dup_cancer_type.sh ${ctype}"
-    qsub remove_dup_cancer_type.sh ${ctype}
+    echo "qsub subscript/remove_dup_cancer_type.sh ${ctype}"
+    qsub subscript/remove_dup_cancer_type.sh ${ctype}
 done < ../input_list/cancer_type_list.txt
 
 
