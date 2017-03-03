@@ -2,11 +2,11 @@
 
 import sys, os, glob, shutil
 
-exp_files = glob.glob("/home/eva/genomon_out/rna_2_4_0/TCGA/*/expression/*/*.sym2fkpm.txt")
+exp_files = glob.glob("/home/eva/workscape/yshira/expression/output/*/*.sym2fpkm.txt")
 
 
 for exp_file in sorted(exp_files):
-    cancer_type = os.path.basename(os.path.dirname(os.path.dirname(os.path.dirname(exp_file))))
+    cancer_type = os.path.basename(os.path.dirname(exp_file))
     out_file = "../expression/" + cancer_type + "/" + os.path.basename(exp_file)
 
     if cancer_type in ["LAML", "OV"]: continue

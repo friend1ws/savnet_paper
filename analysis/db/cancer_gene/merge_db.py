@@ -37,9 +37,12 @@ genes = list(set(gene2lawrence.keys() + gene2cgc.keys() + gene2vogelstein.keys()
 
 
 hout = open("cancer_gene.txt", 'w')
+print >> hout, "Gene_Symbol" + '\t' + "LawrenceEtAl_2014" + '\t' + "Cancer_Gene_Census" + '\t' + \
+                 "VogelsteinEtAl_2013" + '\t' + "YeEtAl_2016"
+
 for gene in sorted(genes):
     lawrence = gene2lawrence[gene] if gene in gene2lawrence else "---"
-    cgc = gene2cgc[gene] if gene in gene2cgc else "---"
+    cgc = gene2cgc[gene] if gene in gene2cgc and gene2cgc[gene] != "" else "---"
     vogelstein = gene2vogelstein[gene] if gene in gene2vogelstein else "---"
     ye = gene2ye[gene] if gene in gene2ye else "---"
     print >> hout, gene + '\t' + lawrence + '\t' + cgc + '\t' + vogelstein + '\t' + ye

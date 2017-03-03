@@ -16,10 +16,9 @@ with open(cancer_gene_file, 'r') as hin:
     for line in hin:
         F = line.rstrip('\n').split('\t')
         cancer_gene_flag = "FALSE"
-        # if F[1] != "---" or F[2] not in ["---", "T"]:
-        if F[4] == "CG":
+        if F[1] != "---" or F[2] != "---" or F[3] != "---" or F[4] != "---":
             cancer_gene_flag = "TRUE"
-        gene2cancer_gene_info[F[0]] = F[1] + '\t' + F[2] + '\t' + F[4] + '\t' + cancer_gene_flag
+        gene2cancer_gene_info[F[0]] = F[1] + '\t' + F[2] + '\t' + F[3] + '\t' + F[4] + '\t' + cancer_gene_flag
 
 
 key2hgmd = {}
@@ -59,6 +58,7 @@ for gsfile in sorted(allfiles_target):
 """
 
 key2int_ss_by_dis = {}
+key2intron = {}
 for gsfile in sorted(allfiles_target):
     cancer_type = os.path.basename(os.path.dirname(gsfile))
     with open(gsfile, 'r') as hin:
@@ -70,25 +70,30 @@ for gsfile in sorted(allfiles_target):
         for line in hin:
             F = line.rstrip('\n').split('\t')
 
-            if F[header2ind["Splicing_Class"]] not in ["alternative-5'-splice-site", "alternative-3'-splice-site", \
-                                                   "intronic-alternative-5'-splice-site", "intronic-alternative-3'-splice-site"]: continue
-
             key = F[header2ind["Sample_Name"]] + '\t' + F[header2ind["Mutation_Key"]]
 
-            pos_match = re.match(r'([\w\d]+)\:(\d+)\-(\d+)', F[header2ind["Splicing_Key"]])
-            schr, sstart, send = pos_match.group(1), pos_match.group(2), pos_match.group(3)
+            if F[header2ind["Splicing_Class"]] in ["alternative-5'-splice-site", "alternative-3'-splice-site", \
+                                                   "intronic-alternative-5'-splice-site", "intronic-alternative-3'-splice-site"]:
 
-            pos_match = re.match(r'([\w\d]+)\:(\d+)\-(\d+)\,([\+\-])', F[header2ind["Motif_Pos"]])
-            mchr, mstart, mend, mdir = pos_match.group(1), pos_match.group(2), pos_match.group(3), pos_match.group(4)
+                pos_match = re.match(r'([\w\d]+)\:(\d+)\-(\d+)', F[header2ind["Splicing_Key"]])
+                schr, sstart, send = pos_match.group(1), pos_match.group(2), pos_match.group(3)
 
-            if "alternative-5'-splice-site" in F[header2ind["Splicing_Class"]] and F[header2ind["Mutation_Type"]] == "splicing donor disruption":
-                if (mdir == "+" and int(mend) < int(sstart)) or (mdir == "-" and int(send) < int(mstart)):
-                    key2int_ss_by_dis[key] = 1
-                    # print '\t'.join(F)
-            elif "alternative-3'-splice-site" in F[header2ind["Splicing_Class"]] and F[header2ind["Mutation_Type"]] == "splicing acceptor disruption":
-                if (mdir == "-" and int(mend) < int(sstart)) or (mdir == "+" and int(send) < int(mstart)):
-                    key2int_ss_by_dis[key] = 1
-                    # print '\t'.join(F)
+                pos_match = re.match(r'([\w\d]+)\:(\d+)\-(\d+)\,([\+\-])', F[header2ind["Motif_Pos"]])
+                mchr, mstart, mend, mdir = pos_match.group(1), pos_match.group(2), pos_match.group(3), pos_match.group(4)
+
+                if "alternative-5'-splice-site" in F[header2ind["Splicing_Class"]] and F[header2ind["Mutation_Type"]] == "splicing donor disruption":
+                    if (mdir == "+" and int(mend) < int(sstart)) or (mdir == "-" and int(send) < int(mstart)):
+                        key2int_ss_by_dis[key] = 1
+                        # print '\t'.join(F)
+                elif "alternative-3'-splice-site" in F[header2ind["Splicing_Class"]] and F[header2ind["Mutation_Type"]] == "splicing acceptor disruption":
+                    if (mdir == "-" and int(mend) < int(sstart)) or (mdir == "+" and int(send) < int(mstart)):
+                        key2int_ss_by_dis[key] = 1
+                        # print '\t'.join(F)
+
+
+            if F[header2ind["Splicing_Class"]] == "intron-retention":
+                key2intron[key] = 1 
+
 
 
 hout = open(output_file_target, 'w')
@@ -105,17 +110,18 @@ for gsfile in sorted(allfiles_target):
             header2ind[cname] = i
 
         if header_print_flag == 0:
-            print >> hout, "Cancer_Type" + '\t' + '\t'.join(header) + '\t' + "IR_with_IASS" + '\t' + \
-                           "LawrenceEtAl_2014" + '\t' + "Cancer_Gene_Census" + '\t' + "YeEtAl_2016" + '\t' + "Is_Cancer_Gene" + '\t' + "HGMD" 
+            print >> hout, "Cancer_Type" + '\t' + '\t'.join(header) + '\t' + "IR_filtered" + '\t' + \
+                           "LawrenceEtAl_2014" + '\t' + "Cancer_Gene_Census" + '\t' + "VogelsteinEtAl_2013" + '\t' + "YeEtAl_2016" + '\t' + \
+                           "Is_Cancer_Gene" + '\t' + "HGMD" 
             header_print_flag = 1
 
         for line in hin:
             F = line.rstrip('\n').split('\t')
+            key = F[header2ind["Sample_Name"]] + '\t' + F[header2ind["Mutation_Key"]]
 
-            IR_with_IASS = "FALSE"
-            if F[header2ind["Splicing_Class"]] == "intron-retention" and \
-               F[header2ind["Sample_Name"]] + '\t' + F[header2ind["Mutation_Key"]] in key2int_ss_by_dis:
-                IR_with_IASS = "TRUE"
+            IR_filtered = "FALSE"
+            if F[header2ind["Splicing_Class"]] == "intron-retention" and key in key2int_ss_by_dis: IR_filtered = "TRUE"
+            if F[header2ind["Splicing_Class"]] == "opposite-side-intron-retention" and key in key2intron: IR_filtered = "TRUE"  
 
 
             gene_symbol = F[0]
@@ -128,18 +134,18 @@ for gsfile in sorted(allfiles_target):
             if float(F[header2ind["Score"]]) < float(BF_thres): continue
             if float(F[header2ind["Q_Value"]]) > float(q_value_thres): continue
 
-            cancer_gene_info = gene2cancer_gene_info[gene_symbol] if gene_symbol in gene2cancer_gene_info else "---\t---\t---\tFALSE" 
+            cancer_gene_info = gene2cancer_gene_info[gene_symbol] if gene_symbol in gene2cancer_gene_info else "---\t---\t---\t---\tFALSE" 
             hgmd_info_print = ';'.join(list(set(key2hgmd[F[header2ind["Mutation_Key"]]]))) if F[header2ind["Mutation_Key"]] in key2hgmd else "---"
 
             for i in range(len(sample_names)):
                 try:
                     print >> hout, cancer_type + '\t' + gene_symbol + '\t' + sample_names[i] + '\t' + '\t'.join(F[2:9]) + '\t' + \
                                     sp_counts[i] + '\t' + F[header2ind["Score"]] + '\t' + F[header2ind["Q_Value"]] + '\t' + \
-                                    IR_with_IASS + '\t' + cancer_gene_info + '\t' + hgmd_info_print
+                                    IR_filtered + '\t' + cancer_gene_info + '\t' + hgmd_info_print
                 except Exception as inst:
                     print >> hout, cancer_type + '\t' + gene_symbol + '\t' + sample_names[i] + '\t' + '\t'.join(F[2:9]) + '\t' + \
                                     sp_counts[0] + '\t' + F[header2ind["Score"]] + '\t' + F[header2ind["Q_Value"]] + '\t' + \
-                                    IR_with_IASS + '\t' + cancer_gene_info + '\t' + hgmd_info_print
+                                    IR_filtered + '\t' + cancer_gene_info + '\t' + hgmd_info_print
 
 hout.close()
 
