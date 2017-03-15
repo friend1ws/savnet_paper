@@ -25,7 +25,8 @@ key2ctype = {}
 
 SJ_black_list = glob.glob("../splicing_factor/*_SJ.sig.txt")
 for bfile in sorted(SJ_black_list):
-    ctype = os.path.basename(bfile).replace(".sig.txt", "")
+    cancer_type, sf_gene = os.path.basename(bfile).replace("_SJ.sig.txt", "").split("_")
+    ctype = sf_gene + '(' + cancer_type + ')'
     with open(bfile, 'r') as hin:
         for line in hin:
             F = line.rstrip('\n').split('\t')
@@ -34,8 +35,9 @@ for bfile in sorted(SJ_black_list):
             key2ctype[key].append(ctype)
 
 IR_black_list = glob.glob("../splicing_factor/*_IR.sig.txt")
-for bfile in sorted(SJ_black_list):
-    ctype = os.path.basename(bfile).replace(".sig.txt", "")
+for bfile in sorted(IR_black_list):
+    cancer_type, sf_gene = os.path.basename(bfile).replace("_IR.sig.txt", "").split("_")
+    ctype = sf_gene + '(' + cancer_type + ')'
     with open(bfile, 'r') as hin:
         for line in hin:
             F = line.rstrip('\n').split('\t')
@@ -47,10 +49,20 @@ for bfile in sorted(SJ_black_list):
 #     print key + '\t' + str(key2ctype[key])
 
 with open(savnet_result, 'r') as hin:
+
+    header2ind = {}
+    header = hin.readline().rstrip('\n').split('\t')
+    for (i, cname) in enumerate(header):
+        header2ind[cname] = i
+
+    print '\t'.join(header[:9]) + '\t' + "Controled_By" + '\t' + "SF_mut_status"
+
     for line in hin:
         F = line.rstrip('\n').split('\t')
-        if F[7] in key2ctype:
-            sf_mut_status = ';'.join(sample2sf_mut[F[2]]) if F[2] in sample2sf_mut else "---"
-            print '\t'.join(F) + '\t' + ';'.join(key2ctype[F[7]]) + '\t' + sf_mut_status
+        if F[header2ind["Splicing_Key"]] in key2ctype:
+
+            sf_mut_status = ';'.join(sample2sf_mut[F[header2ind["Sample_Name"]]]) if F[header2ind["Sample_Name"]] in sample2sf_mut else "---"
+            print '\t'.join(F[:9]) + '\t' + ','.join(key2ctype[F[header2ind["Splicing_Key"]]]) + '\t' + sf_mut_status
+
 
 
