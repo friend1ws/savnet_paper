@@ -8,7 +8,7 @@ splicing_mutation <- read.table("../../output/savnet_out/d3.6_a6.1_8_ka/TCGA.sav
     filter(IR_filtered == "FALSE")
 
 multiple_effect <- splicing_mutation %>% 
-  group_by(Cancer_Type, Sample_Name, Gene_Symbol, Mutation_Key) %>% 
+  group_by(Sample_Name, Mutation_Key) %>% 
   summarize(splice_count = n()) %>%
   arrange(desc(splice_count))
 
@@ -16,7 +16,8 @@ multiple_effect_count <- multiple_effect %>%
   group_by(splice_count) %>% 
   summarize(count = n()) 
 
-print(multiple_effect_count)
+write.table(multiple_effect_count, "../table/multi_splice_sav_count.txt", sep = "\t", quote = FALSE, row.names = FALSE)
+
 
 multiple_effect_count$splice_count2 <- factor(multiple_effect_count$splice_count, levels = 1:max(multiple_effect_count$splice_count))
 
@@ -27,7 +28,7 @@ ggplot(multiple_effect_count, aes(x = splice_count2, y = log10(count + 1))) +
   my_theme() +
   scale_y_continuous(expand = c(0, 0))
 
-ggsave("../figure/multi_event.pdf", width = 3, height = 3)
+ggsave("../figure/multi_event.tiff", width = 6, height = 4, dpi = 600, unit = "cm")
 
 
 # splicing_multiple_mut <- splicing_mutation %>% 

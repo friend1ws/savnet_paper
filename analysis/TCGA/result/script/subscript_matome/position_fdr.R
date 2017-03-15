@@ -69,13 +69,14 @@ df_region <- data.frame(
 g_donor_2 <- ggplot() +
   geom_bar(data = df_donor, aes(x = Rel_Pos2, y = Total_Count, fill = Is_Original2),
            stat = "identity", position = "dodge") +
-  geom_point(data = total_pos_fdr_donor, aes(x = Rel_Pos2, y = 5000 * pfdr), alpha = 0.8, colour = "#7570b3") +
-  geom_line(data = total_pos_fdr_donor, aes(x = Rel_Pos, y = 5000 * pfdr), alpha = 0.8, colour = "#7570b3") +
+  geom_point(data = total_pos_fdr_donor, aes(x = Rel_Pos2, y = 5000 * pfdr), size = 0.6, alpha = 0.8, colour = "#7570b3") +
+  geom_line(data = total_pos_fdr_donor, aes(x = Rel_Pos, y = 5000 * pfdr), size = 0.6, alpha = 0.8, colour = "#7570b3") +
   ggtitle("Donor disruption") +
   labs(x = "Intron position", y = "Frequency") +
   geom_vline(xintercept = 5.5, colour="#d73027", linetype = "longdash") +
   my_theme() +
-  theme(panel.grid.major.x = element_blank()) +
+  theme(plot.margin = unit(c(0.1, 0.1, 0.1, 0.1), "lines"),
+        panel.grid.major.x = element_blank()) +
   scale_fill_manual(values = c("Called SAV count" = "#66bd63", "Estimated false positive count" = "#bf812d")) +
   scale_x_discrete(labels = 
                      c("-5", rep("", 3), "-1", "1", "2", rep("", 2), "5", rep("", 4), "10", rep("", 4), "15")) +
@@ -103,13 +104,14 @@ df_acceptor$Is_Original2 <-
 g_acceptor_2 <- ggplot() + 
   geom_bar(data = df_acceptor, aes(x = Rel_Pos2, y = Total_Count, fill = Is_Original2),
            stat = "identity", position = "dodge") +
-  geom_point(data = total_pos_fdr_acceptor, aes(x = Rel_Pos2, y = 5000 * pfdr), alpha = 0.8, colour = "#7570b3") +
-  geom_line(data = total_pos_fdr_acceptor, aes(x = Rel_Pos, y = 5000 * pfdr), alpha = 0.8, colour = "#7570b3") +
+  geom_point(data = total_pos_fdr_acceptor, aes(x = Rel_Pos2, y = 5000 * pfdr), size = 0.6, alpha = 0.8, colour = "#7570b3") +
+  geom_line(data = total_pos_fdr_acceptor, aes(x = Rel_Pos, y = 5000 * pfdr), size = 0.6, alpha = 0.8, colour = "#7570b3") +
   geom_vline(xintercept = 15.5, colour="#d73027", linetype = "longdash") +
   ggtitle("Acceptor disruption") +
   labs(x = "Intron position", y = "") +
   my_theme() +
-  theme(panel.grid.major.x = element_blank()) +
+  theme(plot.margin = unit(c(0.1, 0.1, 0.1, 0.1), "lines"),
+        panel.grid.major.x = element_blank()) +
   scale_fill_manual(values = c("Called SAV count" = "#66bd63", "Estimated false positive count" = "#bf812d")) +
   scale_x_discrete(labels = 
                      c("15", rep("", 4), "10", rep("", 4), "5", 
@@ -130,15 +132,16 @@ g_dummy_for_legend <-
          aes(x = Rel_Pos2, y = Total_Count, fill = Is_Original2)) +
   geom_bar(stat = "identity", position = "dodge") +
   scale_fill_manual(values = c("Called SAV count" = "#66bd63", "Estimated false positive count" = "#bf812d")) +
+  my_theme() + 
   theme(legend.position = "bottom") +
   labs(fill = "")
 
 
 g_donor_acceptor_2 <- plot_grid(g_donor_2, g_acceptor_2, ncol = 2, align = "h")
 
-plot_grid(g_donor_acceptor_2, g_legend(g_dummy_for_legend), ncol = 1, rel_heights = c(1, 0.15))
+plot_grid(g_donor_acceptor_2, g_legend(g_dummy_for_legend), ncol = 1, rel_heights = c(1, 0.10))
 
-ggsave("../figure/position_fpnum_fdr.pdf", width = 8, height = 3, unit = "in")
+ggsave("../figure/position_fpnum_fdr.tiff", width = 12, height = 4.5, dpi = 600, unit = "cm")
 
 
 

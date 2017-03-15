@@ -106,11 +106,11 @@ p_dc <- ggplot(snv_motif_count_dc,
   labs(x = "Reference base", y = "SAV count", fill = "Alternative base") +
   my_theme() +
   ggtitle("Donor creation") +
-  theme(axis.text.x = element_text(size = rel(1)),
-        axis.text.y = element_text(size = rel(1)),
-        axis.title = element_text(size = rel(1)),
-        legend.text = element_text(size = rel(1)),
-        legend.title = element_text(size = rel(1)),
+  theme(# axis.text.x = element_text(size = rel(1)),
+        # axis.text.y = element_text(size = rel(1)),
+        # axis.title = element_text(size = rel(1)),
+        # legend.text = element_text(size = rel(1)),
+        # legend.title = element_text(size = rel(1)),
         axis.ticks.x = element_blank(),
         legend.position = "bottom") +
   scale_fill_manual(values = base_col) +
@@ -141,11 +141,11 @@ p_ac <- ggplot(snv_motif_count_ac,
   labs(x = "Reference base", y = "SAV count", fill = "Alternative base") +
   my_theme() +
   ggtitle("Acceptor creation") +
-  theme(axis.text.x = element_text(size = rel(1)),
-        axis.text.y = element_text(size = rel(1)),
-        axis.title = element_text(size = rel(1)),
-        legend.text = element_text(size = rel(1)),
-        legend.title = element_text(size = rel(1)),
+  theme(# axis.text.x = element_text(size = rel(1)),
+        # axis.text.y = element_text(size = rel(1)),
+        # axis.title = element_text(size = rel(1)),
+        # legend.text = element_text(size = rel(1)),
+        # legend.title = element_text(size = rel(1)),
         axis.ticks.x = element_blank(),
         legend.position = "bottom") +
   scale_fill_manual(values = base_col) +
@@ -165,13 +165,13 @@ p_dummy_for_legend <- ggplot(snv_motif_count_dc,
   geom_bar(stat = "identity") +
   facet_wrap( ~ Rel_Pos2, nrow = 1) +
   labs(x = "Reference base", y = "SAV count", fill = "Alternative base") +
-  theme_minimal() +
+  my_theme() +
   ggtitle("Donor disruption") +
-  theme(axis.text.x = element_text(size = rel(1)),
-        axis.text.y = element_text(size = rel(1)),
-        axis.title = element_text(size = rel(1)),
-        legend.text = element_text(size = rel(1)),
-        legend.title = element_text(size = rel(1)),
+  theme(# axis.text.x = element_text(size = rel(1)),
+        # axis.text.y = element_text(size = rel(1)),
+        # axis.title = element_text(size = rel(1)),
+        # legend.text = element_text(size = rel(1)),
+        # legend.title = element_text(size = rel(1)),
         axis.ticks.x = element_blank(),
         legend.position = "bottom") +
   scale_fill_manual(values = base_col)
@@ -179,9 +179,9 @@ p_dummy_for_legend <- ggplot(snv_motif_count_dc,
 
 p_ac_dc <- plot_grid(p_dc, p_ac, align = "h", rel_widths = c(1, 0.9))
 
-plot_grid(p_ac_dc, g_legend(p_dummy_for_legend), ncol = 1, rel_heights = c(1, 0.1))
+plot_grid(p_ac_dc, g_legend(p_dummy_for_legend), ncol = 1, rel_heights = c(1, 0.03))
 
-ggsave("../figure/snv_motif_dist_creation.pdf", width = 10, height = 3.3)
+ggsave("../figure/snv_motif_dist_creation.tiff", width = 18, height = 5, dpi = 600, units = "cm")
 
 
 

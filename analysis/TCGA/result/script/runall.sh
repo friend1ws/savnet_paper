@@ -15,19 +15,33 @@ then
     mkdir ../table
 fi
 
+# Splicing Factor related table
+cp ../../output/splicing_factor/TCGA.SJ_IR.sig_summary.txt ../table/
+cp ../../output/splicing_factor/TCGA.savnet.sf_mut.summary.txt ../table/
+
+# spling summary table
+cut -f1-14 ../../output/rescue/TCGA.savnet.with_rescued.result.txt | grep -v "Rescued" > ../table/TCGA.savnet.result.proc.txt 
+
+# rescued table
+cut -f1-14 ../../output/rescue/TCGA.savnet.with_rescued.result.txt | grep "Sample_Name\|Rescued" > ../table/TCGA.savnet.rescued.proc.txt
+
 # SNV data 
 python subscript_matome/summarize_snv_info.py \
     ../../output/savnet_out/d3.6_a6.1_8_ka/TCGA.savnet.result.txt \
     ../temporary/TCGA.savnet.motif_summary.txt \
     ../../../db/GRCh37/GRCh37.fa \
     ../../../db/spidex/hg19_spidex.bed.gz
- 
+
+Rscript subscript_matome/add_mes_score.R ../temporary/TCGA.savnet.motif_summary.txt ../temporary/TCGA.savnet.motif_summary.mes.txt 
+
+
 # mutation data
 python subscript_matome/summarize_mut_count.py \
     ../../output/savnet_out/d3.6_a6.1_8_ka/TCGA.savnet.result.txt \
     ../../data/input_list \
     ../temporary/omega.mut_count.txt
 
+cp ../temporary/omega.mut_count.txt ../table/omega.mut_count.txt
 
 
 # position wise false positive check
@@ -125,9 +139,12 @@ python subscript_matome/merge_mut.py \
 
 cat ../../output/savnet_out/d3.6_a6.1_8_ka/TCGA.savnet.result.txt \
     ../../output/rescue/TCGA.savnet.rescued.result.txt > \
+    ../../output/rescue/TCGA.savnet.with_rescued.result.txt
 
-subscript_matome/cancer_gene_summary2.R subscript_matome/cancer_gene_summary.R
-
+Rscript subscript_matome/cancer_gene_ratio.R
+Rscript subscript_matome/cancer_gene_ratio2.R 
+Rscript subscript_matome/cancer_gene_summary.R
+Rscript subscript_matome/cancer_gene_ratio_table.R
 
 # profile
 Rscript subscript_matome/sav_profile.R
@@ -137,4 +154,7 @@ Rscript subscript_matome/sav_profile.R
 python subscript_matome/gather_read_num.py ../../output/rescue/TCGA.savnet.with_rescued.result.txt ../../data/input_list/ ../temporary/TCGA.motif_read_num.txt
 
 Rscript subscript_matome/top_splicing_read_ratio.R 
+
+
+
 

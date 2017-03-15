@@ -7,6 +7,9 @@ source("../../../conf/plot_config.R")
 
 GC_info <- read.table("../temporary/TCGA.savnet.gc_intron.txt", header = TRUE, sep = "\t", quote = "", stringsAsFactors = FALSE)
 
+GC_info <- GC_info %>% filter(Splice_Class != "no-change" | FPKM >= 10)
+
+print(nrow(GC_info))
 
 GC_info_proc <- GC_info %>% 
   select( Mutation_Key, Type_Motif, Splice_Class, GC_intron_5prime, GC_exon, GC_intron_3prime) %>%
@@ -54,7 +57,7 @@ GC_info_proc$Is_Intron2 <- factor(GC_info_proc$Is_Intron,
 g_gc_d <- ggplot(GC_info_proc %>% 
   filter(Type_Motif == "Donor", Splice_Class2 != "Alternative 3'-ss", Is_Intron2 %in% c("5' intron", "Exon", "3' intron")), 
   aes(x = Is_Intron2, y = GC_ratio, fill = Splice_Class2)) + 
-  geom_boxplot(outlier.size = 0.6, size = 0.3) +
+  geom_boxplot(outlier.size = 0.3, size = 0.3) +
   labs(x = "", y = "GC contents") +
   ggtitle("Donor disruption") +
   facet_grid(.~Splice_Class2) +
@@ -62,12 +65,14 @@ g_gc_d <- ggplot(GC_info_proc %>%
   ylim(c(0.2, 0.8)) + 
   scale_fill_manual(values = splicing_class_colour) +
   my_theme() +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 6),
+        axis.title = element_text(size = 6),
+        strip.text = element_text(size = 5)) 
 
 g_gc_a <- ggplot(GC_info_proc %>% 
   filter(Type_Motif == "Acceptor", Splice_Class2 != "Alternative 5'-ss", Is_Intron2 %in% c("5' intron", "Exon", "3' intron")),
   aes(x = Is_Intron2, y = GC_ratio, fill = Splice_Class2)) + 
-  geom_boxplot(outlier.size = 0.6, size = 0.3) +
+  geom_boxplot(outlier.size = 0.3, size = 0.3) +
   labs(x = "", y = "GC contents") +
   ggtitle("Acceptor disruption") +
   facet_grid(.~Splice_Class2) +
@@ -75,11 +80,13 @@ g_gc_a <- ggplot(GC_info_proc %>%
   ylim(c(0.2, 0.8)) + 
   scale_fill_manual(values = splicing_class_colour) + 
   my_theme() +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 6),
+        axis.title = element_text(size = 6),
+        strip.text = element_text(size = 5))
 
 plot_grid(g_gc_d, g_gc_a, ncol = 1)
 
-ggsave("../figure/diff_gc_content.pdf", width = 8, height = 7)
+ggsave("../figure/diff_gc_content.tiff", width = 9, height = 9, dpi = 600, units = "cm")
 
 
 
@@ -94,31 +101,37 @@ ggsave("../figure/diff_gc_content.pdf", width = 8, height = 7)
 g_dgc_d <- ggplot(GC_info_proc %>% 
   filter(Is_Intron == "GC_exon_intron_diff" & Type_Motif == "Donor", Splice_Class2 != "Alternative 3'-ss"),
   aes(x = Splice_Class2, y = GC_ratio, fill = Splice_Class2)) + 
-  geom_boxplot(outlier.size = 0.6, size = 0.3) +
+  geom_boxplot(outlier.size = 0.3, size = 0.3) +
   labs(x = "", y = "Diff. of GC contents between exonic and intronic regions") +
   ggtitle("Donor disruption") +
   # facet_grid(Type_Motif~.) +
   guides(fill = FALSE) +
   coord_flip() + 
   my_theme() +
+  # theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 6),
+  #       axis.title = element_text(size = 6),
+  #       strip.text = element_text(size = 5)) +
   scale_fill_manual(values = splicing_class_colour) 
 
 g_dgc_a <- ggplot(GC_info_proc %>% 
   filter(Is_Intron == "GC_exon_intron_diff" & Type_Motif == "Acceptor", Splice_Class2 != "Alternative 5'-ss"),
   aes(x = Splice_Class2, y = GC_ratio, fill = Splice_Class2)) + 
-  geom_boxplot(outlier.size = 0.6, size = 0.3) +
+  geom_boxplot(outlier.size = 0.3, size = 0.3) +
   labs(x = "", y = "Diff. of GC contents between exonic and intronic regions") +
   ggtitle("Acceptor disruption") +
   # facet_grid(Type_Motif~.) +
   guides(fill = FALSE) +
   coord_flip() + 
   my_theme() +
+  # theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 6),
+  #       axis.title = element_text(size = 6),
+  #       strip.text = element_text(size = 5)) +
   scale_fill_manual(values = splicing_class_colour)
 
 plot_grid(g_dgc_d, g_dgc_a, ncol = 1)
 
 
-ggsave("../figure/diff_exon_intron_diff_gc_content.pdf", width = 6, height = 4)
+ggsave("../figure/diff_exon_intron_diff_gc_content.tiff", width = 12, height = 7, dpi = 600, units = "cm")
 
 
 
@@ -160,7 +173,7 @@ Len_info_proc$Is_Intron2 <- factor(Len_info_proc$Is_Intron,
 g_len_d <- ggplot(Len_info_proc %>%
   filter(Type_Motif == "Donor", Splice_Class2 != "Alternative 3'-ss", Is_Intron2 %in% c("5' intron", "Exon", "3' intron")),
   aes(x = Is_Intron2, y = log10(Len), fill = Splice_Class2)) +
-  geom_boxplot(outlier.size = 0.6, size = 0.3) +
+  geom_boxplot(outlier.size = 0.3, size = 0.3) +
   labs(x = "", y = "log10(Length)") +
   ggtitle("Donor disruption") +
   facet_grid(.~Splice_Class2) +
@@ -168,12 +181,14 @@ g_len_d <- ggplot(Len_info_proc %>%
   ylim(c(1.5, 5)) +
   scale_fill_manual(values = splicing_class_colour) +
   my_theme() +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 6),
+        axis.title = element_text(size = 6),
+        strip.text = element_text(size = 5))
 
 g_len_a <- ggplot(Len_info_proc %>%
   filter(Type_Motif == "Acceptor", Splice_Class2 != "Alternative 5'-ss", Is_Intron2 %in% c("5' intron", "Exon", "3' intron")),
   aes(x = Is_Intron2, y = log10(Len), fill = Splice_Class2)) +
-  geom_boxplot(outlier.size = 0.6, size = 0.3) +
+  geom_boxplot(outlier.size = 0.3, size = 0.3) +
   labs(x = "", y = "log10(Length)") +
   ggtitle("Acceptor disruption") +
   facet_grid(.~Splice_Class2) +
@@ -181,9 +196,11 @@ g_len_a <- ggplot(Len_info_proc %>%
   ylim(c(1.5, 5)) +
   scale_fill_manual(values = splicing_class_colour) +
   my_theme() +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 6),
+        axis.title = element_text(size = 6),
+        strip.text = element_text(size = 5))
 
 plot_grid(g_len_d, g_len_a, ncol = 1)
 
-ggsave("../figure/diff_length.pdf", width = 8, height = 7)
+ggsave("../figure/diff_length.tiff", width = 9, height = 9, dpi = 600, units = "cm")
 

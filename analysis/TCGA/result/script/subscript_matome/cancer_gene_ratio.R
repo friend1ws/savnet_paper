@@ -17,7 +17,6 @@ gene_list <- read.table("../../../db/refGene/refGene.txt.gz", sep="\t", stringsA
 
 gene_list$VogelsteinEtAl_2013[is.na(gene_list$VogelsteinEtAl_2013)] <- "NonCG"
 
-print(gene_list)
 
 mut_info <- read.table("../temporary/TCGA.mutation.merged.txt", sep = "\t", header = TRUE, quote = "", stringsAsFactors = FALSE) %>%
   filter(!str_detect(Gene.refGene, "-") & !str_detect(Gene.refGene, ",")) %>%
@@ -105,8 +104,9 @@ ggplot(cg_info_proc %>% filter(!(mut_func2 %in% c("Inframe indel", "Frameshift i
   coord_flip() +
   labs(x = "", y = "Cancer gene ratio") +
   my_theme() +
-  theme(strip.text.x = element_text(size = rel(1.2), angle = 0, hjust = 0),
-        panel.spacing.x=unit(1.2, "lines")) +
+  theme(panel.spacing = unit(1.5, "lines")) +
+  # theme(strip.text.x = element_text(size = rel(1.2), angle = 0, hjust = 0),
+  #       panel.spacing.x=unit(1.2, "lines")) +
   facet_grid(.~VogelsteinEtAl_2013, scales = "free") +
   scale_fill_manual(values = splicing_class_colour) +
   # scale_fill_manual(values = c(gsm = "#33a02c", non_gsm = "#b2df8a")) +
@@ -114,7 +114,7 @@ ggplot(cg_info_proc %>% filter(!(mut_func2 %in% c("Inframe indel", "Frameshift i
   guides(fill = FALSE)
 
 
-ggsave("../figure/cancer_gene_ratio.pdf", width = 8, height = 2.2)
+ggsave("../figure/cancer_gene_ratio.tiff", width = 10, height = 4, dpi = 600, units = "cm")
 
 
 ggplot(cg_info_proc %>% filter(!(mut_func2 %in% c("Silent", "Inframe indel", "Frameshift indel", "Other")) & statistics == "log_pV"),
@@ -123,13 +123,14 @@ ggplot(cg_info_proc %>% filter(!(mut_func2 %in% c("Silent", "Inframe indel", "Fr
   coord_flip() +
   labs(x = "", y = "log10(P-value)") +
   my_theme() +
-  theme(strip.text.x = element_text(size = rel(1.2), angle = 0, hjust = 0),
-        panel.spacing.x=unit(1.2, "lines")) +
+  theme(panel.spacing = unit(1.5, "lines")) +
+  # theme(strip.text.x = element_text(size = rel(1.2), angle = 0, hjust = 0),
+  #       panel.spacing.x=unit(1.2, "lines")) +
   facet_grid(.~VogelsteinEtAl_2013, scales = "free") +
   scale_fill_manual(values = splicing_class_colour) +
   scale_y_continuous(expand = c(0, 0)) +
   guides(fill = FALSE)
 
 
-ggsave("../figure/cancer_gene_pV.pdf", width = 8, height = 2.0)
+ggsave("../figure/cancer_gene_pV.tiff", width = 10, height = 4, dpi = 600, units = "cm")
 

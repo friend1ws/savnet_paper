@@ -52,9 +52,15 @@ p_summary <- ggplot(splicing_mutation_count_proc,
   theme_minimal() +
   ggtitle("Frequency per cancer type") +
   labs(x = "Cancer Type", y = "Gene") +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1, size = rel(1.0)),
-        axis.text.y = element_text(size = rel(1.0), colour =  gene_colour),
-        axis.title = element_text(size = rel(1.0)),
+  scale_size(range = c(1, 4)) +
+  theme(title = element_text(size = 7),
+        axis.text = element_text(size = 7),
+        axis.title = element_text(size = 7),
+        legend.text = element_text(size = 6),
+        strip.text = element_text(size = 6),
+        legend.key.size = unit(0.25, "cm"),
+        axis.text.x = element_text(angle = 90, hjust = 1),
+        axis.text.y = element_text(colour =  gene_colour),
         legend.position = "bottom")
 
 
@@ -63,7 +69,7 @@ p_total_count <- ggplot(splicing_mutation_count_total, aes(x = reorder(Gene_Symb
   coord_flip() + theme_minimal() +
   ggtitle("Total frequency") +
   labs(x = "", y = "") +
-  theme(axis.text.y = element_text(size = rel(1.0), colour =  gene_colour),
+  theme(axis.text.y = element_text(colour =  gene_colour),
         panel.grid.major.y = element_blank(),
         panel.grid.minor.y = element_blank())
 
@@ -116,8 +122,14 @@ p_sasmtype <- ggplot(sasm_type_info_proc, aes(x = Gene_Symbol2, y = ratio, fill 
   labs(x = "", y = "Relative frequency", fill = "Mutation type") +
   theme_minimal() +
   theme(
-    axis.text.x = element_text(angle = 90, hjust = 1, size = rel(1.0)),
-    axis.text.y = element_text(size = rel(1.0), colour =  gene_colour),
+    title = element_text(size = 7),
+    axis.text = element_text(size = 7),
+    axis.title = element_text(size = 7),
+    legend.text = element_text(size = 6),
+    strip.text = element_text(size = 6),
+    legend.key.size = unit(0.25, "cm"),
+    axis.text.x = element_text(angle = 90, hjust = 1),
+    axis.text.y = element_text(colour =  gene_colour),
     panel.grid.major.y = element_blank(),
     panel.grid.minor.y = element_blank(),
     legend.position = "bottom") +
@@ -183,9 +195,16 @@ p_spliceclass <- ggplot(sp_class_info_proc, aes(x = Gene_Symbol2, y = ratio, fil
   coord_flip() + theme_minimal() +
   ggtitle("Splcing class") +
   labs(x = "", y = "Relative frequency", fill = "Splicing class") +
+  theme_minimal() +
   theme(
-    axis.text.x = element_text(angle = 90, hjust = 1, size = rel(1.0)),
-    axis.text.y = element_text(size = rel(1.0), colour =  gene_colour),
+    title = element_text(size = 7),
+    axis.text = element_text(size = 7),
+    axis.title = element_text(size = 7),
+    legend.text = element_text(size = 6),
+    strip.text = element_text(size = 6),
+    legend.key.size = unit(0.25, "cm"),
+    axis.text.x = element_text(angle = 90, hjust = 1),
+    axis.text.y = element_text(colour =  gene_colour),
     panel.grid.major.y = element_blank(),
     panel.grid.minor.y = element_blank(),
     legend.position = "bottom") +
@@ -218,7 +237,7 @@ plot_grid(p_main_panel, p_legend_panel, nrow = 2,
           rel_heights = c(0.95, 0.05))
 
   
-ggsave("../figure/cancer_gene_summary.pdf", width = 12, height = 12)
+ggsave("../figure/cancer_gene_summary.tiff", width = 20, height = 20, dpi = 600, units = "cm")
 
 
 

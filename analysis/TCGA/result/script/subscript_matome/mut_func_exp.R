@@ -84,7 +84,7 @@ ggplot(mut_func_exp %>%
                 FPKM_mean >= 10.0),
                 # Gene_Symbol %in% mut_func_exp_gene_count$Gene_Symbol),
        aes(x = Func_Class2, y = FPKM_normalized, fill = Func_Class2)) + 
-  geom_boxplot(outlier.size = 0.6, size = 0.3) + ylim(c(-3, 3)) + 
+  geom_boxplot(outlier.size = 0.3, size = 0.3) + ylim(c(-3, 3)) + 
   coord_flip() + 
   labs(x = "", y = "Normalized FPKM") +
   my_theme() +
@@ -93,7 +93,7 @@ ggplot(mut_func_exp %>%
   guides(fill = FALSE)
   
 
-ggsave("../figure/mut_fun_exp_fpkm10.pdf", width = 6, height = 2.8)
+ggsave("../figure/mut_fun_exp_fpkm10.tiff", width = 10, height = 4, dpi = 600, units = "cm")
 
 
 
@@ -102,7 +102,7 @@ ggplot(mut_func_exp %>%
                 FPKM_mean >= 0.0),
        # Gene_Symbol %in% mut_func_exp_gene_count$Gene_Symbol),
        aes(x = Func_Class2, y = FPKM_normalized, fill = Func_Class2)) + 
-  geom_boxplot(outlier.size = 0.6, size = 0.3) + ylim(c(-3, 3)) + 
+  geom_boxplot(outlier.size = 0.3, size = 0.3) + ylim(c(-3, 3)) + 
   coord_flip() + 
   labs(x = "", y = "Normalized FPKM") +
   my_theme() +
@@ -110,7 +110,7 @@ ggplot(mut_func_exp %>%
   theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
   guides(fill = FALSE)
 
-ggsave("../figure/mut_fun_exp.pdf", width = 6, height = 2.8)
+ggsave("../figure/mut_fun_exp.tiff", width = 10, height = 4, dpi = 600, units = "cm")
 
 
 
@@ -119,7 +119,7 @@ ggplot(mut_func_exp %>%
                 Gene_Symbol %in% cancer_gene_list),
        # Gene_Symbol %in% mut_func_exp_gene_count$Gene_Symbol),
        aes(x = Func_Class2, y = FPKM_normalized, fill = Func_Class2)) + 
-  geom_boxplot(outlier.size = 0.6, size = 0.3) + ylim(c(-3, 3)) + 
+  geom_boxplot(outlier.size = 0.3, size = 0.3) + ylim(c(-3, 3)) + 
   coord_flip() + 
   labs(x = "", y = "Normalized FPKM") +
   my_theme() +
@@ -129,7 +129,7 @@ ggplot(mut_func_exp %>%
 
 
 
-ggsave("../figure/mut_fun_exp_CG.pdf", width = 6, height = 2.8)
+ggsave("../figure/mut_fun_exp_CG.tiff", width = 10, height = 4, dpi = 600, units = "cm")
 
 
 

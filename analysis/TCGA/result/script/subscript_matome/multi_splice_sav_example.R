@@ -248,7 +248,7 @@ get_print_info <- function(gene_symbol, mutation_key) {
   print_info <- ggplot()
   
   if (nrow(exon_num) > 0) {
-    print_info <- print_info + geom_text(data = exon_num, aes(x = x, y = y, label = label))
+    print_info <- print_info + geom_text(data = exon_num, aes(x = x, y = y, label = label), size = 2.5)
   }
   
   if (nrow(exon_box) > 0) {
@@ -256,12 +256,15 @@ get_print_info <- function(gene_symbol, mutation_key) {
   }
   
   if (nrow(intron_line) > 0) {
-    print_info <- print_info + geom_segment(data = intron_line, aes(x = x, xend = xend, y = y, yend = yend), color = "gray60", arrow = arrow(length = unit(0.1, "inches"))) 
+    print_info <- print_info + geom_segment(data = intron_line, aes(x = x, xend = xend, y = y, yend = yend), size = 0.3, color = "gray60", arrow = arrow(length = unit(0.1, "cm"))) 
   }
   
   print_info <- print_info + theme_bw() +
-    ggtitle(paste(gene_symbol, "(", target_gene_info$V2, ")", sep = "")) +
-    theme(legend.position = "bottom",
+    ggtitle(paste(gene_symbol, " (", target_gene_info$V2, ")", sep = "")) +
+    theme(title = element_text(size = 7),
+          legend.key.size = unit(0.25, "cm"),
+          legend.text = element_text(size = 6),
+          legend.position = "bottom",
           axis.ticks.x = element_blank(),
           axis.ticks.y = element_blank(),
           panel.grid.major.y = element_blank(),
@@ -283,7 +286,7 @@ get_print_info <- function(gene_symbol, mutation_key) {
   print_info <- print_info + geom_point(data = mut_line, aes(x = x, y = y), color = "red", shape = 4)
 
   print_info <- print_info + geom_segment(data = splicing_line, aes(x = x, xend = xend, y = y, yend = yend, 
-                                                                    color = splicing_class, linetype = is_inframe)) +
+                                                                    color = splicing_class, linetype = is_inframe), size = 0.4) +
     scale_color_manual(values = splicing_class_colour) +
     scale_linetype_manual(values = c("Inframe" = "solid", "Frameshift" = "dashed"))
 
@@ -303,7 +306,7 @@ plot_grid(plot_grid(p_MEF2B, p_EIF1, p_POLD2, p_CCNG2, ncol = 2),
           g_legend(get_print_info("POLD2", "7,44155494,T,C")),
           ncol = 1, rel_heights = c(0.9, 0.1))
 
-ggsave("../figure/multi_splice_mutation_example.pdf", width = 10, height = 4)
+ggsave("../figure/multi_splice_mutation_example.tiff", width = 18, height = 7, dpi = 600, units = "cm")
 
 
 

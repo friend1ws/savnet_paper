@@ -122,7 +122,7 @@ names(cg_type_tmp) <- "Cancer_Gene_Type"
 cg_info_proc_master <- rbind(cg_info_proc_master, cbind(cg_info_proc_tmp, cg_type_tmp))
 
 cg_info_proc_tmp <- get_cg_ratio_info(mut_info %>% select(GSM, mut_func, cg_type = Cancer_Gene_Census))
-cg_type_tmp <- rep("CGC", nrow(cg_info_proc_tmp))
+cg_type_tmp <- rep("CGC (Feb 2017)", nrow(cg_info_proc_tmp))
 names(cg_type_tmp) <- "Cancer_Gene_Type"
 cg_info_proc_master <- rbind(cg_info_proc_master, cbind(cg_info_proc_tmp, cg_type_tmp))
 
@@ -144,7 +144,7 @@ ggplot(cg_info_proc_master %>% filter(!(mut_func2 %in% c("Inframe indel", "Frame
   guides(fill = FALSE)
 
 
-ggsave("../figure/cancer_gene_ratio2.pdf", width = 8, height = 2.2)
+ggsave("../figure/cancer_gene_ratio2.tiff", width = 10, height = 10, dpi = 600, units = "cm")
 
 
 ggplot(cg_info_proc_master %>% filter(!(mut_func2 %in% c("Silent", "Inframe indel", "Frameshift indel", "Other")) & class_statistics == "CG_log_pV"),
@@ -161,7 +161,7 @@ ggplot(cg_info_proc_master %>% filter(!(mut_func2 %in% c("Silent", "Inframe inde
   guides(fill = FALSE)
 
 
-ggsave("../figure/cancer_gene_pV2.pdf", width = 8, height = 2.0)
+ggsave("../figure/cancer_gene_pV2.tiff", width = 10, height = 10, dpi = 600, units = "cm")
 
 
 

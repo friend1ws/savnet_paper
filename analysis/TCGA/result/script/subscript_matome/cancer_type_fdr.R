@@ -13,5 +13,5 @@ ggplot(cacner_type_fdr, aes(x = Cancer_Type, y = FDR)) +
   scale_y_continuous(expand = c(0, 0))
 
 
-ggsave("../figure/cancer_type_fdr.pdf", width = 10, height = 5)
+ggsave("../figure/cancer_type_fdr.tiff", width = 10, height = 5, dpi = 600, units = "cm")
 

@@ -1,6 +1,8 @@
 #! /usr/local/package/r/3.2.5/bin/Rscript
 
 library(dplyr)
+library(qvalue)
+
 
 gsm_input <- commandArgs(trailingOnly=TRUE)[1]
 gsm_prefix <- commandArgs(trailingOnly=TRUE)[2]
@@ -30,6 +32,8 @@ asp_count <- read.table(paste(gsm_prefix, ".splicing.associate.txt", sep = ""), 
 sp_vec_neg <- rep("", nrow(asp_count))
 sp_vec_pos <- rep("", nrow(asp_count))
 Minus_Log_PV <- rep(0, nrow(asp_count))
+pvalues <- rep(0, nrow(asp_count))
+qvalues <- rep(0, nrow(asp_count))
 Effect_Size <- rep(0, nrow(asp_count))
 for (i in 1:nrow(asp_count)) {
 
@@ -38,15 +42,18 @@ for (i in 1:nrow(asp_count)) {
 
   T <- t.test(sp_vec[setdiff(1:mut_num, sf_mut_id)], sp_vec[sf_mut_id], alternative = "less")
   Minus_Log_PV[i] <- - log10(T$p.value)
+  pvalues[i] <- T$p.value
   Effect_Size[i] <- mean(sp_vec[sf_mut_id]) / (mean(sp_vec[setdiff(1:mut_num, sf_mut_id)]) + 0)
   sp_vec_neg[i] <- paste(round(sp_vec[setdiff(1:mut_num, sf_mut_id)], 2), collapse = ",")
   sp_vec_pos[i] <- paste(round(sp_vec[sf_mut_id], 2), collapse = ",")
 
 }
 
-write.table(cbind(asp_count[,c(1:4,6:9)], sp_vec_neg, sp_vec_pos, Minus_Log_PV, Effect_Size), paste(output_prefix, "_", sf_gene, "_SJ_IR_filt.txt", sep = ""), sep ="\t", row.names = FALSE, quote = FALSE)
+qvalues <- qvalue(p = pvalues)$qvalues
 
-write.table(cbind(asp_count[,c(1:4,6:9)], sp_vec_neg, sp_vec_pos, Minus_Log_PV, Effect_Size)[Minus_Log_PV >= 2,], paste(output_prefix, "_", sf_gene, "_SJ_IR_filt.sig.txt", sep = ""), sep ="\t", row.names = FALSE, quote = FALSE)
+write.table(cbind(asp_count[,c(1:4,6:9)], sp_vec_neg, sp_vec_pos, Minus_Log_PV, qvalues, Effect_Size), paste(output_prefix, "_", sf_gene, "_SJ_IR_filt.txt", sep = ""), sep ="\t", row.names = FALSE, quote = FALSE)
+
+write.table(cbind(asp_count[,c(1:4,6:9)], sp_vec_neg, sp_vec_pos, Minus_Log_PV, qvalues, Effect_Size)[qvalues <= 0.05,], paste(output_prefix, "_", sf_gene, "_SJ_IR_filt.sig.txt", sep = ""), sep ="\t", row.names = FALSE, quote = FALSE)
 
 
 sj_count <- read.table(paste(gsm_prefix, ".SJ_merged.annot.txt", sep = ""), sep = "\t", header = TRUE, stringsAsFactors = FALSE, quote = "") %>% 
@@ -56,6 +63,8 @@ sj_count <- read.table(paste(gsm_prefix, ".SJ_merged.annot.txt", sep = ""), sep 
 
 sp_vec_neg <- rep("", nrow(sj_count))
 sp_vec_pos <- rep("", nrow(sj_count))
+pvalues <- rep(0, nrow(asp_count))
+qvalues <- rep(0, nrow(asp_count))
 Minus_Log_PV <- rep(0, nrow(sj_count))
 Effect_Size <- rep(0, nrow(sj_count))
 for (i in 1:nrow(sj_count)) {
@@ -65,21 +74,26 @@ for (i in 1:nrow(sj_count)) {
   
   T <- t.test(sp_vec[setdiff(1:mut_num, sf_mut_id)], sp_vec[sf_mut_id], alternative = "less")
   Minus_Log_PV[i] <- - log10(T$p.value)
+  pvalues[i] <- T$p.value
   Effect_Size[i] <- mean(sp_vec[sf_mut_id]) / (mean(sp_vec[setdiff(1:mut_num, sf_mut_id)]) + 0)
   sp_vec_neg[i] <- paste(round(sp_vec[setdiff(1:mut_num, sf_mut_id)], 2), collapse = ",")
   sp_vec_pos[i] <- paste(round(sp_vec[sf_mut_id], 2), collapse = ",")
 
 }
 
-write.table(cbind(sj_count[,c(1:3,5:14)], sp_vec_neg, sp_vec_pos, Minus_Log_PV, Effect_Size), paste(output_prefix, "_", sf_gene, "_SJ.txt", sep = ""), sep ="\t", row.names = FALSE, quote = FALSE)
+qvalues <- qvalue(p = pvalues)$qvalues
 
-write.table(cbind(sj_count[,c(1:3,5:14)], sp_vec_neg, sp_vec_pos, Minus_Log_PV, Effect_Size)[Minus_Log_PV >= 2,], paste(output_prefix, "_", sf_gene, "_SJ.sig.txt", sep = ""), sep ="\t", row.names = FALSE, quote = FALSE)
+write.table(cbind(sj_count[,c(1:3,5:14)], sp_vec_neg, sp_vec_pos, Minus_Log_PV, qvalues, Effect_Size), paste(output_prefix, "_", sf_gene, "_SJ.txt", sep = ""), sep ="\t", row.names = FALSE, quote = FALSE)
+
+write.table(cbind(sj_count[,c(1:3,5:14)], sp_vec_neg, sp_vec_pos, Minus_Log_PV, qvalues, Effect_Size)[qvalues <= 0.05,], paste(output_prefix, "_", sf_gene, "_SJ.sig.txt", sep = ""), sep ="\t", row.names = FALSE, quote = FALSE)
 
 
 ir_count <- read.table(paste(gsm_prefix, ".IR_merged.txt", sep = ""), sep = "\t", header = TRUE, stringsAsFactors = FALSE, quote = "")
 
 sp_vec_neg <- rep("", nrow(ir_count))
 sp_vec_pos <- rep("", nrow(ir_count))
+pvalues <- rep(0, nrow(asp_count))
+qvalues <- rep(0, nrow(asp_count))
 Minus_Log_PV <- rep(0, nrow(ir_count))
 Effect_Size <- rep(0, nrow(ir_count))
 for (i in 1:nrow(ir_count)) {
@@ -89,13 +103,16 @@ for (i in 1:nrow(ir_count)) {
 
   T <- t.test(sp_vec[setdiff(1:mut_num, sf_mut_id)], sp_vec[sf_mut_id], alternative = "less")
   Minus_Log_PV[i] <- - log10(T$p.value)
+  pvalues[i] <- T$p.value
   Effect_Size[i] <- mean(sp_vec[sf_mut_id]) / (mean(sp_vec[setdiff(1:mut_num, sf_mut_id)]) + 0)
   sp_vec_neg[i] <- paste(round(sp_vec[setdiff(1:mut_num, sf_mut_id)], 2), collapse = ",")
   sp_vec_pos[i] <- paste(round(sp_vec[sf_mut_id], 2), collapse = ",")
 
 }
 
-write.table(cbind(ir_count[,c(1:8)], sp_vec_neg, sp_vec_pos, Minus_Log_PV, Effect_Size), paste(output_prefix, "_", sf_gene, "_IR.txt", sep = ""), sep ="\t", row.names = FALSE, quote = FALSE)
+qvalues <- qvalue(p = pvalues)$qvalues
 
-write.table(cbind(ir_count[,c(1:8)], sp_vec_neg, sp_vec_pos, Minus_Log_PV, Effect_Size)[Minus_Log_PV >= 2.0,], paste(output_prefix, "_", sf_gene, "_IR.sig.txt", sep = ""), sep ="\t", row.names = FALSE, quote = FALSE)
+write.table(cbind(ir_count[,c(1:8)], sp_vec_neg, sp_vec_pos, Minus_Log_PV, qvalues, Effect_Size), paste(output_prefix, "_", sf_gene, "_IR.txt", sep = ""), sep ="\t", row.names = FALSE, quote = FALSE)
+
+write.table(cbind(ir_count[,c(1:8)], sp_vec_neg, sp_vec_pos, Minus_Log_PV, qvalues, Effect_Size)[qvalues <= 0.05,], paste(output_prefix, "_", sf_gene, "_IR.sig.txt", sep = ""), sep ="\t", row.names = FALSE, quote = FALSE)
 

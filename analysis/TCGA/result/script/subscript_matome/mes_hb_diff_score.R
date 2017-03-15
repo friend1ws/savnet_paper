@@ -42,6 +42,9 @@ snv_info$GSM2[snv_info$GSM2 == "intronic-alternative-3'-splice-site"] <- "altern
 # snv_info$GSM2[snv_info$GSM2 == "alternative-5'-splice-site"] <- "alternative-splice-site"
 # snv_info$GSM2[snv_info$GSM2 == "alternative-3'-splice-site"] <- "alternative-splice-site"
 
+snv_info <- snv_info %>% filter(GSM2 != "no-change" | FPKM >= 10)
+
+print(nrow(snv_info))
 
 ##########
 # donor maxEnt score

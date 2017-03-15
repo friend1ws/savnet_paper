@@ -184,10 +184,10 @@ ggplot(splicing_mutation_count, aes(x = Mutation_Type3, y = count, fill = Splici
   ) +
   scale_fill_manual(values = splicing_class_colour) +
   scale_y_continuous(expand = c(0, 0)) +
-  guides(fill=guide_legend(nrow=2,byrow=TRUE))
+  guides(fill=guide_legend(nrow=1,byrow=TRUE))
 
 
-ggsave("../figure/category_count.pdf", width = 9, height = 5)
+ggsave("../figure/category_count.tiff", width = 8, height = 8, dpi = 600, units = "cm")
 
 
 
@@ -204,9 +204,9 @@ ggplot(splicing_mutation_count_simple, aes(x = Mutation_Type4, y = count, fill =
         ) +
   scale_fill_manual(values = splicing_class_colour) +
   scale_y_continuous(expand = c(0, 0)) +
-  guides(fill=guide_legend(nrow=2,byrow=TRUE))
+  guides(fill=guide_legend(nrow=1,byrow=TRUE))
 
-ggsave("../figure/category_count_simple.pdf", width = 7, height = 3)
+ggsave("../figure/category_count_simple.tiff", width = 8, height = 3.5, dpi = 600, units = "cm")
 
 
 write.table(splicing_mutation %>% 

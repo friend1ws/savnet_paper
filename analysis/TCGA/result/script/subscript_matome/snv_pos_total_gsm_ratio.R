@@ -84,11 +84,11 @@ p_dd_total <- ggplot(snv_motif_count_dd,
   labs(x = "", y = "Total mutation count", fill = "Alternative base") +
   my_theme() +
   ggtitle("Donor Disruption") +
-  theme(axis.text.x = element_text(size = rel(1)),
-        axis.text.y = element_text(size = rel(1)),
-        axis.title = element_text(size = rel(1)),
-        legend.text = element_text(size = rel(1)),
-        legend.title = element_text(size = rel(1)),
+  theme(# axis.text.x = element_text(size = rel(1)),
+        # axis.text.y = element_text(size = rel(1)),
+        # axis.title = element_text(size = rel(1)),
+        # legend.text = element_text(size = rel(1)),
+        # legend.title = element_text(size = rel(1)),
         axis.ticks.x = element_blank(),
         legend.position = "bottom") +
   scale_fill_manual(values = base_col) +
@@ -116,18 +116,18 @@ for (i in 1:nrow(snv_gsm_ratio_dd)) {
 p_dd_gsm <- ggplot() +
   geom_bar(data = snv_motif_count_dd %>% filter(Is_GSM == "yes"),
            aes(x = Ref_Mut, y = count, fill = Alt_Mut), stat = "identity") +
-  geom_point(data = snv_gsm_ratio_dd, aes(x = Ref_Mut, y = 12000 * ratio_median), colour = "#7570b3", alpha = 0.8) +
+  geom_point(data = snv_gsm_ratio_dd, aes(x = Ref_Mut, y = 12000 * ratio_median), colour = "#7570b3", size = 0.4, alpha = 0.8) +
   geom_segment(data = snv_gsm_ratio_dd, aes(x = Ref_Mut, xend = Ref_Mut,
                                             y = 12000 * ratio_lower, yend = 12000 * ratio_upper), colour = "#7570b3", alpha = 0.4) +
   # geom_line(data = snv_gsm_ratio, aes(x = Ref_Mut, y = 12000 * ratio), colour = "#7570b3", alpha = 0.8) +
   facet_wrap( ~ Rel_Start_Motif2, nrow = 1) +
   labs(x = "Reference base", y = "SAV count", fill = "Alternative base") +
   my_theme() +
-  theme(axis.text.x = element_text(size = rel(1)),
-        axis.text.y = element_text(size = rel(1)),
-        axis.title = element_text(size = rel(1)),
-        legend.text = element_text(size = rel(1)),
-        legend.title = element_text(size = rel(1)),
+  theme(# axis.text.x = element_text(size = rel(1)),
+        # axis.text.y = element_text(size = rel(1)),
+        # axis.title = element_text(size = rel(1)),
+        # legend.text = element_text(size = rel(1)),
+        # legend.title = element_text(size = rel(1)),
         axis.ticks.x = element_blank(),
         legend.position = "bottom") +
   scale_fill_manual(values = base_col) +
@@ -162,11 +162,11 @@ p_ad_total <- ggplot(snv_motif_count_ad,
   labs(x = "", y = "", fill = "Alternative base") +
   my_theme() +
   ggtitle("Acceptor disruption") +
-  theme(axis.text.x = element_text(size = rel(1)),
-        axis.text.y = element_text(size = rel(1)),
-        axis.title = element_text(size = rel(1)),
-        legend.text = element_text(size = rel(1)),
-        legend.title = element_text(size = rel(1)),
+  theme(# axis.text.x = element_text(size = rel(1)),
+        # axis.text.y = element_text(size = rel(1)),
+        # axis.title = element_text(size = rel(1)),
+        # legend.text = element_text(size = rel(1)),
+        # legend.title = element_text(size = rel(1)),
         axis.ticks.x = element_blank(),
         legend.position = "bottom") +
   scale_fill_manual(values = base_col) +
@@ -193,17 +193,17 @@ for (i in 1:nrow(snv_gsm_ratio_ad)) {
 p_ad_gsm <- ggplot() +
   geom_bar(data = snv_motif_count_ad %>% filter(Is_GSM == "yes"),
                    aes(x = Ref_Mut, y = count, fill = Alt_Mut), stat = "identity") +
-  geom_point(data = snv_gsm_ratio_ad, aes(x = Ref_Mut, y = 12000 * ratio_median), colour = "#7570b3", alpha = 0.8) +
+  geom_point(data = snv_gsm_ratio_ad, aes(x = Ref_Mut, y = 12000 * ratio_median), colour = "#7570b3", size = 0.4, alpha = 0.8) +
   geom_segment(data = snv_gsm_ratio_ad, aes(x = Ref_Mut, xend = Ref_Mut,
                                             y = 12000 * ratio_lower, yend = 12000 * ratio_upper), colour = "#7570b3", alpha = 0.4) +
   facet_wrap( ~ Rel_Start_Motif2, nrow = 1) +
   labs(x = "Reference base", y = "", fill = "Alternative base") +
   my_theme() +
-  theme(axis.text.x = element_text(size = rel(1)),
-        axis.text.y = element_text(size = rel(1)),
-        axis.title = element_text(size = rel(1)),
-        legend.text = element_text(size = rel(1)),
-        legend.title = element_text(size = rel(1)),
+  theme(# axis.text.x = element_text(size = rel(1)),
+        # axis.text.y = element_text(size = rel(1)),
+        # axis.title = element_text(size = rel(1)),
+        # legend.text = element_text(size = rel(1)),
+        # legend.title = element_text(size = rel(1)),
         axis.ticks.x = element_blank(),
         legend.position = "bottom") +
   scale_fill_manual(values = base_col) +
@@ -227,11 +227,11 @@ p_dummy_for_legend <- ggplot(snv_motif_count %>% filter(Type_Motif == "donor"),
   labs(x = "Reference base", y = "#SNV", fill = "Alternative base") +
   my_theme() +
   ggtitle("Donor") +
-  theme(axis.text.x = element_text(size = rel(1)),
-        axis.text.y = element_text(size = rel(1)),
-        axis.title = element_text(size = rel(1)),
-        legend.text = element_text(size = rel(1)),
-        legend.title = element_text(size = rel(1)),
+  theme(# axis.text.x = element_text(size = rel(1)),
+        # axis.text.y = element_text(size = rel(1)),
+        # axis.title = element_text(size = rel(1)),
+        # legend.text = element_text(size = rel(1)),
+        # legend.title = element_text(size = rel(1)),
         axis.ticks.x = element_blank(),
         legend.position = "bottom") +
   scale_fill_manual(values = base_col) 
@@ -244,10 +244,10 @@ p_dummy_for_legend <- ggplot(snv_motif_count %>% filter(Type_Motif == "donor"),
 p_donor <- plot_grid(p_dd_total, p_dd_gsm, ncol = 1, rel_heights = c(1.1, 1), align = "v")
 p_acceptor <- plot_grid(p_ad_total, p_ad_gsm, ncol = 1, rel_heights = c(1.1, 1), align = "v")
 
-plot_grid(plot_grid(p_donor, p_acceptor, ncol = 2, align = "h", rel_widths = c(1, 0.95)), g_legend(p_dummy_for_legend), ncol = 1, rel_heights = c(2.2, 0.1))
+plot_grid(plot_grid(p_donor, p_acceptor, ncol = 2, align = "h", rel_widths = c(1, 0.85)), g_legend(p_dummy_for_legend), ncol = 1, rel_heights = c(2.2, 0.1))
 
 
-ggsave("../figure/snv_pos_total_gsm_ratio.pdf", width = 10, height = 7)
+ggsave("../figure/snv_pos_total_gsm_ratio.tiff", width = 20, height = 9, dpi = 600, units = "cm")
 
 
 

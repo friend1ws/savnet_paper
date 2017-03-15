@@ -10,7 +10,8 @@ input_list_dir = sys.argv[2]
 header2ind0 = {}
 # key2exist = {}
 key2gsm = {}
-
+key2mut_type = {}
+key2is_canonical = {}
 with open(gsm_file, 'r') as hin:
     header = hin.readline().rstrip('\n').split('\t')
     for (i, cname) in enumerate(header):
@@ -47,6 +48,8 @@ with open(gsm_file, 'r') as hin:
         else:
             key2gsm[key] = [gsm]
 
+        key2mut_type[key] = F[header2ind0["Mutation_Type"]]
+        key2is_canonical[key] = F[header2ind0["Is_Canonical"]]
 
 
 all_list_files = glob.glob(input_list_dir + "/*.mut_SJ_IR_list.txt")
@@ -82,7 +85,8 @@ for list_file in sorted(all_list_files):
                     header2ind2[cname] = i
 
                 if header_flag == 0:
-                    print "Sample_Name" + '\t' + "Cancer_Type" + '\t' + '\t'.join(header2[:7]) + '\t' + header2[8] + '\t' + "GSM"
+                    print "Sample_Name" + '\t' + "Cancer_Type" + '\t' + '\t'.join(header2[:7]) + '\t' + header2[8] + '\t' + \
+                            "GSM" + '\t' + "Mutation_Type" + '\t' + "Is_Canonical"
                     header_flag = 1
 
                 for line2 in hin2:
@@ -98,12 +102,16 @@ for list_file in sorted(all_list_files):
                             gsm_info = key2gsm[key][0]
 
                     #     print >> sys.stderr, key
+                    mutation_type = key2mut_type[key] if key in key2mut_type else "---"
+                    is_canonical = key2is_canonical[key] if key in key2is_canonical else "---"
 
-                    if gsm_info == "FALSE" and F2[header2ind2["Func.refGene"]] not in ["exonic", "exonic;splicing", "splicing"]: continue
+                    if gsm_info == "no-change" and F2[header2ind2["Func.refGene"]] not in ["exonic", "exonic;splicing", "splicing"]: continue
                     # if gsm_info == "FALSE" and F2[header2ind2["ExonicFunc.refGene"]] == "synonymous SNV": continue
 
                     if F2[8].strip() == "": F2[8] = "---"
 
-                    print sample_name + '\t' + cancer_type + '\t' + '\t'.join(F2[:7]) + '\t' + F2[8] + '\t' + gsm_info
+                    print sample_name + '\t' + cancer_type + '\t' + '\t'.join(F2[:7]) + '\t' + F2[8] + '\t' + \
+                             gsm_info + '\t' + mutation_type + '\t' + is_canonical
+
 
 

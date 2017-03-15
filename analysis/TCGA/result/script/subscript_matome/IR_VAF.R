@@ -29,6 +29,6 @@ ggplot(allele_count %>% filter(! is.na(ratio)),
   guides(fill = FALSE)
 
 
-ggsave("../figure/IR_VAF.pdf", width = 6, height = 2.5)
+ggsave("../figure/IR_VAF.tiff", width = 8, height = 4, dpi = 600, units = "cm")
 
 

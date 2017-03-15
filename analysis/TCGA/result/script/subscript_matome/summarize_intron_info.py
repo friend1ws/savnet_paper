@@ -2,6 +2,7 @@
 
 import sys, subprocess
 import pysam
+import my_utils.seq
 
 from annot_utils.coding import *
 
@@ -10,23 +11,11 @@ gsm_file = sys.argv[1]
 output_file = sys.argv[2]
 reference = sys.argv[3]
 
-def get_seq(reference, pos):
-
-    seq = ""    
-    for item in pysam.faidx(reference, pos):
-        seq = seq + item.rstrip('\n')
-    seq = seq.replace('>', '')
-    seq = seq.replace(pos, '')
-
-    return seq
-
-
 
 make_coding_info(output_file + ".refCoding.bed.gz", "refseq", "hg19", True, False)
 ref_coding_tb = pysam.TabixFile(output_file + ".refCoding.bed.gz")
 
 mut2info = {}
-mut2count = {}
 with open(gsm_file, 'r') as hin:
 
     header2ind = {}
@@ -41,6 +30,7 @@ with open(gsm_file, 'r') as hin:
 
         mut = ','.join([F[header2ind[x]] for x in ["Sample_Name", "Chr_Mut", "Start_Mut", "End_Mut", "Ref_Mut", "Alt_Mut"]])
         gsms = F[header2ind["GenomonSplicingMutation"]].split(';')
+        fpkm = F[header2ind["FPKM"]]
         if gsms[0] == "---":
             gsm = "no-change"
         elif len(gsms) == 2 and "retention" in gsms[0] and "retention" in gsms[1]:
@@ -50,24 +40,19 @@ with open(gsm_file, 'r') as hin:
         else:
             gsm = gsms[0]
 
-        # if mut not in mut2count:
-            # mut2count[mut] = int(F[header2ind["Supporting_Read_Num"]])
-        mut2info[mut] = F[header2ind["Type_Motif"]] + '\t' + F[header2ind["Gene_Symbol"]] + '\t' + gsm
-        # elif int(F[header2ind["Supporting_Read_Num"]]) >= mut2count[mut]:
-        #     mut2count[mut] = int(F[header2ind["Supporting_Read_Num"]])
-        #     mut2info[mut] = F[header2ind["Type_Motif"]] + '\t' + F[header2ind["Gene_Symbol"]] + '\t' + gsm
+        mut2info[mut] = F[header2ind["Type_Motif"]] + '\t' + F[header2ind["Gene_Symbol"]] + '\t' + gsm + '\t' + fpkm
+
 
 
 hout = open(output_file, 'w')
 print >> hout, "Mutation_Key" + '\t' + "Type_Motif" + '\t' + "Splice_Class" + '\t' + "Gene_Symbol" + '\t' + "Strand" + '\t' + \
-               "Len_intron_5prime" + '\t' + "Len_exon" + '\t' + "Len_intron_3prime" + '\t' + \
+               "FPKM" + '\t' + "Len_intron_5prime" + '\t' + "Len_exon" + '\t' + "Len_intron_3prime" + '\t' + \
                "GC_intron_5prime" + '\t' + "GC_exon" + '\t' + "GC_intron_3prime" 
-
 
 process_n = 0
 for mut in mut2info:
     MM = mut.split(',')
-    mut_type, gene_symbol, sp_class = mut2info[mut].split('\t')
+    mut_type, gene_symbol, sp_class, fpkm = mut2info[mut].split('\t')
     gene_strand = ""
 
     if mut == "17,7578291,T,G":
@@ -152,9 +137,9 @@ for mut in mut2info:
 
 
     tchr, tstart, tend = exons[0][0], exons[0][1], exons[0][2]
-    intron_prev_seq = get_seq(reference, tchr + ':' + str(int(tstart) - 150) + '-' + str(int(tstart) - 20))
-    exon_seq = get_seq(reference, tchr + ':' + str(int(tstart) + 6) + '-' + str(int(tend) - 5))
-    intron_after_seq = get_seq(reference, tchr + ':' + str(int(tend) + 20 + 1) + '-' + str(int(tend) + 150 + 1))
+    intron_prev_seq = my_utils.seq.get_seq(reference, tchr + ':' + str(int(tstart) - 150) + '-' + str(int(tstart) - 20))
+    exon_seq = my_utils.seq.get_seq(reference, tchr + ':' + str(int(tstart) + 6) + '-' + str(int(tend) - 5))
+    intron_after_seq = my_utils.seq.get_seq(reference, tchr + ':' + str(int(tend) + 20 + 1) + '-' + str(int(tend) + 150 + 1))
 
     if len(exon_seq) < 30: continue
 
@@ -184,7 +169,7 @@ for mut in mut2info:
 
 
     print >> hout, mut + '\t' + mut_type + '\t' + sp_class + '\t' + gene_symbol + '\t'+  gene_strand + '\t' + \
-                    len_intron_5prime + '\t' + len_exon + '\t' + len_introns_3prime + '\t' + \
+                    fpkm + '\t' + len_intron_5prime + '\t' + len_exon + '\t' + len_introns_3prime + '\t' + \
                     GC_intron_5prime + '\t' + GC_exon + '\t' + GC_intron_3prime
 
 

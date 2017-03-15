@@ -2,8 +2,13 @@ library(ggplot2)
 library(dplyr)
 library(cowplot)
 
+source("../../../conf/plot_config.R")
 
 GC <- read.table("../temporary/TCGA.savnet.gc_intron.txt", sep = "\t", header = TRUE, quote = "")
+
+GC <- GC %>% filter(Splice_Class != "no-change" | FPKM >= 10.0)
+
+print(nrow(GC))
 
 GC$Splice_Class[GC$Splice_Class == "intronic-alternative-5'-splice-site"] <- "alternative-5'-splice-site"
 GC$Splice_Class[GC$Splice_Class == "intronic-alternative-3'-splice-site"] <- "alternative-3'-splice-site"
@@ -116,15 +121,23 @@ get_print_info <- function(GC_Len_df, is_donor, is_GC, is_dummy) {
   }
   
   p <- ggplot(Ps, aes(x = x, y = y, fill = mlogp)) + 
-    geom_tile() + 
+    geom_tile(colour = "grey30") + 
     ggtitle(ttitle) +
     coord_flip() +
     facet_grid(.~type) +
-    theme_minimal() +
+    my_theme() +
     scale_fill_gradient2(low = "#2166ac", mid = "#ffffff", high = "#b2182b") +
-    theme(axis.text.x = element_text(angle = 90, hjust = 1),
+    theme(axis.line = element_blank(),
+          axis.text.x = element_text(angle = 90, hjust = 1),
+          legend.key.width = unit(1, "cm"),
           panel.border = element_blank(),
           panel.grid.major = element_blank(),
+          axis.ticks = element_blank(), 
+          legend.background = element_blank(), 
+          legend.key = element_blank(), 
+          panel.background = element_blank(), 
+          strip.background = element_blank(), 
+          plot.background = element_blank(),
           legend.position = "bottom")
   
   # if (is_donor == TRUE) {
@@ -157,26 +170,26 @@ g_legend <- function(a.gplot){
   return(legend)}
 
 
-p_legend <- g_legend(get_print_info(GC, FALSE, TRUE, TRUE))
+p_legend <- g_legend(get_print_info(GC, FALSE, FALSE, TRUE))
 
 p_GC_donor <- get_print_info(GC, TRUE, TRUE, FALSE)
 p_GC_acceptor <- get_print_info(GC, FALSE, TRUE, FALSE)
 
 plot_grid(
   plot_grid(p_GC_donor, p_GC_acceptor, align = "v", ncol = 2),
-  p_legend, ncol = 1, rel_heights = c(1, 0.1))
+  p_legend, ncol = 1, rel_heights = c(1, 0.2))
 
-ggsave("../figure/GC_comp.pdf", width = 10, height = 4)
+ggsave("../figure/GC_comp.tiff", width = 18, height = 7.5, dpi = 600, units = "cm")
 
 p_Len_donor <- get_print_info(GC, TRUE, FALSE, FALSE)
 p_Len_acceptor <- get_print_info(GC, FALSE, FALSE, FALSE)
 
 plot_grid(
   plot_grid(p_Len_donor, p_Len_acceptor, align = "v", ncol = 2),
-  p_legend, ncol = 1, rel_heights = c(1, 0.1))
+  p_legend, ncol = 1, rel_heights = c(1, 0.2))
 
 
-ggsave("../figure/Len_comp.pdf", width = 10, height = 4)
+ggsave("../figure/Len_comp.tiff", width = 18, height = 7.5, dpi = 600, units = "cm")
   
 
 

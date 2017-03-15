@@ -130,17 +130,17 @@ gsm_ratio <- sig2mem %>% left_join(sig2mem_all, by = c("Sig_Type")) %>%
 
 
 ggplot(gsm_ratio, aes(x = Sig_Type, y = gsm_ratio, fill = Sig_Type)) + 
-  geom_bar(stat = "identity") + coord_flip() +
+  geom_bar(stat = "identity") + # coord_flip() +
   my_theme() +
-  labs(x = "", y = "Relative splicing mutation ratio", fill = "") +
-  theme(legend.position = "bottom") +
-  scale_x_discrete(limits = rev(sig_type_order[1:8])) +
+  labs(x = "", y = "Relative SAV fraction", fill = "") +
+  theme(legend.position = "bottom", axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
+  scale_x_discrete(limits = sig_type_order[1:8]) +
   scale_y_continuous(expand = c(0, 0)) +
   scale_fill_manual(values = signature_colour) +
   guides(fill = FALSE)
 
  
-ggsave("../figure/rel_sp_ratio.pdf", width = 6, height = 2.5)
+ggsave("../figure/rel_sp_ratio.tiff", width = 4, height = 7, dpi = 600, units = "cm")
 
 
 
@@ -193,7 +193,7 @@ p_pole <- plot_grid(p_ctype[[5]], p_ctype[[6]], nrow = 2)
 
 plot_grid(p_tobacco, p_uv, p_pole, nrow = 1)
 
-ggsave(paste("../figure/rel_sp_ratio_ctype.pdf", sep = ""), width = 10, height = 4)
+ggsave(paste("../figure/rel_sp_ratio_ctype.tiff", sep = ""), width = 15, height = 6, dpi = 600, units = "cm")
 
 
 ##########
@@ -223,6 +223,6 @@ theme_set(theme_gray())
 
 plot_grid(p_age, p_appobec, p_tobacco, p_mmr, p_uv, p_pole1, p_pole2, p_ms, nrow = 2)
 
-ggsave("../figure/pmsignature_list.pdf", width = 8, height = 3.2) 
+ggsave("../figure/pmsignature_list.tiff", width = 15, height = 6, dpi = 600, units = "cm") 
 
 
