@@ -1,2 +1,0 @@
-intron_retention_utils allele_count /home/omega3/omega_rna/star/BLCA/TCGA-KQ-A41Q-01A-11R-A33J-07/TCGA-KQ-A41Q-01A-11R-A33J-07.Aligned.sortedByCoord.out.bam /home/omega3/omega_project/genomon2_2_0_alpha/BLCA/mutation/TCGA-KQ-A41Q-01/TCGA-KQ-A41Q-01.genomon_mutation.result.filt.txt test.txt /home/w3varann/database/GRCh37/GRCh37.fa /home/yshira/mysoftware/intron_retention_utils/resource/refGene.txt.gz --chr_name_list /home/yshira/mysoftware/intron_retention_utils/resource/ucsc2grch.txt --donor_size 10,0 --acceptor_size 0,10 --template_score_margin 1
-
