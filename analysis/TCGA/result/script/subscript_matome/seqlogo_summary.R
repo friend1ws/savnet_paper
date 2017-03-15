@@ -1,5 +1,5 @@
 library(dplyr)
-library(seqLogo)
+# library(seqLogo)
 library(ggplot2)
 library(ggseqlogo)
 library(cowplot)
