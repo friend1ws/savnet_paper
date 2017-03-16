@@ -166,11 +166,11 @@ g_mes_a <- ggplot(mes_df %>% filter(splice_class != "Alternative 5'-ss" & motif_
   labs(x = "", y = "") +
   guides(fill = FALSE)
 
-ylabel <- ggdraw() + draw_label("Diff. of MaxEnt score")
+ylabel <- ggdraw() + draw_label("Diff. of MaxEnt score", size = 7)
 
 plot_grid(g_mes_d, g_mes_a, ylabel, ncol = 1, rel_heights = c(1, 1, 0.1))
 
-ggsave("../figure/diff_mes_spliceclass.pdf", width = 4, height = 4)
+ggsave("../figure/diff_mes_spliceclass.tiff", width = 10, height = 7, dpi = 600, units = "cm")
 
 
 pos_colour <- rep("grey30", 9)
@@ -189,7 +189,7 @@ ggplot(mes_df %>% filter(motif_type == "Donor"),
   theme(axis.text.x = element_text(colour = pos_colour),
         legend.position = "bottom")
 
-ggsave("../figure/diff_mes_mutpos_donor.pdf", width = 6, height = 4)
+ggsave("../figure/diff_mes_mutpos_donor.tiff", width = 10, height = 7, dpi = 600, units = "cm")
 
 
 
@@ -209,7 +209,7 @@ ggplot(mes_df %>% filter(motif_type == "Acceptor"),
   theme(axis.text.x = element_text(colour = pos_colour),
         legend.position = "bottom") 
 
-ggsave("../figure/diff_mes_mutpos_acceptor.pdf", width = 6, height = 4)
+ggsave("../figure/diff_mes_mutpos_acceptor.tiff", width = 10, height = 7, dpi = 600, units = "cm")
 
 
 
@@ -225,17 +225,17 @@ hb_df <- data.frame(hb_diff = c(hb_score_mt - hb_score_wt),
                      mut_pos = snv_info_d$Rel_Start_Motif,
                      is_gsm = is_gsm)
 
-ggplot(hb_df %>% filter(splice_class != "Alternative 3' splice site"), aes(x = splice_class, y = hb_diff, fill = splice_class)) + 
+ggplot(hb_df %>% filter(splice_class != "Alternative 3'-ss"), aes(x = splice_class, y = hb_diff, fill = splice_class)) + 
   geom_boxplot(size = 0.3, outlier.size = 0.4) +
   coord_flip() +
   ylim(c(-20, 10)) +
   my_theme() +
   scale_fill_manual(values = splicing_class_colour) + 
-  labs(x = "", y = "Diff. of HBond score") +
+  labs(x = "", y = "Diff. of H-bond score") +
   guides(fill = FALSE)
 
 
-ggsave("../figure/diff_hb_spliceclass.pdf", width = 6, height = 2.4)
+ggsave("../figure/diff_hb_spliceclass.tiff", width = 8, height = 4, dpi = 600, units = "cm")
 
 
 
@@ -250,13 +250,13 @@ ggplot(hb_df,
   my_theme() +
   labs(fill = "") +
   ylim(c(-20, 10)) + 
-  labs(x = "Intronic position", y = "Diff. of HBond score", fill = "Splicing") +
+  labs(x = "Intronic position", y = "Diff. of H-bond score", fill = "Splicing") +
   scale_x_discrete(limits = 1:9, 
                    labels = c("-3", "-2", "-1", "1", "2", "3", "4", "5", "6")) +
   theme(axis.text.x = element_text(colour = pos_colour),
         legend.position = "bottom") +
   scale_fill_manual(values = c("#ef8a62", "#999999")) 
 
-ggsave("../figure/diff_hb_mutpos_donor.pdf", width = 6, height = 4)
+ggsave("../figure/diff_hb_mutpos_donor.tiff", width = 10, height = 7, dpi = 600, units = "cm")
 
 
