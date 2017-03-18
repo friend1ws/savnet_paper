@@ -258,11 +258,17 @@ get_print_info <- function(gene_symbol, mutation_key) {
   if (nrow(intron_line) > 0) {
     print_info <- print_info + geom_segment(data = intron_line, aes(x = x, xend = xend, y = y, yend = yend), size = 0.3, color = "gray60", arrow = arrow(length = unit(0.1, "cm"))) 
   }
-  
+
+  example_title <- substitute(paste(italic(a), " (", b, ")", sep = ""), list(a = gene_symbol, b = target_gene_info$V2))
+
   print_info <- print_info + theme_bw() +
-    ggtitle(paste(gene_symbol, " (", target_gene_info$V2, ")", sep = "")) +
+    # ggtitle(paste(gene_symbol, " (", target_gene_info$V2, ")", sep = "")) +
+    ggtitle(example_title) +
     theme(title = element_text(size = 7),
-          legend.key.size = unit(0.25, "cm"),
+          # legend.margin = margin(0.5, 2.5, 0.5, 2.5),
+          # legend.key.size = unit(1.0, "lines"), 
+          # legend.key.width = unit(1.5, "lines"),
+          # legend.spacing.x = unit(2, "lines"),
           legend.text = element_text(size = 6),
           legend.position = "bottom",
           axis.ticks.x = element_blank(),
@@ -306,7 +312,7 @@ plot_grid(plot_grid(p_MEF2B, p_EIF1, p_POLD2, p_CCNG2, ncol = 2),
           g_legend(get_print_info("POLD2", "7,44155494,T,C")),
           ncol = 1, rel_heights = c(0.9, 0.1))
 
-ggsave("../figure/multi_splice_mutation_example.tiff", width = 18, height = 7, dpi = 600, units = "cm")
+ggsave("../figure/multi_splice_mutation_example.tiff", width = 20, height = 8, dpi = 600, units = "cm")
 
 
 

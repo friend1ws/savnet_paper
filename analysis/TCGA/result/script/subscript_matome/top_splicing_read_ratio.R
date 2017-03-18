@@ -202,16 +202,112 @@ DDDs$Key <- factor(key, levels = rev(unique(key)))
 
 
 
-ggplot(DDDs %>% filter(Mut_ID %in% as.character(1:12)), aes(x = Key, y = Rel_Count, colour = Mut_ID)) + 
-  geom_jitter(width = 0.15, height = 0.03, alpha = 0.8) + 
+
+ggsave("../figure/top_splicing_read_ratio.pdf", width = 8, height = 8)
+t(DDDs %>% filter(Mut_ID %in% as.character(1:12)), aes(x = Key, y = Rel_Count, colour = Mut_ID)) + 
+  geom_jitter(width = 0.15, height = 0.02, size = 1) + 
   coord_flip() +
-  theme_minimal() +
+  my_theme() +
+  # theme_minimal() +
   # theme(axis.ticks = element_blank(), axis.text.y = element_blank(), axis.text.x = element_blank()) +
-  theme(axis.ticks = element_blank()) +
-  labs(x = "", y = "Top splicing read count / \n (Top splicing read count + second splicing read count)") +
+  theme(axis.ticks = element_blank(),
+        panel.grid.major.y = element_line(linetype = "longdash", colour = "grey60")) +
+  labs(x = "", y = "Fraction of the most frequent type of abnormal splicing") +
   # labs(x = "", y = "") +
     guides(colour = FALSE) 
 
 
-ggsave("../figure/top_splicing_read_ratio.pdf", width = 8, height = 8)
+ggsave("../figure/top_splicing_read_ratio.tiff", width = 12, height = 10, dpi = 600, units = "cm")
+
+
+
+
+
+##########
+# example
+
+motif2first_second_read_count <- function(motif_pos_str) {
+  
+
+  read_num_info_filt <- read_num_info %>% 
+    filter(Motif_Pos == motif_pos_str) %>%
+    mutate(Splicing_Key2 = paste(Splicing_Class, " (", Splicing_Key, ")", sep = "")) %>%
+    # mutate(n_Supporting_Read_Num = Supporting_Read_Num / Weight) %>% 
+    select(Sample_Name, Splicing_Key2, Mutation_Key, Supporting_Read_Num) %>% 
+    spread(key = Splicing_Key2, value = Supporting_Read_Num)
+
+  mut_count <- table(read_num_info_filt$Mutation_Key)
+  mut_id <- factor(read_num_info_filt$Mutation_Key,
+                   levels = names(mut_count)[order(mut_count, decreasing = TRUE)],
+                   labels = 1:length(mut_count))
+
+  N <- nrow(read_num_info_filt)
+
+  int_id_1 <- grep("intron-retention", colnames(read_num_info_filt))
+  int_id_2 <- grep("opposite-side-intron-retention", colnames(read_num_info_filt))
+  int_id_1 <- setdiff(int_id_1, int_id_2)
+  
+  if (length(int_id_1) >= 1 & length(int_id_2) >= 1) {
+    read_num_info_filt[, int_id_1] <- pmax(read_num_info_filt[,int_id_1], read_num_info_filt[, int_id_2])
+    read_num_info_filt[, int_id_2] <- 0
+  }
+
+  vec_mat <- read_num_info_filt[,3:ncol(read_num_info_filt), drop = FALSE]
+  mean_count_vec <- apply(vec_mat, 2, function(x) {mean(x, trim = 0.1)})
+  order_vec <- order(mean_count_vec, decreasing = TRUE)
+
+  top_ind <- order_vec[1]
+  sec_ind <- order_vec[2]
+  top_splice <- names(mean_count_vec)[top_ind]
+  sec_splice <- names(mean_count_vec)[sec_ind]
+  
+  top_splice <- sub("exon-skip", "Exon skip", top_splice)
+  top_splice <- sub("intronic-", "", top_splice)
+  top_splice <- sub("opposite-side-", "", top_splice)
+  top_splice <- sub("intron-retention", "Intron retention", top_splice)
+  top_splice <- sub("alternative-5'-splice-site", "Alternative 5'-ss", top_splice)
+  top_splice <- sub("alternative-3'-splice-site", "Alternative 3'-ss", top_splice)
+  
+  sec_splice <- sub("exon-skip", "Exon skip", sec_splice)
+  sec_splice <- sub("intronic-", "", sec_splice)
+  sec_splice <- sub("opposite-side-", "", sec_splice)
+  sec_splice <- sub("intron-retention", "Intron retention", sec_splice)
+  sec_splice <- sub("alternative-5'-splice-site", "Alternative 5'-ss", sec_splice)
+  sec_splice <- sub("alternative-3'-splice-site", "Alternative 3'-ss", sec_splice)
+  
+  first_vec <- vec_mat[, top_ind]
+  second_vec <- vec_mat[, sec_ind]
+  
+  
+  temp_for_gene_symbol <- read_num_info %>% filter(Motif_Pos == motif_pos_str)
+  gene_symbol <- unique(temp_for_gene_symbol$Gene_Symbol)
+  motif_info <- get_motif_info(motif_pos_str, as.character(gene2ref[gene_symbol])) 
+  plot_title <- paste(gene_symbol, " exon ", motif_info[2], ", ", motif_info[1], sep = "")
+  
+  df <- data.frame(mut_id = mut_id, first_vec = first_vec, second_vec = second_vec)
+  
+  p <- ggplot(df, aes(x = first_vec, y = second_vec, colour = mut_id)) +
+    geom_point(size = 1) +
+    my_theme() +
+    ggtitle(plot_title) +
+    labs(x = top_splice, y = sec_splice) +
+    guides(colour = FALSE)
+  
+  return(p)
+
+}
+
+
+p_TP53 <- motif2first_second_read_count("17:7579306-7579314,-")
+p_CDKN2A <- motif2first_second_read_count("9:21971207-21971213,-")
+p_GATA3 <- motif2first_second_read_count("10:8111430-8111436,+")
+
+
+plot_grid(p_TP53, p_CDKN2A, p_GATA3, ncol = 3)
+
+
+
+ggsave("../figure/top_splicing_read_ratio_example.tiff", width = 20, height = 7, dpi = 600, units = "cm")
+
+
 

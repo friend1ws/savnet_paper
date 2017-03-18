@@ -1,5 +1,6 @@
 library(dplyr)
 library(ggplot2)
+library(cowplot)
 
 source("../../../conf/plot_config.R")
 ##########
@@ -40,6 +41,13 @@ splicing_mutation_proc$Is_Canonical2[
 splicing_mutation_proc$Mutation_Type2 <- unlist(lapply(splicing_mutation_proc$Mutation_Type_Paste, select_mut_type))
 
 
+splicing_mutation_proc$Mutation_Type2 <-
+  factor(splicing_mutation_proc$Mutation_Type2,
+         levels = rev(c("splicing donor disruption", "splicing donor creation",
+                        "splicing acceptor disruption", "splicing acceptor creation")),
+         labels = rev(c("Donor disruption", "Donor creation", 
+                        "Acceptor disruption", "Acceptor creation")))
+
 
 ##########
 
@@ -53,79 +61,79 @@ splicing_mutation$Is_Indel <-
 
 
 splicing_mutation$Mutation_Type3 <- rep("", nrow(splicing_mutation))
-splicing_mutation$Mutation_Type4 <- rep("", nrow(splicing_mutation))
+# splicing_mutation$Mutation_Type4 <- rep("", nrow(splicing_mutation))
 
 splicing_mutation$Mutation_Type3[
-  splicing_mutation$Mutation_Type2 == "splicing donor disruption" &
+  splicing_mutation$Mutation_Type2 == "Donor disruption" &
   splicing_mutation$Is_Canonical2 == "canonical" &
-  splicing_mutation$Is_Indel == FALSE] <- "SNV, canonical donor disruption"
+  splicing_mutation$Is_Indel == FALSE] <- "SNV, canonical"
 
 splicing_mutation$Mutation_Type3[
-  splicing_mutation$Mutation_Type2 == "splicing donor disruption" &
+  splicing_mutation$Mutation_Type2 == "Donor disruption" &
     splicing_mutation$Is_Canonical2 == "non-canonical" &
-    splicing_mutation$Is_Indel == FALSE] <- "SNV, noncanonical donor disruption"
+    splicing_mutation$Is_Indel == FALSE] <- "SNV, noncanonical"
 
 splicing_mutation$Mutation_Type3[
-  splicing_mutation$Mutation_Type2 == "splicing donor disruption" &
+  splicing_mutation$Mutation_Type2 == "Donor disruption" &
     splicing_mutation$Is_Canonical2 == "canonical" &
-    splicing_mutation$Is_Indel == TRUE] <- "Indel, canonical donor disruption"
+    splicing_mutation$Is_Indel == TRUE] <- "Indel, canonical"
 
 splicing_mutation$Mutation_Type3[
-  splicing_mutation$Mutation_Type2 == "splicing donor disruption" &
+  splicing_mutation$Mutation_Type2 == "Donor disruption" &
     splicing_mutation$Is_Canonical2 == "non-canonical" &
-    splicing_mutation$Is_Indel == TRUE] <- "Indel, noncanonical donor disruption"
+    splicing_mutation$Is_Indel == TRUE] <- "Indel, noncanonical"
 
 splicing_mutation$Mutation_Type3[
-  splicing_mutation$Mutation_Type2 == "splicing donor creation" &
-    splicing_mutation$Is_Indel == FALSE] <- "SNV, donor creation"
+  splicing_mutation$Mutation_Type2 == "Donor creation" &
+    splicing_mutation$Is_Indel == FALSE] <- "SNV"
 
 splicing_mutation$Mutation_Type3[
-  splicing_mutation$Mutation_Type2 == "splicing donor creation" &
-    splicing_mutation$Is_Indel == TRUE] <- "Indel, donor creation"
+  splicing_mutation$Mutation_Type2 == "Donor creation" &
+    splicing_mutation$Is_Indel == TRUE] <- "Indel"
 
 
 splicing_mutation$Mutation_Type3[
-  splicing_mutation$Mutation_Type2 == "splicing acceptor disruption" &
+  splicing_mutation$Mutation_Type2 == "Acceptor disruption" &
     splicing_mutation$Is_Canonical2 == "canonical" &
-    splicing_mutation$Is_Indel == FALSE] <- "SNV, canonical acceptor disruption"
+    splicing_mutation$Is_Indel == FALSE] <- "SNV, canonical"
 
 splicing_mutation$Mutation_Type3[
-  splicing_mutation$Mutation_Type2 == "splicing acceptor disruption" &
+  splicing_mutation$Mutation_Type2 == "Acceptor disruption" &
     splicing_mutation$Is_Canonical2 == "non-canonical" &
-    splicing_mutation$Is_Indel == FALSE] <- "SNV, noncanonical acceptor disruption"
+    splicing_mutation$Is_Indel == FALSE] <- "SNV, noncanonical"
 
 splicing_mutation$Mutation_Type3[
-  splicing_mutation$Mutation_Type2 == "splicing acceptor disruption" &
+  splicing_mutation$Mutation_Type2 == "Acceptor disruption" &
     splicing_mutation$Is_Canonical2 == "canonical" &
-    splicing_mutation$Is_Indel == TRUE] <- "Indel, canonical acceptor disruption"
+    splicing_mutation$Is_Indel == TRUE] <- "Indel, canonical"
 
 splicing_mutation$Mutation_Type3[
-  splicing_mutation$Mutation_Type2 == "splicing acceptor disruption" &
+  splicing_mutation$Mutation_Type2 == "Acceptor disruption" &
     splicing_mutation$Is_Canonical2 == "non-canonical" &
-    splicing_mutation$Is_Indel == TRUE] <- "Indel, noncanonical acceptor disruption"
+    splicing_mutation$Is_Indel == TRUE] <- "Indel, noncanonical"
 
 splicing_mutation$Mutation_Type3[
-  splicing_mutation$Mutation_Type2 == "splicing acceptor creation" &
-    splicing_mutation$Is_Indel == FALSE] <- "SNV, acceptor creation"
+  splicing_mutation$Mutation_Type2 == "Acceptor creation" &
+    splicing_mutation$Is_Indel == FALSE] <- "SNV"
 
 splicing_mutation$Mutation_Type3[
-  splicing_mutation$Mutation_Type2 == "splicing acceptor creation" &
-    splicing_mutation$Is_Indel == TRUE] <- "Indel, acceptor creation"
+  splicing_mutation$Mutation_Type2 == "Acceptor creation" &
+    splicing_mutation$Is_Indel == TRUE] <- "Indel"
 
 
-splicing_mutation$Mutation_Type4[
-    splicing_mutation$Mutation_Type3 %in% c("SNV, canonical donor disruption", "SNV, noncanonical donor disruption", 
-                                            "Indel, canonical donor disruption", "Indel, noncanonical donor disruption")] <- "Donor disruption"
+# splicing_mutation$Mutation_Type4[
+#     splicing_mutation$Mutation_Type3 %in% c("SNV, canonical donor disruption", "SNV, noncanonical donor disruption", 
+#                                             "Indel, canonical donor disruption", "Indel, noncanonical donor disruption")] <- "Donor disruption"
 
-splicing_mutation$Mutation_Type4[
-    splicing_mutation$Mutation_Type3 %in% c("SNV, donor creation", "Indel, donor creation")] <- "Donor creation"
+# splicing_mutation$Mutation_Type4[
+#     splicing_mutation$Mutation_Type3 %in% c("SNV, donor creation", "Indel, donor creation")] <- "Donor creation"
 
-splicing_mutation$Mutation_Type4[
-    splicing_mutation$Mutation_Type3 %in% c("SNV, canonical acceptor disruption", "SNV, noncanonical acceptor disruption",
-                                            "Indel, canonical acceptor disruption", "Indel, noncanonical acceptor disruption")] <- "Acceptor disruption"
+# splicing_mutation$Mutation_Type4[
+#     splicing_mutation$Mutation_Type3 %in% c("SNV, canonical acceptor disruption", "SNV, noncanonical acceptor disruption",
+#                                             "Indel, canonical acceptor disruption", "Indel, noncanonical acceptor disruption")] <- "Acceptor disruption"
 
-splicing_mutation$Mutation_Type4[
-    splicing_mutation$Mutation_Type3 %in% c("SNV, acceptor creation", "Indel, acceptor creation")] <- "Acceptor creation"
+# splicing_mutation$Mutation_Type4[
+#     splicing_mutation$Mutation_Type3 %in% c("SNV, acceptor creation", "Indel, acceptor creation")] <- "Acceptor creation"
 
 
 
@@ -153,65 +161,135 @@ splicing_mutation$Splicing_Class <-
 
 splicing_mutation$Mutation_Type3 <- 
   factor(splicing_mutation$Mutation_Type3,
-         levels = rev(c("SNV, canonical donor disruption",
-                        "SNV, noncanonical donor disruption",
-                        "SNV, donor creation",
-                        "Indel, canonical donor disruption",
-                        "Indel, noncanonical donor disruption",
-                        "Indel, donor creation",
-                        "SNV, canonical acceptor disruption",
-                        "SNV, noncanonical acceptor disruption",
-                        "SNV, acceptor creation",
-                        "Indel, canonical acceptor disruption",
-                        "Indel, noncanonical acceptor disruption",
-                        "Indel, acceptor creation")))
+         levels = rev(c("SNV, canonical",
+                        "SNV, noncanonical",
+                        "SNV",
+                        "Indel, canonical",
+                        "Indel, noncanonical",
+                        "Indel")))
+         
 
-splicing_mutation$Mutation_Type4 <-
-    factor(splicing_mutation$Mutation_Type4,
-        levels = rev(c("Donor disruption", "Donor creation", "Acceptor disruption", "Acceptor creation")))
+# splicing_mutation$Mutation_Type4 <-
+#     factor(splicing_mutation$Mutation_Type4,
+#         levels = rev(c("Donor disruption", "Donor creation", "Acceptor disruption", "Acceptor creation")))
 
 
-splicing_mutation_count <- splicing_mutation %>% 
-  group_by(Mutation_Type3, Splicing_Class) %>% 
-  summarize(count = n())
+# splicing_mutation_count <- splicing_mutation %>% 
+#   group_by(Mutation_Type3, Splicing_Class) %>% 
+#  summarize(count = n())
 
-ggplot(splicing_mutation_count, aes(x = Mutation_Type3, y = count, fill = Splicing_Class)) + 
+p_dd <- ggplot(splicing_mutation %>% 
+         filter(Mutation_Type2 == "Donor disruption") %>% 
+         group_by(Mutation_Type3, Splicing_Class) %>% 
+         summarize(count = n()), 
+       aes(x = Mutation_Type3, y = count, fill = Splicing_Class)) + 
   geom_bar(stat = "identity") +
   coord_flip() +
+  ggtitle("Donor disruption") +
+  labs(x = "", y = "", fill = "") +
+  my_theme() +
+  theme(legend.position = "bottom") +
+  scale_fill_manual(values = splicing_class_colour) +
+  scale_y_continuous(expand = c(0, 0), limits = c(0, 5300)) +
+  guides(fill = FALSE)
+  # guides(fill=guide_legend(nrow=1,byrow=TRUE))
+
+p_dc <- ggplot(splicing_mutation %>% 
+                 filter(Mutation_Type2 == "Donor creation") %>% 
+                 group_by(Mutation_Type3, Splicing_Class) %>% 
+                 summarize(count = n()), 
+               aes(x = Mutation_Type3, y = count, fill = Splicing_Class)) + 
+  geom_bar(stat = "identity") +
+  coord_flip() +
+  ggtitle("Donor creation") +
   labs(x = "", y = "Splicing event count", fill = "") +
   my_theme() +
-  theme(legend.position = "bottom",
-  ) +
+  theme(legend.position = "bottom") +
   scale_fill_manual(values = splicing_class_colour) +
-  scale_y_continuous(expand = c(0, 0)) +
-  guides(fill=guide_legend(nrow=1,byrow=TRUE))
+  scale_y_continuous(expand = c(0, 0),limits = c(0, 5300)) +
+  guides(fill = FALSE)
+# guides(fill=guide_legend(nrow=1,byrow=TRUE))
+
+p_ad <- ggplot(splicing_mutation %>% 
+                 filter(Mutation_Type2 == "Acceptor disruption") %>% 
+                 group_by(Mutation_Type3, Splicing_Class) %>% 
+                 summarize(count = n()), 
+               aes(x = Mutation_Type3, y = count, fill = Splicing_Class)) + 
+  geom_bar(stat = "identity") +
+  coord_flip() +
+  ggtitle("Acceptor disruption") +
+  labs(x = "", y = "", fill = "") +
+  my_theme() +
+  theme(legend.position = "bottom") +
+  scale_fill_manual(values = splicing_class_colour) +
+  scale_y_continuous(expand = c(0, 0), limits = c(0, 5300)) +
+  guides(fill = FALSE)
+# guides(fill=guide_legend(nrow=1,byrow=TRUE))
+
+p_ac <- ggplot(splicing_mutation %>% 
+                 filter(Mutation_Type2 == "Acceptor creation") %>% 
+                 group_by(Mutation_Type3, Splicing_Class) %>% 
+                 summarize(count = n()), 
+               aes(x = Mutation_Type3, y = count, fill = Splicing_Class)) + 
+  geom_bar(stat = "identity") +
+  coord_flip() +
+  ggtitle("Acceptor creation") +
+  labs(x = "", y = "Splicing event count", fill = "") +
+  my_theme() +
+  theme(legend.position = "bottom") +
+  scale_fill_manual(values = splicing_class_colour) +
+  scale_y_continuous(expand = c(0, 0),limits = c(0, 5300)) +
+  guides(fill = FALSE)
+# guides(fill=guide_legend(nrow=1,byrow=TRUE))
 
 
-ggsave("../figure/category_count.tiff", width = 8, height = 8, dpi = 600, units = "cm")
+p_dummy_for_legend <- 
+  ggplot(splicing_mutation %>% 
+           filter(Mutation_Type2 == "Donor disruption") %>% 
+           group_by(Mutation_Type3, Splicing_Class) %>% 
+           summarize(count = n()), 
+         aes(x = Mutation_Type3, y = count, fill = Splicing_Class)) + 
+  geom_bar(stat = "identity") +
+  coord_flip() +
+  ggtitle("Donor disruption") +
+  labs(x = "", y = "", fill = "") +
+  my_theme() +
+  theme(legend.position = "bottom") +
+  scale_fill_manual(values = splicing_class_colour) +
+  scale_y_continuous(expand = c(0, 0), limits = c(0, 5300))
+
+
+p_dd_ad_dc_ac <- plot_grid(p_dd, p_ad, p_dc, p_ac, ncol = 2, align = "hv", rel_heights = c(1, 0.65))
+
+plot_grid(p_dd_ad_dc_ac, g_legend(p_dummy_for_legend), ncol = 1, rel_heights = c(1, 0.1))
+
+
+
+ggsave("../figure/category_count.tiff", width = 18, height = 8, dpi = 600, units = "cm")
 
 
 
 splicing_mutation_count_simple <- splicing_mutation %>%
-  group_by(Mutation_Type4, Splicing_Class) %>%
+  group_by(Mutation_Type2, Splicing_Class) %>%
   summarize(count = n())
 
-ggplot(splicing_mutation_count_simple, aes(x = Mutation_Type4, y = count, fill = Splicing_Class)) +
+ggplot(splicing_mutation_count_simple, aes(x = Mutation_Type2, y = count, fill = Splicing_Class)) +
   geom_bar(stat = "identity") +
   coord_flip() +
   labs(x = "", y = "Splicing event count", fill = "") +
   my_theme() +
-  theme(legend.position = "bottom",
-        ) +
+  theme(legend.position = "bottom") +
   scale_fill_manual(values = splicing_class_colour) +
   scale_y_continuous(expand = c(0, 0)) +
   guides(fill=guide_legend(nrow=1,byrow=TRUE))
 
-ggsave("../figure/category_count_simple.tiff", width = 8, height = 3.5, dpi = 600, units = "cm")
+ggsave("../figure/category_count_simple.tiff", width = 10, height = 4, dpi = 600, units = "cm")
 
 
 write.table(splicing_mutation %>% 
-  select(Cancer_Type, Sample_Name, Mutation_Key, Mutation_Type3) %>% 
-  distinct() %>% group_by(Mutation_Type3) %>% summarize(count = n()),
+              mutate(Mutation_Type4 = paste(Mutation_Type2, Mutation_Type3, sep =", ")) %>% 
+  select(Cancer_Type, Sample_Name, Mutation_Key, Mutation_Type4) %>% 
+  distinct() %>% group_by(Mutation_Type4) %>% summarize(count = n()),
   "../temporary/mutation_caterogy_count.txt", quote = FALSE, row.names = FALSE, sep = "\t")
 
 

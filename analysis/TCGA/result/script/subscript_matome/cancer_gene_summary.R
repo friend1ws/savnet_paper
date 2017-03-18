@@ -54,13 +54,13 @@ p_summary <- ggplot(splicing_mutation_count_proc,
   labs(x = "Cancer Type", y = "Gene") +
   scale_size(range = c(1, 4)) +
   theme(title = element_text(size = 7),
-        axis.text = element_text(size = 7),
+        axis.text = element_text(size = 7), 
         axis.title = element_text(size = 7),
         legend.text = element_text(size = 6),
         strip.text = element_text(size = 6),
         legend.key.size = unit(0.25, "cm"),
         axis.text.x = element_text(angle = 90, hjust = 1),
-        axis.text.y = element_text(colour =  gene_colour),
+        axis.text.y = element_text(colour =  gene_colour, face = "italic"),
         legend.position = "bottom")
 
 
@@ -129,7 +129,7 @@ p_sasmtype <- ggplot(sasm_type_info_proc, aes(x = Gene_Symbol2, y = ratio, fill 
     strip.text = element_text(size = 6),
     legend.key.size = unit(0.25, "cm"),
     axis.text.x = element_text(angle = 90, hjust = 1),
-    axis.text.y = element_text(colour =  gene_colour),
+    axis.text.y = element_text(colour =  gene_colour, face = "italic"),
     panel.grid.major.y = element_blank(),
     panel.grid.minor.y = element_blank(),
     legend.position = "bottom") +
@@ -204,7 +204,7 @@ p_spliceclass <- ggplot(sp_class_info_proc, aes(x = Gene_Symbol2, y = ratio, fil
     strip.text = element_text(size = 6),
     legend.key.size = unit(0.25, "cm"),
     axis.text.x = element_text(angle = 90, hjust = 1),
-    axis.text.y = element_text(colour =  gene_colour),
+    axis.text.y = element_text(colour =  gene_colour, face = "italic"),
     panel.grid.major.y = element_blank(),
     panel.grid.minor.y = element_blank(),
     legend.position = "bottom") +
@@ -229,12 +229,14 @@ p_main_panel <- plot_grid(p_summary + guides(size = FALSE),
           nrow = 1, rel_widths = c(0.6, 0.2, 0.2),
           align = "h")
 
-p_legend_panel <- plot_grid(
-  plot_grid(p_summary_legend, p_sasmtype_legend, nrow = 1, align = "h"),
-  p_spliceclass_legend, nrow = 2, align = "h")
+# p_legend_panel <- plot_grid(
+#   plot_grid(p_summary_legend, p_sasmtype_legend, nrow = 1, align = "h"),
+#   p_spliceclass_legend, nrow = 2, align = "h")
+
+p_legend_panel <- plot_grid(p_summary_legend, p_sasmtype_legend, p_spliceclass_legend, nrow = 3)
   
 plot_grid(p_main_panel, p_legend_panel, nrow = 2,
-          rel_heights = c(0.95, 0.05))
+          rel_heights = c(0.90, 0.1))
 
   
 ggsave("../figure/cancer_gene_summary.tiff", width = 20, height = 20, dpi = 600, units = "cm")

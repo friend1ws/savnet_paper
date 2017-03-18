@@ -33,11 +33,11 @@ p_donor <- ggplot(mem_info %>% filter(Splice_Site == "donor"), aes(x = Splice_Po
   scale_fill_manual(values = signature_colour) +
   labs(x = "", y = "Signature membership", fill = "") +
   my_theme() +
-  theme(axis.text.x = element_text(colour = pos_colour, size = rel(1.5)),
-        axis.text.y = element_text(size = rel(1.2)),
-        axis.title = element_text(size = rel(1.2)),
-        legend.text = element_text(size = rel(1)),
-        legend.title = element_text(size = rel(1)),
+  theme(axis.text.x = element_text(colour = pos_colour), # , size = rel(1.5)),
+        # axis.text.y = element_text(size = rel(1.2)),
+        # axis.title = element_text(size = rel(1.2)),
+        # legend.text = element_text(size = rel(1)),
+        # legend.title = element_text(size = rel(1)),
         axis.ticks.x = element_blank(),
         legend.position = "bottom") +
   scale_x_discrete(limits = 1:9, 
@@ -56,11 +56,11 @@ p_acceptor <- ggplot(mem_info %>% filter(Splice_Site == "acceptor"), aes(x = Spl
   scale_fill_manual(values = signature_colour) +
   labs(x = "", y = "Signature membership", fill = "") +
   my_theme() +
-  theme(axis.text.x = element_text(colour = pos_colour, size = rel(1.5)),
-        axis.text.y = element_text(size = rel(1.2)),
-        axis.title = element_text(size = rel(1.2)),
-        legend.text = element_text(size = rel(1)),
-        legend.title = element_text(size = rel(1)),
+  theme(axis.text.x = element_text(colour = pos_colour), # , size = rel(1.5)),
+        # axis.text.y = element_text(size = rel(1.2)),
+        # axis.title = element_text(size = rel(1.2)),
+        # legend.text = element_text(size = rel(1)),
+        # legend.title = element_text(size = rel(1)),
         axis.ticks.x = element_blank(),
         legend.position = "bottom") +
   scale_x_discrete(limits = 1:7, 
@@ -81,17 +81,18 @@ p_dummy_for_legend <- ggplot(mem_info, aes(x = Splice_Pos, y = Membership_Sum, f
   geom_bar(stat = "identity") +
   labs(x = "", fill = "") +
   scale_fill_manual(values = signature_colour) +
-  theme(legend.position = "bottom") +
+  my_theme() +
+  theme(legend.position = "bottom") + 
   guides(fill = guide_legend(nrow=2, byrow=TRUE))
 
 
 
 p_donor_acceptor <- plot_grid(p_donor, p_acceptor, ncol = 2, rel_widths = c(1, 0.9), align = "h")
 
-plot_grid(p_donor_acceptor, g_legend(p_dummy_for_legend), ncol = 1, rel_heights = c(1, 0.2))
+plot_grid(p_donor_acceptor, g_legend(p_dummy_for_legend), ncol = 1, rel_heights = c(1, 0.1))
 
 
-ggsave("../figure/signature_membership.pdf", width = 8, height = 4)
+ggsave("../figure/signature_membership.tiff", width = 15, height = 6, dpi = 600, units = "cm")
 
 ##########
 ###
@@ -174,10 +175,10 @@ for(i in 1:length(ctype_vec)) {
     my_theme() +
     ggtitle(ctype) + 
     # scale_fill_brewer(palette = "Set1") +
-    labs(x = "", y = "Relative splicing mutation ratio", fill = "") +
+    labs(x = "", y = "", fill = "") +
     theme(legend.position = "bottom") +
     scale_x_discrete(limits = rev(sig_type_order[sig_type_order %in% gsm_ratio$Sig_Type])) +
-    scale_y_continuous(expand = c(0, 0)) +
+    scale_y_continuous(expand = c(0, 0), limits = c(0, 1.1 * max(gsm_ratio$gsm_ratio))) +
     scale_fill_manual(values = signature_colour) +
     guides(fill = FALSE)
 
@@ -187,13 +188,17 @@ for(i in 1:length(ctype_vec)) {
 
 
 
-p_tobacco <- plot_grid(p_ctype[[1]], p_ctype[[2]], nrow = 2)
-p_uv <- plot_grid(p_ctype[[3]], p_ctype[[4]], nrow = 2)
-p_pole <- plot_grid(p_ctype[[5]], p_ctype[[6]], nrow = 2)
+p_tobacco <- plot_grid(p_ctype[[1]], p_ctype[[2]], nrow = 2, align = "v")
+p_uv <- plot_grid(p_ctype[[3]], p_ctype[[4]], nrow = 2, align = "v")
+p_pole <- plot_grid(p_ctype[[5]], p_ctype[[6]], nrow = 2, align = "v")
 
-plot_grid(p_tobacco, p_uv, p_pole, nrow = 1)
+# plot_grid(p_tobacco, p_uv, p_pole, nrow = 1, align = "h")
 
-ggsave(paste("../figure/rel_sp_ratio_ctype.tiff", sep = ""), width = 15, height = 6, dpi = 600, units = "cm")
+xtitle <- ggdraw() + draw_label("Relative SAV fraction", size = 8)
+
+plot_grid(plot_grid(p_tobacco, p_uv, p_pole, nrow = 1, align = "h"), xtitle, ncol = 1, rel_heights = c(1, 0.1))
+
+ggsave(paste("../figure/rel_sp_ratio_ctype.tiff", sep = ""), width = 18, height = 8, dpi = 600, units = "cm")
 
 
 ##########
@@ -206,7 +211,10 @@ get_plot <- function(sig_num, title) {
   selected_key <- mem_info_all %>% filter(COSM_ID == as.character(sig_num)) %>% filter(Corr == max(Corr)) 
   sig_num <- my_sig_num[my_sig_num[,1] == selected_key$Cancer_Type, 2]
   load(paste("../../data/pmsignature/", selected_key$Cancer_Type, "/pmsignature/ind.", sig_num, ".Rdata", sep = ""))
-  visPMSignature(resultForSave[[1]], selected_key$Sig_Num, charSize = 2.5) + ggtitle(title) + theme(panel.background = element_blank())
+  visPMSignature(resultForSave[[1]], selected_key$Sig_Num, charSize = 2) + 
+	ggtitle(title) + 
+	theme(panel.background = element_blank(),
+	      title = element_text(size = 7))
 }
 
 p_age <- get_plot(1, "Age")
