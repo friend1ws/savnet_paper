@@ -229,14 +229,14 @@ p_main_panel <- plot_grid(p_summary + guides(size = FALSE),
           nrow = 1, rel_widths = c(0.6, 0.2, 0.2),
           align = "h")
 
-# p_legend_panel <- plot_grid(
-#   plot_grid(p_summary_legend, p_sasmtype_legend, nrow = 1, align = "h"),
-#   p_spliceclass_legend, nrow = 2, align = "h")
+p_legend_panel <- plot_grid(
+  plot_grid(p_summary_legend, p_sasmtype_legend, nrow = 1, align = "h"),
+  p_spliceclass_legend, nrow = 2, align = "h")
 
-p_legend_panel <- plot_grid(p_summary_legend, p_sasmtype_legend, p_spliceclass_legend, nrow = 3)
+# p_legend_panel <- plot_grid(p_summary_legend, p_sasmtype_legend, p_spliceclass_legend, nrow = 3)
   
 plot_grid(p_main_panel, p_legend_panel, nrow = 2,
-          rel_heights = c(0.90, 0.1))
+          rel_heights = c(1, 0.05))
 
   
 ggsave("../figure/cancer_gene_summary.tiff", width = 20, height = 20, dpi = 600, units = "cm")

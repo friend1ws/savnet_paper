@@ -1,6 +1,7 @@
 library(dplyr)
 library(ggplot2)
 library(tidyr)
+library(cowplot)
 
 source("../../../conf/plot_config.R")
 
@@ -203,8 +204,8 @@ DDDs$Key <- factor(key, levels = rev(unique(key)))
 
 
 
-ggsave("../figure/top_splicing_read_ratio.pdf", width = 8, height = 8)
-t(DDDs %>% filter(Mut_ID %in% as.character(1:12)), aes(x = Key, y = Rel_Count, colour = Mut_ID)) + 
+# ggsave("../figure/top_splicing_read_ratio.pdf", width = 8, height = 8)
+ggplot(DDDs %>% filter(Mut_ID %in% as.character(1:12)), aes(x = Key, y = Rel_Count, colour = Mut_ID)) + 
   geom_jitter(width = 0.15, height = 0.02, size = 1) + 
   coord_flip() +
   my_theme() +
