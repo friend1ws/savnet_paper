@@ -4,6 +4,7 @@ library(tidyr)
 library(cowplot)
 library(RColorBrewer)
 
+source("../../../conf/plot_config.R")
 
 ##########
 # setting data
@@ -244,12 +245,12 @@ get_gene_print_info <- function(ref_gene_id, start_target, end_target, dir_targe
   p_gene <- ggplot()
   if (nrow(exon_box) > 0) {
     p_gene <- p_gene + geom_rect(data = exon_box, aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax, fill= "gene"))
-    p_gene <- p_gene + geom_text(data = exon_num, aes(x = x, y = y, label = label, colour = "gene"), size = 3)
+    p_gene <- p_gene + geom_text(data = exon_num, aes(x = x, y = y, label = label, colour = "gene"), size = 1.8)
   }
   
   if (!is.null(amino_size)) {
     p_gene <- p_gene + geom_rect(data = rect_data, aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax, fill = domain)) +
-      geom_text(data = label_data, aes(x = x, y = y, label = label))
+      geom_text(data = label_data, aes(x = x, y = y, label = label), size = 1.8)
   
     # p_gene <- p_gene + geom_segment(data = amino_genome_seg, 
     #                                 aes(x = x, xend = xend, y = y, yend = yend, color = col),
@@ -260,10 +261,11 @@ get_gene_print_info <- function(ref_gene_id, start_target, end_target, dir_targe
   }
   
   if (nrow(intron_line) > 0) {
-    p_gene <- p_gene + geom_segment(data = intron_line, aes(x = x, xend = xend, y = y, yend = yend, colour = "gene"), arrow = arrow(length = unit(0.1, "inches"))) 
+    p_gene <- p_gene + geom_segment(data = intron_line, aes(x = x, xend = xend, y = y, yend = yend, colour = "gene"), 
+                                    size = 0.3, arrow = arrow(length = unit(0.03, "inches"))) 
   }
   
-  p_gene <- p_gene + theme_minimal() +
+  p_gene <- p_gene + theme_bw() +
     theme(axis.ticks.x = element_blank(),
           axis.ticks.y = element_blank(),
           panel.grid.major.y = element_blank(),
@@ -274,7 +276,8 @@ get_gene_print_info <- function(ref_gene_id, start_target, end_target, dir_targe
           axis.title.x = element_blank(),
           axis.text.x = element_blank(),
           axis.title.y = element_blank(),
-          axis.text.y = element_blank()) +
+          axis.text.y = element_blank(),
+          plot.margin = unit(c(0.05, 0.05, 0.05, 0.05), "lines")) +
     scale_y_continuous(trans = "reverse") + 
     scale_fill_manual(values = gene_domain_colour) +
     scale_colour_manual(values = gene_domain_colour) +
@@ -528,21 +531,22 @@ get_gsm_print_info <- function(omega_info_input, gene_symbol, ref_gene_id, count
     splicing_line <- rbind(splicing_line, tmp_splicing_line)
   }
   
-  
-  
-  p_gsm <- ggplot() + theme_minimal() +
+ 
+ 
+  p_gsm <- ggplot() + theme_bw() +
     theme(axis.ticks.x = element_blank(),
           axis.ticks.y = element_blank(),
           panel.grid.major.y = element_blank(),
           panel.grid.minor.y = element_blank(),
           panel.grid.major.x = element_blank(),
-          panel.grid.minor.x = element_line(colour="grey60", linetype="dotted"),
+          panel.grid.minor.x = element_line(colour="grey60", linetype="dotted", size = 0.25),
           panel.border=element_blank(),
           axis.title.x = element_blank(),
           axis.text.x = element_blank(),
           axis.title.y = element_blank(),
-          axis.text.y = element_blank()) +
-    scale_y_continuous(trans = "reverse") + 
+          axis.text.y = element_blank(),
+          plot.margin = unit(c(0.05, 0.05, 0.05, 0.05), "lines")) +
+    scale_y_continuous(trans = "reverse", limits = c(max(mut_line$y) + 1.5, 0)) + 
     guides(fill=FALSE) +
     guides(colour = FALSE) + 
     guides(linetype = FALSE) + 
@@ -556,20 +560,20 @@ get_gsm_print_info <- function(omega_info_input, gene_symbol, ref_gene_id, count
   } 
   
   p_gsm <- p_gsm + geom_segment(data = mut_seg,
-                                aes(x = x, y = y, xend = xend, yend = yend), colour = "grey50")
+                                aes(x = x, y = y, xend = xend, yend = yend), colour = "grey50", size = 0.5)
   
   p_gsm <- p_gsm + geom_point(data = mut_line, 
                               aes(x = x, y = y, shape = mutation_type, fill = motif_type, size = mutation_num, colour = motif_type), alpha = 0.95) +
     scale_shape_manual(values = c(disruption = 21, creation = 24)) +
-    scale_size(range = c(2, 6), limits = c(1, 20))
+    scale_size(range = c(1, 3), limits = c(1, 20))
   
   p_gsm <- p_gsm + geom_text(data = mut_line, 
-                             aes(x = x, y = y, label = count_label), colour = "gray20", size = 3) 
+                             aes(x = x, y = y, label = count_label), colour = "gray20", size = 1.8) 
   
   
   p_gsm <- p_gsm + geom_segment(data = splicing_line, 
                                 aes(x = x, xend = xend, y = y, yend = yend, 
-                                    colour = splicing_class, linetype = is_inframe)) +
+                                    colour = splicing_class, linetype = is_inframe), size = 0.5) +
     scale_colour_manual(values = splicing_mut_class_colour) +
     scale_fill_manual(values = splicing_mut_class_colour) +
     scale_linetype_manual(values = c("In frame" = "solid", "Frameshift" = "longdash"))
@@ -722,15 +726,15 @@ print_prof <- function(gene_symbol, ref_gene_id, start_target, end_target, dir_t
   p_gsm_c <- gsm_print_info_c[[1]]
 
   if (gene_symbol != "CDKN2A") {
-    xtitle <- ggdraw() + draw_label(paste(gene_symbol, paste("(", ref_gene_id, ", ", as.numeric(gene2size[gene_symbol]), "aa", ")", sep = "")))
+    xtitle <- ggdraw() + draw_label(paste(gene_symbol, paste("(", ref_gene_id, ", ", as.numeric(gene2size[gene_symbol]), "aa", ")", sep = "")), size = 7)
   } else {
-    xtitle <- ggdraw() + draw_label("CDKN2A(NM_000077,NM_058195, 156aa,132aa)")
+    xtitle <- ggdraw() + draw_label("CDKN2A(NM_000077,NM_058195, 156aa,132aa)", size = 7)
   }
-  
-  
+ 
   ylabel_dummy <- ggdraw() + draw_label("", angle = 90) 
   ylabel_d <- ggdraw() + draw_label("Disruption", angle = 90)
   ylabel_c <- ggdraw() + draw_label("Creation", angle = 90)
+ 
 
   if ( !is.null(gsm_print_info_d[[3]]) & !is.null(gsm_print_info_c[[3]]) ) {
   
@@ -741,9 +745,9 @@ print_prof <- function(gene_symbol, ref_gene_id, start_target, end_target, dir_t
       ylabel_c <- ylabel_dummy
     }
  
-    plot_grid(xtitle, plot_grid(ylabel_dummy, p_gene, ncol = 2, rel_widths = c(0.03, 0.97)),
-              plot_grid(ylabel_d, p_gsm_d, ncol = 2, rel_widths = c(0.03, 0.97)),
-              plot_grid(ylabel_c, p_gsm_c, rel_widths = c(0.03, 0.97)),
+    plot_grid(xtitle, plot_grid(ylabel_dummy, p_gene, ncol = 2, rel_widths = c(0.04, 0.96)),
+              plot_grid(ylabel_d, p_gsm_d, ncol = 2, rel_widths = c(0.04, 0.96)),
+              plot_grid(ylabel_c, p_gsm_c, rel_widths = c(0.04, 0.96)),
               ncol = 1, align = "v", rel_heights = c(1, 3, 0.15 * c(mut_y_d, mut_y_c) + 0.6))
   
   
@@ -752,8 +756,8 @@ print_prof <- function(gene_symbol, ref_gene_id, start_target, end_target, dir_t
     mut_y_d <- max(gsm_print_info_d[[3]]$y)
     if (mut_y_d < 10) ylabel_d <- ylabel_dummy
 
-    plot_grid(xtitle, plot_grid(ylabel_dummy, p_gene, ncol = 2, rel_widths = c(0.03, 0.97)),
-              plot_grid(ylabel_d, p_gsm_d, ncol = 2, rel_widths = c(0.03, 0.97)),
+    plot_grid(xtitle, plot_grid(ylabel_dummy, p_gene, ncol = 2, rel_widths = c(0.04, 0.96)),
+              plot_grid(ylabel_d, p_gsm_d, ncol = 2, rel_widths = c(0.04, 0.96)),
               ncol = 1, align = "v", rel_heights = c(1, 3, 0.15 * c(mut_y_d) + 0.6))
   
   } else if ( !is.null(gsm_print_info_c[[3]]) ) {
@@ -761,8 +765,8 @@ print_prof <- function(gene_symbol, ref_gene_id, start_target, end_target, dir_t
     mut_y_c <- max(gsm_print_info_c[[3]]$y)
     if (mut_y_c < 10) ylabel_c <- ylabel_dummy
     
-    plot_grid(plot_grid(ylabel_dummy, p_gene, ncol = 2, rel_widths = c(0.03, 0.97)),
-              plot_grid(ylabel_c, p_gsm_c, rel_widths = c(0.03, 0.97)),
+    plot_grid(plot_grid(ylabel_dummy, p_gene, ncol = 2, rel_widths = c(0.04, 0.96)),
+              plot_grid(ylabel_c, p_gsm_c, rel_widths = c(0.04, 0.96)),
               ncol = 1, align = "v", rel_heights = c(1, 3, 0.15 * c(mut_y_c) + 0.6))
   
   
@@ -772,7 +776,7 @@ print_prof <- function(gene_symbol, ref_gene_id, start_target, end_target, dir_t
   
   }
   
-  ggsave(paste("../figure/", gene_symbol, "_prof.pdf", sep = ""), width = 7, height = 0.45 + 1.8 + 0.0675 *(mut_y_d + mut_y_c))
+  ggsave(paste("../figure/", gene_symbol, "_prof.tiff", sep = ""), width = 10, height = 0.6 + 2.4 + 0.08 *(mut_y_d + mut_y_c), dpi = 600, units = "cm")
   
 
 }
@@ -800,10 +804,10 @@ gene_print_info_CDKN2A <- function() {
   p_gene <- p_gene + geom_rect(data = exon_box, aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax, fill= "gene"))
   # p_gene <- p_gene + geom_text(data = exon_num, aes(x = x, y = y, label = label, colour = "gene"), size = 3)
 
-  p_gene <- p_gene + geom_segment(data = intron_line, aes(x = x, xend = xend, y = y, yend = yend, colour = "gene"), arrow = arrow(length = unit(0.1, "inches"))) 
+  p_gene <- p_gene + geom_segment(data = intron_line, aes(x = x, xend = xend, y = y, yend = yend, colour = "gene"), size = 0.5, arrow = arrow(length = unit(0.02, "inches"))) 
 
   
-  p_gene <- p_gene + theme_minimal() +
+  p_gene <- p_gene + theme_bw() +
     theme(axis.ticks.x = element_blank(),
           axis.ticks.y = element_blank(),
           panel.grid.major.y = element_blank(),
@@ -814,7 +818,8 @@ gene_print_info_CDKN2A <- function() {
           axis.title.x = element_blank(),
           axis.text.x = element_blank(),
           axis.title.y = element_blank(),
-          axis.text.y = element_blank()) +
+          axis.text.y = element_blank(),
+          plot.margin = unit(c(0.05, 0.05, 0.05, 0.05), "lines")) +
     scale_y_continuous(trans = "reverse") + 
     scale_fill_manual(values = gene_domain_colour) +
     scale_colour_manual(values = gene_domain_colour) +

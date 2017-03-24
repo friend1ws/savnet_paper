@@ -206,7 +206,7 @@ DDDs$Key <- factor(key, levels = rev(unique(key)))
 
 # ggsave("../figure/top_splicing_read_ratio.pdf", width = 8, height = 8)
 ggplot(DDDs %>% filter(Mut_ID %in% as.character(1:12)), aes(x = Key, y = Rel_Count, colour = Mut_ID)) + 
-  geom_jitter(width = 0.15, height = 0.02, size = 1) + 
+  geom_jitter(width = 0.15, height = 0.02, size = 0.8) + 
   coord_flip() +
   my_theme() +
   # theme_minimal() +
@@ -218,7 +218,7 @@ ggplot(DDDs %>% filter(Mut_ID %in% as.character(1:12)), aes(x = Key, y = Rel_Cou
     guides(colour = FALSE) 
 
 
-ggsave("../figure/top_splicing_read_ratio.tiff", width = 12, height = 10, dpi = 600, units = "cm")
+ggsave("../figure/top_splicing_read_ratio.tiff", width = 18, height = 9, dpi = 600, units = "cm")
 
 
 
