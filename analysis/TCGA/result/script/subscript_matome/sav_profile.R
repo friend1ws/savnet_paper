@@ -9,9 +9,9 @@ source("../../../conf/plot_config.R")
 ##########
 # setting data
 splicing_class_colour <- c(
-  "Exon skip" = "#fb8072",
-  "Alternative 5'-ss" = "#80b1d3",
-  "Alternative 3'-ss" = "#b3de69",
+  "Exon skipping" = "#fb8072",
+  "Alternative 5'SS" = "#80b1d3",
+  "Alternative 3'SS" = "#b3de69",
   "Intron retention" = "#bebada"
 )
 
@@ -680,8 +680,8 @@ omega_info$Splicing_Class <-
   factor(omega_info$Splicing_Class,
          levels = c("exon-skip", "alternative-5'-splice-site",
                     "alternative-3'-splice-site", "intron-retention"),
-         labels = c("Exon skip", "Alternative 5'-ss",
-                    "Alternative 3'-ss", "Intron retention"))
+         labels = c("Exon skipping", "Alternative 5'SS",
+                    "Alternative 3'SS", "Intron retention"))
 
 omega_info_proc <- omega_info %>% group_by(Sample_Name, Mutation_Key) %>% 
   summarize(splicing_key_paste = paste(Splicing_Key, collapse = ";"), 

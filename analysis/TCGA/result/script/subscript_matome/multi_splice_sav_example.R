@@ -21,8 +21,8 @@ splicing_mutation$Splicing_Class <-
          levels = c("exon-skip", "alternative-5'-splice-site",
                     "alternative-3'-splice-site",
                     "intron-retention"),
-         labels = c("Exon skip", "Alternative 5'-ss",
-                    "Alternative 3'-ss", "Intron retention"))
+         labels = c("Exon skipping", "Alternative 5'SS",
+                    "Alternative 3'SS", "Intron retention"))
 
 splicing_mutation$Is_Inframe <-
   factor(splicing_mutation$Is_Inframe,

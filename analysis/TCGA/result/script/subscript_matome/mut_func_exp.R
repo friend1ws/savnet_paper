@@ -24,30 +24,30 @@ func_class2[
 
 func_class2[
   mut_func_exp$Func_Class %in% c("exon-skip")] <-
-  "Exon skip (frameshift)"
+  "Exon skipping (frameshift)"
 
 func_class2[
-  func_class2 == "Exon skip (frameshift)" &
+  func_class2 == "Exon skipping (frameshift)" &
     mut_func_exp$Is_Inframe == "in-frame"] <-
-  "Exon skip (inframe)"
+  "Exon skipping (inframe)"
 
 func_class2[
   mut_func_exp$Func_Class %in% c("alternative-5'-splice-site", "intronic-alternative-5'-splice-site")] <-
-  "Alternative 5'-ss (frameshift)"
+  "Alternative 5'SS (frameshift)"
 
 func_class2[
   mut_func_exp$Func_Class %in% c("alternative-3'-splice-site", "intronic-alternative-3'-splice-site")] <-
-  "Alternative 3'-ss (frameshift)"
+  "Alternative 3'SS (frameshift)"
 
 func_class2[
-  func_class2 == "Alternative 5'-ss (frameshift)" &
+  func_class2 == "Alternative 5'SS (frameshift)" &
   mut_func_exp$Is_Inframe == "in-frame"] <-
-  "Alternative 5'-ss (inframe)"
+  "Alternative 5'SS (inframe)"
 
 func_class2[
-  func_class2 == "Alternative 3'-ss (frameshift)" &
+  func_class2 == "Alternative 3'SS (frameshift)" &
   mut_func_exp$Is_Inframe == "in-frame"] <-
-  "Alternative 3'-ss (inframe)"
+  "Alternative 3'SS (inframe)"
 
 
 func_class2[
@@ -71,9 +71,9 @@ func_class2[
 
 mut_func_exp$Func_Class2 <- factor(func_class2, 
                                    levels =rev(c("Silent", "Missense", "Nonsense", "Inframe indel", "Frameshift indel",
-                                                 "Exon skip (frameshift)", "Exon skip (inframe)",
-                                                 "Alternative 5'-ss (frameshift)", "Alternative 5'-ss (inframe)",
-                                                 "Alternative 3'-ss (frameshift)", "Alternative 3'-ss (inframe)",
+                                                 "Exon skipping (frameshift)", "Exon skipping (inframe)",
+                                                 "Alternative 5'SS (frameshift)", "Alternative 5'SS (inframe)",
+                                                 "Alternative 3'SS (frameshift)", "Alternative 3'SS (inframe)",
                                                  "Intron retention", "Complex", "other")))
 
 

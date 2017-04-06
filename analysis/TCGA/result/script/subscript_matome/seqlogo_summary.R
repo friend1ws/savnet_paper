@@ -22,7 +22,7 @@ splicing_mutation$GSM2[splicing_mutation$GSM2 == "intronic-alternative-3'-splice
 splicing_mutation$GSM2 <- factor(splicing_mutation$GSM2,
                                  levels = rev(c("exon-skip", "alternative-5'-splice-site", "alternative-3'-splice-site",
                                                 "intron-retention", "complex", "no-change")),
-                                 labels = rev(c("Exon skip", "Alternative 5'-ss", "Alternative 3'-ss",
+                                 labels = rev(c("Exon skipping", "Alternative 5'SS", "Alternative 3'SS",
                                                 "Intron retention", "Complex", "No change"))
 )
 
@@ -134,8 +134,8 @@ ggsave("../figure/seqlogo_list_simple.tiff", width = 9, height = 9, dpi = 600, u
 count_thres <- 25 
 seq_logo_print_list <- list(plot_grid(ggdraw() + draw_label(""),
                                       ggdraw() + draw_label("No change", size = 7),
-                                      ggdraw() + draw_label("Exon skip", size = 7),
-                                      ggdraw() + draw_label("Alternative 5'-ss", size = 7),
+                                      ggdraw() + draw_label("Exon skipping", size = 7),
+                                      ggdraw() + draw_label("Alternative 5'SS", size = 7),
                                       ggdraw() + draw_label("Intron retention", size = 7),
                                       ggdraw() + draw_label("Complex", size = 7),
                                       ncol = 6, rel_widths = c(0.15, 1, 1, 1, 1, 1)))
@@ -159,7 +159,7 @@ for(pos in c(2, 3, 7, 8, 9)) {
   
   motif_sub <- splicing_mutation %>% 
     filter(Type_Motif == "donor", Rel_Start_Motif == pos) %>%
-    filter(GSM2 == "Exon skip")
+    filter(GSM2 == "Exon skipping")
   count_mat[pos, 2] <- nrow(motif_sub)
   
   if (count_mat[pos, 2] >= count_thres) {
@@ -172,7 +172,7 @@ for(pos in c(2, 3, 7, 8, 9)) {
   
   motif_sub <- splicing_mutation %>% 
     filter(Type_Motif == "donor", Rel_Start_Motif == pos) %>%
-    filter(GSM2 == "Alternative 5'-ss")
+    filter(GSM2 == "Alternative 5'SS")
   count_mat[pos, 3] <- nrow(motif_sub)
   
   if (count_mat[pos, 3] >= count_thres) {
