@@ -45,7 +45,7 @@ GC_info_proc$Splice_Class[GC_info_proc$Splice_Class == "opposite-side-intron-ret
 GC_info_proc$Splice_Class2 <- factor(GC_info_proc$Splice_Class,
                                     levels = c("exon-skip", "alternative-5'-splice-site", "alternative-3'-splice-site", 
                                                "intron-retention", "complex", "no-change"),
-                                    labels = c("Exon skip", "Alternative 5'-ss", "Alternative 3'-ss",
+                                    labels = c("Exon skipping", "Alternative 5'SS", "Alternative 3'SS",
                                                "Intron retention", "Complex", "No change"))
 
 GC_info_proc$Is_Intron2 <- factor(GC_info_proc$Is_Intron, 
@@ -55,7 +55,7 @@ GC_info_proc$Is_Intron2 <- factor(GC_info_proc$Is_Intron,
 
 
 g_gc_d <- ggplot(GC_info_proc %>% 
-  filter(Type_Motif == "Donor", Splice_Class2 != "Alternative 3'-ss", Is_Intron2 %in% c("5' intron", "Exon", "3' intron")), 
+  filter(Type_Motif == "Donor", Splice_Class2 != "Alternative 3'SS", Is_Intron2 %in% c("5' intron", "Exon", "3' intron")), 
   aes(x = Is_Intron2, y = GC_ratio, fill = Splice_Class2)) + 
   geom_boxplot(outlier.size = 0.3, size = 0.3) +
   labs(x = "", y = "GC contents") +
@@ -70,7 +70,7 @@ g_gc_d <- ggplot(GC_info_proc %>%
         strip.text = element_text(size = 5)) 
 
 g_gc_a <- ggplot(GC_info_proc %>% 
-  filter(Type_Motif == "Acceptor", Splice_Class2 != "Alternative 5'-ss", Is_Intron2 %in% c("5' intron", "Exon", "3' intron")),
+  filter(Type_Motif == "Acceptor", Splice_Class2 != "Alternative 5'SS", Is_Intron2 %in% c("5' intron", "Exon", "3' intron")),
   aes(x = Is_Intron2, y = GC_ratio, fill = Splice_Class2)) + 
   geom_boxplot(outlier.size = 0.3, size = 0.3) +
   labs(x = "", y = "GC contents") +
@@ -94,12 +94,12 @@ ggsave("../figure/diff_gc_content.tiff", width = 9, height = 9, dpi = 600, units
 # GC_info_proc$Splice_Class3 <- factor(GC_info_proc$Splice_Class,
 #                                      levels = rev(c("exon-skip", "alternative-5'-splice-site", "alternative-3'-splice-site",
 #                                                 "intron-retention", "complex", "no-change")),
-#                                      labels = rev(c("Exon skip", "Alternative 5' splice site", "Alternative 3' splice site",
+#                                      labels = rev(c("Exon skipping", "Alternative 5' splice site", "Alternative 3' splice site",
 #                                                 "Intron retention", "Complex", "No change")))
 
 
 g_dgc_d <- ggplot(GC_info_proc %>% 
-  filter(Is_Intron == "GC_exon_intron_diff" & Type_Motif == "Donor", Splice_Class2 != "Alternative 3'-ss"),
+  filter(Is_Intron == "GC_exon_intron_diff" & Type_Motif == "Donor", Splice_Class2 != "Alternative 3'SS"),
   aes(x = Splice_Class2, y = GC_ratio, fill = Splice_Class2)) + 
   geom_boxplot(outlier.size = 0.3, size = 0.3) +
   labs(x = "", y = "Diff. of GC contents between exonic and intronic regions") +
@@ -114,7 +114,7 @@ g_dgc_d <- ggplot(GC_info_proc %>%
   scale_fill_manual(values = splicing_class_colour) 
 
 g_dgc_a <- ggplot(GC_info_proc %>% 
-  filter(Is_Intron == "GC_exon_intron_diff" & Type_Motif == "Acceptor", Splice_Class2 != "Alternative 5'-ss"),
+  filter(Is_Intron == "GC_exon_intron_diff" & Type_Motif == "Acceptor", Splice_Class2 != "Alternative 5'SS"),
   aes(x = Splice_Class2, y = GC_ratio, fill = Splice_Class2)) + 
   geom_boxplot(outlier.size = 0.3, size = 0.3) +
   labs(x = "", y = "Diff. of GC contents between exonic and intronic regions") +
@@ -162,7 +162,7 @@ Len_info_proc$Splice_Class[Len_info_proc$Splice_Class == "opposite-side-intron-r
 Len_info_proc$Splice_Class2 <- factor(Len_info_proc$Splice_Class,
                                     levels = c("exon-skip", "alternative-5'-splice-site", "alternative-3'-splice-site",
                                                "intron-retention", "complex", "no-change"),
-                                    labels = c("Exon skip", "Alternative 5'-ss", "Alternative 3'-ss",
+                                    labels = c("Exon skipping", "Alternative 5'SS", "Alternative 3'SS",
                                                "Intron retention", "Complex", "No change"))
 
 Len_info_proc$Is_Intron2 <- factor(Len_info_proc$Is_Intron,
@@ -171,7 +171,7 @@ Len_info_proc$Is_Intron2 <- factor(Len_info_proc$Is_Intron,
 
 
 g_len_d <- ggplot(Len_info_proc %>%
-  filter(Type_Motif == "Donor", Splice_Class2 != "Alternative 3'-ss", Is_Intron2 %in% c("5' intron", "Exon", "3' intron")),
+  filter(Type_Motif == "Donor", Splice_Class2 != "Alternative 3'SS", Is_Intron2 %in% c("5' intron", "Exon", "3' intron")),
   aes(x = Is_Intron2, y = log10(Len), fill = Splice_Class2)) +
   geom_boxplot(outlier.size = 0.3, size = 0.3) +
   labs(x = "", y = "log10(Length)") +
@@ -186,7 +186,7 @@ g_len_d <- ggplot(Len_info_proc %>%
         strip.text = element_text(size = 5))
 
 g_len_a <- ggplot(Len_info_proc %>%
-  filter(Type_Motif == "Acceptor", Splice_Class2 != "Alternative 5'-ss", Is_Intron2 %in% c("5' intron", "Exon", "3' intron")),
+  filter(Type_Motif == "Acceptor", Splice_Class2 != "Alternative 5'SS", Is_Intron2 %in% c("5' intron", "Exon", "3' intron")),
   aes(x = Is_Intron2, y = log10(Len), fill = Splice_Class2)) +
   geom_boxplot(outlier.size = 0.3, size = 0.3) +
   labs(x = "", y = "log10(Length)") +

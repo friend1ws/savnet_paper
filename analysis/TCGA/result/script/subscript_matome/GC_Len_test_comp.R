@@ -18,11 +18,11 @@ GC$Splice_Class[GC$Splice_Class == "opposite-side-intron-retention"] <- "intron-
 GC$Splice_Class <- factor(GC$Splice_Class,
                           levels = c("exon-skip", "alternative-5'-splice-site", "alternative-3'-splice-site", 
                                      "intron-retention", "complex", "no-change"),
-                          labels = c("Exon skip", "Alternative 5'-ss", "Alternative 3'-ss",
+                          labels = c("Exon skipping", "Alternative 5'SS", "Alternative 3'SS",
                                      "Intron retention", "Complex", "No change"))
 
 
-ind2sptype <- c("Exon skip", "Alternative 5'-ss", "Alternative 3'-ss",
+ind2sptype <- c("Exon skipping", "Alternative 5'SS", "Alternative 3'SS",
                "Intron retention", "Complex", "No change")
 # ind2motif <- c("donor", "acceptor")
 
@@ -30,10 +30,10 @@ ind2sptype <- c("Exon skip", "Alternative 5'-ss", "Alternative 3'-ss",
 get_print_info <- function(GC_Len_df, is_donor, is_GC, is_dummy) {
 
   if (is_donor == TRUE) {
-    ind2sptype <- c("Exon skip", "Alternative 5'-ss",
+    ind2sptype <- c("Exon skipping", "Alternative 5'SS",
                     "Intron retention", "Complex", "No change")
   } else {
-    ind2sptype <- c("Exon skip", "Alternative 3'-ss",
+    ind2sptype <- c("Exon skipping", "Alternative 3'SS",
                     "Intron retention", "Complex", "No change")
   }
   
@@ -128,7 +128,7 @@ get_print_info <- function(GC_Len_df, is_donor, is_GC, is_dummy) {
     my_theme() +
     scale_fill_gradient2(low = "#2166ac", mid = "#ffffff", high = "#b2182b") +
     theme(axis.line = element_blank(),
-          axis.text.x = element_text(angle = 90, hjust = 1),
+          axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5),
           legend.key.width = unit(1, "cm"),
           panel.border = element_blank(),
           panel.grid.major = element_blank(),

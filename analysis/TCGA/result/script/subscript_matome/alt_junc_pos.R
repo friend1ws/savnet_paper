@@ -32,8 +32,8 @@ a$Mutation_Type <- factor(a$Mutation_Type,
                           levels = c("splicing donor disruption", "splicing acceptor disruption", 
                             "splicing donor creation", "splicing acceptor creation"))
 
-a$Splicing_Class <- rep("Alternative 5'-ss", nrow(a))
-a$Splicing_Class[a$Mutation_Type %in% c("splicing acceptor creation", "splicing acceptor disruption")] <- "Alternative 3'-ss"
+a$Splicing_Class <- rep("Alternative 5'SS", nrow(a))
+a$Splicing_Class[a$Mutation_Type %in% c("splicing acceptor creation", "splicing acceptor disruption")] <- "Alternative 3'SS"
 
 
 
