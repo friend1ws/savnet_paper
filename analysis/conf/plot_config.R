@@ -20,10 +20,13 @@ my_theme <- function() {
 
 splicing_class_colour <- c(
   "Exon skip" = "#fb8072",
+  "Exon skipping" = "#fb8072",  
   "Alternative 5' splice site" = "#80b1d3",
   "Alternative 5'-ss" = "#80b1d3",
+  "Alternative 5'SS" = "#80b1d3",
   "Alternative 3' splice site" = "#b3de69",
   "Alternative 3'-ss" = "#b3de69",
+  "Alternative 3'SS" = "#b3de69",    
   "Intron retention" = "#bebada",
   "Complex" = "#fdb462",
   "Exon skip (frameshift)" = "#fb8072",

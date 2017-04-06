@@ -2,6 +2,7 @@ library(dplyr)
 library(ggplot2)
 library(cowplot)
 library(tidyr)
+library(scales)
 
 source("../../../conf/plot_config.R")
 
@@ -114,8 +115,8 @@ mem_info_all$Sig_Type[mem_info_all$COSM_ID == "7" & mem_info_all$Corr >= 0.75] <
 mem_info_all$Sig_Type <- factor(mem_info_all$Sig_Type, levels = sig_type_order)
 
 
-base_ratio <- sum(mem_info$Membership_Sum) / sum(mem_info_all$Membership_Sum)
-
+# base_ratio <- sum(mem_info$Membership_Sum) / sum(mem_info_all$Membership_Sum)
+base_ratio <- 1
 
 sig2mem <- mem_info %>% 
   group_by(Sig_Type) %>% 
@@ -171,14 +172,18 @@ for(i in 1:length(ctype_vec)) {
 
 
   tp <- ggplot(gsm_ratio, aes(x = Sig_Type, y = gsm_ratio, fill = Sig_Type)) + 
-    geom_bar(stat = "identity") + coord_flip() +
+    geom_bar(stat = "identity") + # coord_flip() +
     my_theme() +
     ggtitle(ctype) + 
     # scale_fill_brewer(palette = "Set1") +
     labs(x = "", y = "", fill = "") +
-    theme(legend.position = "bottom") +
-    scale_x_discrete(limits = rev(sig_type_order[sig_type_order %in% gsm_ratio$Sig_Type])) +
-    scale_y_continuous(expand = c(0, 0), limits = c(0, 1.1 * max(gsm_ratio$gsm_ratio))) +
+    theme(legend.position = "bottom",
+          axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)) +
+    scale_x_discrete(limits = sig_type_order[sig_type_order %in% gsm_ratio$Sig_Type]) +
+    scale_y_continuous(expand = c(0, 0), # labels = scientific, 
+                       # breaks = seq(0, max(gsm_ratio$gsm_ratio), 0.002),
+                       # minor_breaks = seq(0.001, max(gsm_ratio$gsm_ratio), 0.002),
+                       limits = c(0, 1.1 * max(gsm_ratio$gsm_ratio))) +
     scale_fill_manual(values = signature_colour) +
     guides(fill = FALSE)
 
@@ -188,17 +193,17 @@ for(i in 1:length(ctype_vec)) {
 
 
 
-p_tobacco <- plot_grid(p_ctype[[1]], p_ctype[[2]], nrow = 2, align = "v")
-p_uv <- plot_grid(p_ctype[[3]], p_ctype[[4]], nrow = 2, align = "v")
-p_pole <- plot_grid(p_ctype[[5]], p_ctype[[6]], nrow = 2, align = "v")
+# p_tobacco <- plot_grid(p_ctype[[1]], p_ctype[[2]], nrow = 2, align = "v")
+# p_uv <- plot_grid(p_ctype[[3]], p_ctype[[4]], nrow = 2, align = "v")
+# p_pole <- plot_grid(p_ctype[[5]], p_ctype[[6]], nrow = 2, align = "v")
 
-# plot_grid(p_tobacco, p_uv, p_pole, nrow = 1, align = "h")
+#  plot_grid(p_tobacco, p_uv, p_pole, nrow = 1, align = "h")
 
-xtitle <- ggdraw() + draw_label("Relative SAV fraction", size = 8)
+ytitle <- ggdraw() + draw_label("SAV fraction", size = 8, angle = 90)
 
-plot_grid(plot_grid(p_tobacco, p_uv, p_pole, nrow = 1, align = "h"), xtitle, ncol = 1, rel_heights = c(1, 0.1))
+plot_grid(ytitle, plot_grid(plotlist = p_ctype, nrow = 2, align = "hv"), nrow = 1, rel_widths = c(0.1, 1), scale = 0.99)
 
-ggsave(paste("../figure/rel_sp_ratio_ctype.tiff", sep = ""), width = 18, height = 8, dpi = 600, units = "cm")
+ggsave(paste("../figure/rel_sp_ratio_ctype.tiff", sep = ""), width = 10, height = 10, dpi = 600, units = "cm")
 
 
 ##########

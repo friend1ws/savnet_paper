@@ -117,7 +117,7 @@ for(pos in c(2, 3, 7, 8, 9)) {
 }
 
 
-plot_grid(ggdraw() + draw_label("Mutation position at splicing donor sites", angle = 90, size = 7),
+plot_grid(ggdraw() + draw_label("Variant position at splicing donor sites", angle = 90, size = 7),
           plot_grid(
             plot_grid(plotlist = seq_logo_print_list, ncol = 1, rel_heights = c(0.4, 1, 1, 1, 1, 1.2)),
             ggdraw() + draw_label("Position", size = 7), 
@@ -131,7 +131,7 @@ ggsave("../figure/seqlogo_list_simple.tiff", width = 9, height = 9, dpi = 600, u
 ##########
 # detailed version
 
-count_thres <- 30
+count_thres <- 25 
 seq_logo_print_list <- list(plot_grid(ggdraw() + draw_label(""),
                                       ggdraw() + draw_label("No change", size = 7),
                                       ggdraw() + draw_label("Exon skip", size = 7),
@@ -195,11 +195,12 @@ for(pos in c(2, 3, 7, 8, 9)) {
     tgg_logo_IR <- ggplot()
   }
   
- 
+
   motif_sub <- splicing_mutation %>% 
     filter(Type_Motif == "donor", Rel_Start_Motif == pos) %>%
     filter(GSM2 == "Complex")
   count_mat[pos, 5] <- nrow(motif_sub)
+
 
   if (count_mat[pos, 5] >= count_thres) {
     tgg_logo_CP <- ggseqlogo(t(get_base_count_mat(motif_sub$Motif_Seq, 9)), TRUE) + 
@@ -215,11 +216,11 @@ for(pos in c(2, 3, 7, 8, 9)) {
       tgg_logo_IR <- tgg_logo_IR + theme_nonbottom()
       tgg_logo_CP <- tgg_logo_CP + theme_nonbottom()
   } else {
-      if (count_mat[pos, 1] > count_thres) tgg_logo_no <- tgg_logo_no + theme_bottom() + scale_x_continuous(breaks = 1:9, labels = c("-3", "-2", "-1", "1", "2", "3", "4", "5", "6"))
-      if (count_mat[pos, 2] > count_thres) tgg_logo_ES <- tgg_logo_ES + theme_bottom() + scale_x_continuous(breaks = 1:9, labels = c("-3", "-2", "-1", "1", "2", "3", "4", "5", "6"))
-      if (count_mat[pos, 3] > count_thres) tgg_logo_A5S <- tgg_logo_A5S + theme_bottom() + scale_x_continuous(breaks = 1:9, labels = c("-3", "-2", "-1", "1", "2", "3", "4", "5", "6"))
-      if (count_mat[pos, 4] > count_thres) tgg_logo_IR <- tgg_logo_IR + theme_bottom() + scale_x_continuous(breaks = 1:9, labels = c("-3", "-2", "-1", "1", "2", "3", "4", "5", "6"))
-      if (count_mat[pos, 5] > count_thres) tgg_logo_CP <- tgg_logo_CP + theme_bottom() + scale_x_continuous(breaks = 1:9, labels = c("-3", "-2", "-1", "1", "2", "3", "4", "5", "6"))
+      if (count_mat[pos, 1] >= count_thres) tgg_logo_no <- tgg_logo_no + theme_bottom() + scale_x_continuous(breaks = 1:9, labels = c("-3", "-2", "-1", "1", "2", "3", "4", "5", "6"))
+      if (count_mat[pos, 2] >= count_thres) tgg_logo_ES <- tgg_logo_ES + theme_bottom() + scale_x_continuous(breaks = 1:9, labels = c("-3", "-2", "-1", "1", "2", "3", "4", "5", "6"))
+      if (count_mat[pos, 3] >= count_thres) tgg_logo_A5S <- tgg_logo_A5S + theme_bottom() + scale_x_continuous(breaks = 1:9, labels = c("-3", "-2", "-1", "1", "2", "3", "4", "5", "6"))
+      if (count_mat[pos, 4] >= count_thres) tgg_logo_IR <- tgg_logo_IR + theme_bottom() + scale_x_continuous(breaks = 1:9, labels = c("-3", "-2", "-1", "1", "2", "3", "4", "5", "6"))
+      if (count_mat[pos, 5] >= count_thres) tgg_logo_CP <- tgg_logo_CP + theme_bottom() + scale_x_continuous(breaks = 1:9, labels = c("-3", "-2", "-1", "1", "2", "3", "4", "5", "6"))
   }
 
 
@@ -237,7 +238,7 @@ for(pos in c(2, 3, 7, 8, 9)) {
               tgg_logo_IR,
               tgg_logo_CP, 
               ncol = 6, rel_widths = c(0.15, 1, 1, 1, 1, 1))
-  )
+    )
   )
   
 }
@@ -260,7 +261,7 @@ for(pos in c(2, 3, 7, 8, 9)) {
 # )
 
 
-plot_grid(ggdraw() + draw_label("Mutation position at splicing donor sites", angle = 90, size = 7),
+plot_grid(ggdraw() + draw_label("Variant position at splicing donor sites", angle = 90, size = 7),
           plot_grid(
             plot_grid(plotlist = seq_logo_print_list, ncol = 1, rel_heights = c(0.4, 1, 1, 1, 1, 1.2)),
             ggdraw() + draw_label("Position", size = 7), 
@@ -271,4 +272,56 @@ plot_grid(ggdraw() + draw_label("Mutation position at splicing donor sites", ang
 ggsave("../figure/seqlogo_list_detail.tiff", width = 16, height = 9, dpi = 600, units = "cm")
 
 
+
+
+seq_logo_print_list <- list(plot_grid(ggdraw() + draw_label(""),
+                                      ggdraw() + draw_label("No change", size = 7),
+                                      ggdraw() + draw_label("Abnormal splicing", size = 7),
+                                      ncol = 3, rel_widths = c(0.15, 1, 1)))
+
+for(pos in c(1, 2, 4, 7)) {
+
+  motif_sub <- splicing_mutation %>%
+    filter(Type_Motif == "acceptor", Rel_Start_Motif == pos) %>%
+    filter(GSM2 == "No change") %>% filter(FPKM >= 10.0)
+
+  tgg_logo_no <- ggseqlogo(t(get_base_count_mat(motif_sub$Motif_Seq, 7)), TRUE) +
+    labs(x = "", y = "")
+
+  motif_sub <- splicing_mutation %>%
+    filter(Type_Motif == "acceptor", Rel_Start_Motif == pos) %>%
+    filter(GSM2 != "No change")
+
+  tgg_logo_yes <- ggseqlogo(t(get_base_count_mat(motif_sub$Motif_Seq, 7)), TRUE) +
+    labs(x = "", y = "")
+
+
+  if (pos != 7) {
+        tgg_logo_no <- tgg_logo_no + theme_nonbottom()
+        tgg_logo_yes <- tgg_logo_yes + theme_nonbottom()
+  } else {
+        tgg_logo_no <- tgg_logo_no + theme_bottom() + scale_x_continuous(breaks = 1:7, labels = c("6", "5", "4", "3", "2", "1", "-1"))
+        tgg_logo_yes <- tgg_logo_yes + theme_bottom() + scale_x_continuous(breaks = 1:7, labels = c("6", "5", "4", "3", "2", "1", "-1"))
+  }
+
+  label_pos <- ifelse(pos > 6, as.character(-pos + 6), as.character(-pos + 7))
+  seq_logo_print_list <- c(seq_logo_print_list, list(
+    plot_grid(ggdraw() + draw_label(label_pos, size = 7),
+              tgg_logo_no,
+              tgg_logo_yes, ncol = 3, rel_widths = c(0.15, 1, 1))
+  )
+  )
+
+}
+
+
+plot_grid(ggdraw() + draw_label("Variant position at splicing acceptort sites", angle = 90, size = 7),
+          plot_grid(
+            plot_grid(plotlist = seq_logo_print_list, ncol = 1, rel_heights = c(0.4, 1, 1, 1, 1.2)),
+            ggdraw() + draw_label("Position", size = 7),
+            align = "v", ncol = 1, rel_heights = c(4.7, 0.25)),
+          ncol = 2, rel_widths = c(0.07, 1))
+
+
+ggsave("../figure/seqlogo_acceptor.tiff", width = 9, height = 7, dpi = 600, units = "cm")
 

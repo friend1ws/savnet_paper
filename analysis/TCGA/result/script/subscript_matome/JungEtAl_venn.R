@@ -32,28 +32,43 @@ omega <- read.table("../temporary/TCGA.savnet.motif_summary.txt", sep = "\t",
 omega_CG <- omega %>% filter(Gene_Symbol %in% cancer_gene_list)
 
 
-All_comp <- list(GSM = omega$Comp_Key, JungEtAl = JungEtAl_RS$Comp_Key)
+All_comp <- list(SAVNet = omega$Comp_Key, JungEtAl = JungEtAl_RS$Comp_Key)
 
 venn.diagram(All_comp, 
              fill = c("dodgerblue", "goldenrod1"),
-             imagetype = "png",
-             filename = "../figure/JungEtAl_comp.png",
-             height = 3000,
-             width = 3000,
-             margin = 0.05,
+             imagetype = "tiff",
+             filename = "../figure/JungEtAl_comp.tiff",
+             resolution = 600,
+             height = 4,
+             width = 4,
+             units = "cm",
+             margin = 0.12,
              main = "All genes",
-             main.cex = 1.5)
+             main.pos = c(0.5, 0.9),
+             main.cex = 0.6,
+             cat.cex = 0.5,
+             cat.dist = 0.03,
+             cat.pos = c(-30, 30),
+             cex = 0.5)
 
-CG_comp <- list(GSM = omega_CG$Comp_Key, JungEtAl = JungEtAl_RS_CG$Comp_Key)
+
+CG_comp <- list(SAVNet = omega_CG$Comp_Key, JungEtAl = JungEtAl_RS_CG$Comp_Key)
 
 venn.diagram(CG_comp, 
              fill = c("dodgerblue", "goldenrod1"),
-             imagetype = "png",
-             filename = "../figure/JungEtAl_comp_CG.png",
-             height = 3000,
-             width = 3000,
-             margin = 0.05,
+             imagetype = "tiff",
+             filename = "../figure/JungEtAl_comp_CG.tiff",
+             resolution = 600,
+             height = 4,
+             width = 4,
+             units = "cm",
+             margin = 0.12,
              main = "Cancer genes",
-             main.cex = 1.5)
+             main.pos = c(0.5, 0.9),
+             main.cex = 0.6,
+             cat.cex = 0.5,
+             cat.dist = 0.03,
+             cat.pos = c(-30, 30),
+             cex = 0.5)
 
 

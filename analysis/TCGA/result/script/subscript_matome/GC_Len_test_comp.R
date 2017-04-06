@@ -52,43 +52,43 @@ get_print_info <- function(GC_Len_df, is_donor, is_GC, is_dummy) {
         
         W_g <- wilcox.test(GC_1$GC_intron_5prime, GC_2$GC_intron_5prime, alternative = "greater")
         W_l <- wilcox.test(GC_1$GC_intron_5prime, GC_2$GC_intron_5prime, alternative = "less")
-        mlogp <- ifelse(W_g$p.value < W_l$p.value, -log10(W_g$p.value), log10(W_l$p.value))
-        # mlogp <- -log10(W_g$p.value) + log10(W_l$p.value)
+        # mlogp <- ifelse(W_g$p.value < W_l$p.value, -log10(W_g$p.value), log10(W_l$p.value))
+        mlogp <- -log10(W_g$p.value) + log10(W_l$p.value)
         Ps <- rbind(Ps, data.frame(x = ind2sptype[i1], y = ind2sptype[i2], type = "GC_intron_5prime", mlogp = mlogp, motif = tmotif))
         
         
         W_g <- wilcox.test(GC_1$GC_exon, GC_2$GC_exon, alternative = "greater")
         W_l <- wilcox.test(GC_1$GC_exon, GC_2$GC_exon, alternative = "less")
-        mlogp <- ifelse(W_g$p.value < W_l$p.value, -log10(W_g$p.value), log10(W_l$p.value))
-        # mlogp <- -log10(W_g$p.value) + log10(W_l$p.value)
+        # mlogp <- ifelse(W_g$p.value < W_l$p.value, -log10(W_g$p.value), log10(W_l$p.value))
+        mlogp <- -log10(W_g$p.value) + log10(W_l$p.value)
         Ps <- rbind(Ps, data.frame(x = ind2sptype[i1], y = ind2sptype[i2], type = "GC_exon", mlogp = mlogp, motif = tmotif))
         
         W_g <- wilcox.test(GC_1$GC_intron_3prime, GC_2$GC_intron_3prime, alternative = "greater")
         W_l <- wilcox.test(GC_1$GC_intron_3prime, GC_2$GC_intron_3prime, alternative = "less")
-        mlogp <- ifelse(W_g$p.value < W_l$p.value, -log10(W_g$p.value), log10(W_l$p.value))
-        # mlogp <- -log10(W_g$p.value) + log10(W_l$p.value)
+        # mlogp <- ifelse(W_g$p.value < W_l$p.value, -log10(W_g$p.value), log10(W_l$p.value))
+        mlogp <- -log10(W_g$p.value) + log10(W_l$p.value)
         Ps <- rbind(Ps, data.frame(x = ind2sptype[i1], y = ind2sptype[i2], type = "GC_intron_3prime", mlogp = mlogp, motif = tmotif))
         
       } else {
         
         W_g <- wilcox.test(GC_1$Len_intron_5prime, GC_2$Len_intron_5prime, alternative = "greater")
         W_l <- wilcox.test(GC_1$Len_intron_5prime, GC_2$Len_intron_5prime, alternative = "less")
-        mlogp <- ifelse(W_g$p.value < W_l$p.value, -log10(W_g$p.value), log10(W_l$p.value))
-        # mlogp <- -log10(W_g$p.value) + log10(W_l$p.value)
+        # mlogp <- ifelse(W_g$p.value < W_l$p.value, -log10(W_g$p.value), log10(W_l$p.value))
+        mlogp <- -log10(W_g$p.value) + log10(W_l$p.value)
         Ps <- rbind(Ps, data.frame(x = ind2sptype[i1], y = ind2sptype[i2], type = "Len_intron_5prime", mlogp = mlogp, motif = tmotif))
       
       
         W_g <- wilcox.test(GC_1$Len_exon, GC_2$Len_exon, alternative = "greater")
         W_l <- wilcox.test(GC_1$Len_exon, GC_2$Len_exon, alternative = "less")
-        mlogp <- ifelse(W_g$p.value < W_l$p.value, -log10(W_g$p.value), log10(W_l$p.value))
-        # mlogp <- -log10(W_g$p.value) + log10(W_l$p.value)
+        # mlogp <- ifelse(W_g$p.value < W_l$p.value, -log10(W_g$p.value), log10(W_l$p.value))
+        mlogp <- -log10(W_g$p.value) + log10(W_l$p.value)
         Ps <- rbind(Ps, data.frame(x = ind2sptype[i1], y = ind2sptype[i2], type = "Len_exon", mlogp = mlogp, motif = tmotif))
       
       
         W_g <- wilcox.test(GC_1$Len_intron_3prime, GC_2$Len_intron_3prime, alternative = "greater")
         W_l <- wilcox.test(GC_1$Len_intron_3prime, GC_2$Len_intron_3prime, alternative = "less")
-        mlogp <- ifelse(W_g$p.value < W_l$p.value, -log10(W_g$p.value), log10(W_l$p.value))
-        # mlogp <- -log10(W_g$p.value) + log10(W_l$p.value)
+        # mlogp <- ifelse(W_g$p.value < W_l$p.value, -log10(W_g$p.value), log10(W_l$p.value))
+        mlogp <- -log10(W_g$p.value) + log10(W_l$p.value)
         Ps <- rbind(Ps, data.frame(x = ind2sptype[i1], y = ind2sptype[i2], type = "Len_intron_3prime", mlogp = mlogp, motif = tmotif))
       
       }

@@ -20,7 +20,7 @@ ggplot(mut_count, aes(x = Cancer_Type, y = SAV_Count)) +
   geom_point(position = position_jitter(width = 0.1, height = 0.1), colour = "#fc8d59", alpha = 0.2, size = 0.3) +
   geom_boxplot(outlier.colour = NA, fill = "#3288bd", size = 0.3) +
   my_theme() +
-  labs(y = "SAV Count", x = "Cancer type") +
+  labs(y = "SAV count", x = "Cancer type") +
   theme(# axis.text = element_text(size = rel(1.2)),
         # axis.title = element_text(size = rel(1.5)),
         axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5),

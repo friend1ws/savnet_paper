@@ -65,7 +65,7 @@ g_gc_d <- ggplot(GC_info_proc %>%
   ylim(c(0.2, 0.8)) + 
   scale_fill_manual(values = splicing_class_colour) +
   my_theme() +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 6),
+  theme(axis.text.x = element_text(angle = 90, hjust = 1,vjust = 0.5, size = 6),
         axis.title = element_text(size = 6),
         strip.text = element_text(size = 5)) 
 
@@ -80,7 +80,7 @@ g_gc_a <- ggplot(GC_info_proc %>%
   ylim(c(0.2, 0.8)) + 
   scale_fill_manual(values = splicing_class_colour) + 
   my_theme() +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 6),
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5, size = 6),
         axis.title = element_text(size = 6),
         strip.text = element_text(size = 5))
 
@@ -181,7 +181,7 @@ g_len_d <- ggplot(Len_info_proc %>%
   ylim(c(1.5, 5)) +
   scale_fill_manual(values = splicing_class_colour) +
   my_theme() +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 6),
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5, size = 6),
         axis.title = element_text(size = 6),
         strip.text = element_text(size = 5))
 
@@ -196,7 +196,7 @@ g_len_a <- ggplot(Len_info_proc %>%
   ylim(c(1.5, 5)) +
   scale_fill_manual(values = splicing_class_colour) +
   my_theme() +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 6),
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5, size = 6),
         axis.title = element_text(size = 6),
         strip.text = element_text(size = 5))
 

@@ -116,7 +116,7 @@ Ds$Top_Splice[Ds$Top_Splice == "intronic-alternative-5'-splice-site"] <- "altern
 Ds$Top_Splice <- factor(Ds$Top_Splice,
                         levels = c("exon-skip", "alternative-5'-splice-site", 
                                    "alternative-3'-splice-site", "intron-retention"),
-                        labels = c("Exon skip", "Alternative 5'-ss", "Alternative 3'-ss", "Intron retention"))
+                        labels = c("Exon skipping", "Alternative 5'SS", "Alternative 3'SS", "Intron retention"))
 
 motif2mut_splice_info <- Ds %>% select(Motif_Pos, Mut_Num, Top_Splice) %>% distinct()
 
@@ -262,19 +262,19 @@ motif2first_second_read_count <- function(motif_pos_str) {
   top_splice <- names(mean_count_vec)[top_ind]
   sec_splice <- names(mean_count_vec)[sec_ind]
   
-  top_splice <- sub("exon-skip", "Exon skip", top_splice)
+  top_splice <- sub("exon-skip", "Exon skipping", top_splice)
   top_splice <- sub("intronic-", "", top_splice)
   top_splice <- sub("opposite-side-", "", top_splice)
   top_splice <- sub("intron-retention", "Intron retention", top_splice)
-  top_splice <- sub("alternative-5'-splice-site", "Alternative 5'-ss", top_splice)
-  top_splice <- sub("alternative-3'-splice-site", "Alternative 3'-ss", top_splice)
+  top_splice <- sub("alternative-5'-splice-site", "Alternative 5'SS", top_splice)
+  top_splice <- sub("alternative-3'-splice-site", "Alternative 3'SS", top_splice)
   
-  sec_splice <- sub("exon-skip", "Exon skip", sec_splice)
+  sec_splice <- sub("exon-skip", "Exon skipping", sec_splice)
   sec_splice <- sub("intronic-", "", sec_splice)
   sec_splice <- sub("opposite-side-", "", sec_splice)
   sec_splice <- sub("intron-retention", "Intron retention", sec_splice)
-  sec_splice <- sub("alternative-5'-splice-site", "Alternative 5'-ss", sec_splice)
-  sec_splice <- sub("alternative-3'-splice-site", "Alternative 3'-ss", sec_splice)
+  sec_splice <- sub("alternative-5'-splice-site", "Alternative 5'SS", sec_splice)
+  sec_splice <- sub("alternative-3'-splice-site", "Alternative 3'SS", sec_splice)
   
   first_vec <- vec_mat[, top_ind]
   second_vec <- vec_mat[, sec_ind]

@@ -156,7 +156,7 @@ g_mes_d <- ggplot(mes_df %>% filter(splice_class != "Alternative 3'-ss" & motif_
   guides(fill = FALSE)
 
 g_mes_a <- ggplot(mes_df %>% filter(splice_class != "Alternative 5'-ss" & motif_type == "Acceptor"), aes(x = splice_class, y = mes_diff, fill = splice_class)) + 
-  geom_boxplot(size = 0.3, outlier.size = 0.4) +
+  geom_boxplot(size = 0.3, outlier.size = 0.3) +
   coord_flip() +
   ggtitle("Acceptor disruption") +
   labs(x = "", y = "") +
@@ -170,7 +170,7 @@ ylabel <- ggdraw() + draw_label("Diff. of MaxEnt score", size = 7)
 
 plot_grid(g_mes_d, g_mes_a, ylabel, ncol = 1, rel_heights = c(1, 1, 0.1))
 
-ggsave("../figure/diff_mes_spliceclass.tiff", width = 10, height = 7, dpi = 600, units = "cm")
+ggsave("../figure/diff_mes_spliceclass.tiff", width = 9, height = 8, dpi = 600, units = "cm")
 
 
 pos_colour <- rep("grey30", 9)
@@ -178,7 +178,7 @@ pos_colour[4:5] <- "red"
 
 ggplot(mes_df %>% filter(motif_type == "Donor"), 
        aes(x = factor(mut_pos, levels = 1:9), y = mes_diff, fill = is_gsm)) +
-  geom_boxplot(size = 0.3, outlier.size = 0.4) +
+  geom_boxplot(size = 0.3, outlier.size = 0.3) +
   labs(fill = "") +
   my_theme() +
   ylim(c(-15, 10)) + 
@@ -189,7 +189,7 @@ ggplot(mes_df %>% filter(motif_type == "Donor"),
   theme(axis.text.x = element_text(colour = pos_colour),
         legend.position = "bottom")
 
-ggsave("../figure/diff_mes_mutpos_donor.tiff", width = 10, height = 7, dpi = 600, units = "cm")
+ggsave("../figure/diff_mes_mutpos_donor.tiff", width = 7, height = 5, dpi = 600, units = "cm")
 
 
 
@@ -198,7 +198,7 @@ pos_colour[5:6] <- "red"
 
 ggplot(mes_df %>% filter(motif_type == "Acceptor"), 
        aes(x = factor(mut_pos, levels = 1:7), y = mes_diff, fill = is_gsm)) +
-  geom_boxplot(size = 0.3, outlier.size = 0.4) +
+  geom_boxplot(size = 0.3, outlier.size = 0.3) +
   my_theme() +
   labs(fill = "") +
   ylim(c(-15, 10)) + 
@@ -209,7 +209,7 @@ ggplot(mes_df %>% filter(motif_type == "Acceptor"),
   theme(axis.text.x = element_text(colour = pos_colour),
         legend.position = "bottom") 
 
-ggsave("../figure/diff_mes_mutpos_acceptor.tiff", width = 10, height = 7, dpi = 600, units = "cm")
+ggsave("../figure/diff_mes_mutpos_acceptor.tiff", width = 5.5, height = 5, dpi = 600, units = "cm")
 
 
 
@@ -235,7 +235,7 @@ ggplot(hb_df %>% filter(splice_class != "Alternative 3'-ss"), aes(x = splice_cla
   guides(fill = FALSE)
 
 
-ggsave("../figure/diff_hb_spliceclass.tiff", width = 8, height = 4, dpi = 600, units = "cm")
+ggsave("../figure/diff_hb_spliceclass.tiff", width = 9, height = 4, dpi = 600, units = "cm")
 
 
 
@@ -246,7 +246,7 @@ pos_colour[4:5] <- "red"
 
 ggplot(hb_df, 
        aes(x = factor(mut_pos, levels = 1:9), y = hb_diff, fill = is_gsm)) +
-  geom_boxplot(outlier.size = 0.4) +
+  geom_boxplot(size = 0.3, outlier.size = 0.3) +
   my_theme() +
   labs(fill = "") +
   ylim(c(-20, 10)) + 
@@ -257,6 +257,6 @@ ggplot(hb_df,
         legend.position = "bottom") +
   scale_fill_manual(values = c("#ef8a62", "#999999")) 
 
-ggsave("../figure/diff_hb_mutpos_donor.tiff", width = 10, height = 7, dpi = 600, units = "cm")
+ggsave("../figure/diff_hb_mutpos_donor.tiff", width = 7, height = 5, dpi = 600, units = "cm")
 
 

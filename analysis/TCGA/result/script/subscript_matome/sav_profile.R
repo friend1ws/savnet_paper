@@ -366,7 +366,8 @@ get_gsm_print_info <- function(omega_info_input, gene_symbol, ref_gene_id, count
   tmp_mutation_num <- 0
   
   if (nrow(sp_mut_filt) == 0) {
-    return(list(ggplot(), splicing_line, mut_line))
+    return(NULL)
+    # return(list(ggplot(), splicing_line, mut_line))
   }
   
   temp_mut <- data.frame(Motif_Pos = c(""))
@@ -577,9 +578,13 @@ get_gsm_print_info <- function(omega_info_input, gene_symbol, ref_gene_id, count
     scale_colour_manual(values = splicing_mut_class_colour) +
     scale_fill_manual(values = splicing_mut_class_colour) +
     scale_linetype_manual(values = c("In frame" = "solid", "Frameshift" = "longdash"))
-  
-  return(list(p_gsm, splicing_line, mut_line))
-  
+
+
+  if (!is.null(mut_line)) { 
+    return(list(p_gsm, splicing_line, mut_line))
+  } else {
+    return(NULL)
+  }
 }
 
 ##########
@@ -719,6 +724,10 @@ print_prof <- function(gene_symbol, ref_gene_id, start_target, end_target, dir_t
   p_gene <- gene_print_info[[1]]
   exon_intron_junction <- gene_print_info[[4]]
 
+  if (gene_symbol == "MIEN1") {
+    print(exon_intron_junction)
+  }
+
   gsm_print_info_d <- get_gsm_print_info(omega_info_uniq, gene_symbol, ref_gene_id, 1, start_target, end_target, dir_target, "disruption", exon_intron_junction, mut_margin)
   gsm_print_info_c <- get_gsm_print_info(omega_info_uniq, gene_symbol, ref_gene_id, 1, start_target, end_target, dir_target, "creation", exon_intron_junction, mut_margin)
 
@@ -731,13 +740,14 @@ print_prof <- function(gene_symbol, ref_gene_id, start_target, end_target, dir_t
     xtitle <- ggdraw() + draw_label("CDKN2A(NM_000077,NM_058195, 156aa,132aa)", size = 7)
   }
  
-  ylabel_dummy <- ggdraw() + draw_label("", angle = 90) 
-  ylabel_d <- ggdraw() + draw_label("Disruption", angle = 90)
-  ylabel_c <- ggdraw() + draw_label("Creation", angle = 90)
+  ylabel_dummy <- ggdraw() + draw_label("", angle = 90, size = 7) 
+  ylabel_d <- ggdraw() + draw_label("Disruption", angle = 90, size = 7)
+  ylabel_c <- ggdraw() + draw_label("Creation", angle = 90, size = 7)
+ 
  
 
-  if ( !is.null(gsm_print_info_d[[3]]) & !is.null(gsm_print_info_c[[3]]) ) {
-  
+  if ( !is.null(gsm_print_info_d) & !is.null(gsm_print_info_c) ) {
+
     mut_y_d <- max(gsm_print_info_d[[3]]$y)
     mut_y_c <- max(gsm_print_info_c[[3]]$y)
     if (mut_y_d < 10 | mut_y_c < 10)  {
@@ -751,20 +761,25 @@ print_prof <- function(gene_symbol, ref_gene_id, start_target, end_target, dir_t
               ncol = 1, align = "v", rel_heights = c(1, 3, 0.15 * c(mut_y_d, mut_y_c) + 0.6))
   
   
-  } else if ( !is.null(gsm_print_info_d[[3]]) ) {
-  
-    mut_y_d <- max(gsm_print_info_d[[3]]$y)
-    if (mut_y_d < 10) ylabel_d <- ylabel_dummy
+  } else if ( !is.null(gsm_print_info_d) ) {
 
+    print(gsm_print_info_d)
+    mut_y_d <- ifelse(length(gsm_print_info_d[[3]]$y) == 1, gsm_print_info_d[[3]]$y, max(gsm_print_info_d[[3]]$y))
+    if (mut_y_d < 10) ylabel_d <- ylabel_dummy
+    mut_y_c <- 0
+
+    print(c(mut_y_d, mut_y_c))
     plot_grid(xtitle, plot_grid(ylabel_dummy, p_gene, ncol = 2, rel_widths = c(0.04, 0.96)),
               plot_grid(ylabel_d, p_gsm_d, ncol = 2, rel_widths = c(0.04, 0.96)),
               ncol = 1, align = "v", rel_heights = c(1, 3, 0.15 * c(mut_y_d) + 0.6))
-  
-  } else if ( !is.null(gsm_print_info_c[[3]]) ) {
-  
+    
+ 
+  } else if ( !is.null(gsm_print_info_c) ) {
+ 
     mut_y_c <- max(gsm_print_info_c[[3]]$y)
     if (mut_y_c < 10) ylabel_c <- ylabel_dummy
-    
+    mut_y_d <- 0
+ 
     plot_grid(plot_grid(ylabel_dummy, p_gene, ncol = 2, rel_widths = c(0.04, 0.96)),
               plot_grid(ylabel_c, p_gsm_c, rel_widths = c(0.04, 0.96)),
               ncol = 1, align = "v", rel_heights = c(1, 3, 0.15 * c(mut_y_c) + 0.6))
@@ -775,9 +790,8 @@ print_prof <- function(gene_symbol, ref_gene_id, start_target, end_target, dir_t
     p_gene
   
   }
-  
+
   ggsave(paste("../figure/", gene_symbol, "_prof.tiff", sep = ""), width = 10, height = 0.6 + 2.4 + 0.08 *(mut_y_d + mut_y_c), dpi = 600, units = "cm")
-  
 
 }
 
@@ -795,7 +809,9 @@ gene_print_info_CDKN2A <- function() {
   
   gene_print_info_CDKN2A_1[[3]]$y <- gene_print_info_CDKN2A_1[[3]]$y - 1
   gene_print_info_CDKN2A_1[[3]]$yend <- gene_print_info_CDKN2A_1[[3]]$yend - 1
-  
+
+  label_box <- data.frame(x = c(21975132, 21994490), y = c(0.5, 1.5), label = c("NM_000077", "NM_058195"))
+ 
   exon_box <- rbind(gene_print_info_CDKN2A_1[[2]], gene_print_info_CDKN2A_2[[2]])
   intron_line <- rbind(gene_print_info_CDKN2A_1[[3]], gene_print_info_CDKN2A_2[[3]])
   exon_intron_junction <- unique(c(gene_print_info_CDKN2A_1[[4]], gene_print_info_CDKN2A_2[[4]]))
@@ -804,9 +820,10 @@ gene_print_info_CDKN2A <- function() {
   p_gene <- p_gene + geom_rect(data = exon_box, aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax, fill= "gene"))
   # p_gene <- p_gene + geom_text(data = exon_num, aes(x = x, y = y, label = label, colour = "gene"), size = 3)
 
-  p_gene <- p_gene + geom_segment(data = intron_line, aes(x = x, xend = xend, y = y, yend = yend, colour = "gene"), size = 0.5, arrow = arrow(length = unit(0.02, "inches"))) 
+  p_gene <- p_gene + geom_segment(data = intron_line, aes(x = x, xend = xend, y = y, yend = yend, colour = "gene"), size = 0.3, arrow = arrow(length = unit(0.03, "inches"))) 
 
-  
+  p_gene <- p_gene + geom_text(data = label_box, aes(x = x, y = y, label = label), size = 1.8, hjust = 0)
+
   p_gene <- p_gene + theme_bw() +
     theme(axis.ticks.x = element_blank(),
           axis.ticks.y = element_blank(),
@@ -842,8 +859,9 @@ print_prof("PIK3R1", "NM_181523", 67588086 - 300, 67593429 + 300, "+")
 
 print_prof("CDKN2A", "NM_000077", 21968227 - 300, 21994330 + 300, "-")
 
-print_prof("GATA3", "NM_002051", 8105958  - 300, 8115986 + 300, "+")
+print_prof("GATA3", "NM_002051", 8105958 - 300, 8115986 + 300, "+")
 
+print_prof("MET", "NM_000245", 116411551 - 300, 116415165 + 300, "+")
 
-
+print_prof("MIEN1", "NM_032339", 37884752, 37886816, "-")
 

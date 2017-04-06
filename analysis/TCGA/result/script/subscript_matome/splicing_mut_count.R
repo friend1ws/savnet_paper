@@ -38,7 +38,7 @@ splicing_mut_info_filt$GenomonSplicingMutation <-
   factor(splicing_mut_info_filt$GenomonSplicingMutation,
          levels = c("exon-skip", "alternative-5'-splice-site", "alternative-3'-splice-site",
                     "intron-retention", "complex", "no-change"),
-         labels = c("Exon skip", "Alternative 5'-ss", "Alternative 3'-ss",
+         labels = c("Exon skipping", "Alternative 5'SS", "Alternative 3'SS",
                     "Intron retention", "Complex", "No change"))
  
 

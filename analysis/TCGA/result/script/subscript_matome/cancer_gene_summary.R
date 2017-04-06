@@ -50,7 +50,7 @@ p_summary <- ggplot(splicing_mutation_count_proc,
   geom_point(colour = "#2166ac") +
   labs(size = "Number of cases") +
   theme_minimal() +
-  ggtitle("Frequency per cancer type") +
+  ggtitle("Number per cancer type") +
   labs(x = "Cancer Type", y = "Gene") +
   scale_size(range = c(1, 4)) +
   theme(title = element_text(size = 7),
@@ -59,7 +59,7 @@ p_summary <- ggplot(splicing_mutation_count_proc,
         legend.text = element_text(size = 6),
         strip.text = element_text(size = 6),
         legend.key.size = unit(0.25, "cm"),
-        axis.text.x = element_text(angle = 90, hjust = 1),
+        axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5),
         axis.text.y = element_text(colour =  gene_colour, face = "italic"),
         legend.position = "bottom")
 
@@ -117,21 +117,25 @@ sasm_type_info_proc$mut_type <- factor(sasm_type_info_proc$mut_type,
 
 p_sasmtype <- ggplot(sasm_type_info_proc, aes(x = Gene_Symbol2, y = ratio, fill = mut_type)) + 
   geom_bar(stat = "identity") + 
-  ggtitle("Mutation type") +
+  ggtitle("Variant type") +
   coord_flip() + theme_minimal() +
-  labs(x = "", y = "Relative frequency", fill = "Mutation type") +
+  labs(x = "", y = "Relative frequency", fill = "Variant type") +
   theme_minimal() +
   theme(
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor.x = element_blank(),
+    panel.border=element_blank(),
+    panel.background = element_blank(),
     title = element_text(size = 7),
     axis.text = element_text(size = 7),
     axis.title = element_text(size = 7),
     legend.text = element_text(size = 6),
     strip.text = element_text(size = 6),
     legend.key.size = unit(0.25, "cm"),
-    axis.text.x = element_text(angle = 90, hjust = 1),
+    axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5),
     axis.text.y = element_text(colour =  gene_colour, face = "italic"),
-    panel.grid.major.y = element_blank(),
-    panel.grid.minor.y = element_blank(),
     legend.position = "bottom") +
   scale_fill_manual(breaks = c("Canonical site disruption", "Noncanonical site disruption", "Creation"),
                     values = c("Canonical site disruption" = "#a6d854", "Noncanonical site disruption" = "#ffd92f", "Creation" = "#e78ac3"))
@@ -186,31 +190,36 @@ sp_class_info_proc$Gene_Symbol2 <- factor(sp_class_info_proc$Gene_Symbol,
 sp_class_info_proc$splice_class2 <- factor(sp_class_info_proc$splice_class,
                                           levels = rev(c("exon-skip", "alternative-5'-splice-site",
                                                      "alternative-3'-splice-site", "intron-retention")),
-                                          labels = rev(c("Exon skip", "Alternative 5'-ss",
-                                                     "Alternative 3'-ss", "Intron retention")))
+                                          labels = rev(c("Exon skipping", "Alternative 5'SS",
+                                                     "Alternative 3'SS", "Intron retention")))
 
 
 p_spliceclass <- ggplot(sp_class_info_proc, aes(x = Gene_Symbol2, y = ratio, fill = splice_class2)) + 
   geom_bar(stat = "identity") + 
   coord_flip() + theme_minimal() +
-  ggtitle("Splcing class") +
-  labs(x = "", y = "Relative frequency", fill = "Splicing class") +
-  theme_minimal() +
+  ggtitle("Splicing outcome") +
+  labs(x = "", y = "Relative frequency", fill = "Splicing outcome") +
+  theme_minimal() +  
   theme(
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor.x = element_blank(),
+    panel.border=element_blank(),
+    panel.background = element_blank(),
     title = element_text(size = 7),
     axis.text = element_text(size = 7),
     axis.title = element_text(size = 7),
     legend.text = element_text(size = 6),
     strip.text = element_text(size = 6),
     legend.key.size = unit(0.25, "cm"),
-    axis.text.x = element_text(angle = 90, hjust = 1),
-    axis.text.y = element_text(colour =  gene_colour, face = "italic"),
-    panel.grid.major.y = element_blank(),
-    panel.grid.minor.y = element_blank(),
+    axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5),
+    # axis.text.y = element_text(colour =  gene_colour, face = "italic"),
+    axis.text.y = element_blank(),
     legend.position = "bottom") +
   scale_fill_manual(values = splicing_class_colour, 
-                    breaks = c("Exon skip", "Alternative 5'-ss",
-                              "Alternative 3'-ss", "Intron retention"))
+                    breaks = c("Exon skipping", "Alternative 5'SS",
+                              "Alternative 3'SS", "Intron retention"))
 
 
 g_legend <- function(a.gplot){
@@ -226,7 +235,7 @@ p_spliceclass_legend <- g_legend(p_spliceclass)
 p_main_panel <- plot_grid(p_summary + guides(size = FALSE), 
           p_sasmtype + guides(fill = FALSE), 
           p_spliceclass + guides(fill = FALSE),
-          nrow = 1, rel_widths = c(0.6, 0.2, 0.2),
+          nrow = 1, rel_widths = c(0.6, 0.21, 0.15),
           align = "h")
 
 p_legend_panel <- plot_grid(
