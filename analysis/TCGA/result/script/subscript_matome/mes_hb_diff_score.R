@@ -140,12 +140,12 @@ mes_df <- data.frame(motif_type = factor(c(rep("donor", nrow(snv_info_d)), rep("
                      splice_class = factor(c(snv_info_d$GSM2, snv_info_a$GSM2),
                                            levels = rev(c("exon-skip", "alternative-5'-splice-site", "alternative-3'-splice-site",
                                                       "intron-retention", "complex", "no-change")),
-                                           labels = rev(c("Exon skip", "Alternative 5'-ss", "Alternative 3'-ss",
+                                           labels = rev(c("Exon skipping", "Alternative 5'SS", "Alternative 3'SS",
                                                           "Intron retention", "Complex", "No change"))),
                      mut_pos = c(snv_info_d$Rel_Start_Motif, snv_info_a$Rel_Start_Motif),
                      is_gsm = is_gsm)
 
-g_mes_d <- ggplot(mes_df %>% filter(splice_class != "Alternative 3'-ss" & motif_type == "Donor"), aes(x = splice_class, y = mes_diff, fill = splice_class)) + 
+g_mes_d <- ggplot(mes_df %>% filter(splice_class != "Alternative 3'SS" & motif_type == "Donor"), aes(x = splice_class, y = mes_diff, fill = splice_class)) + 
   geom_boxplot(size = 0.3, outlier.size = 0.4) +
   coord_flip() +
   ggtitle("Donor disruption") +
@@ -155,7 +155,7 @@ g_mes_d <- ggplot(mes_df %>% filter(splice_class != "Alternative 3'-ss" & motif_
   labs(x = "", y = "") +
   guides(fill = FALSE)
 
-g_mes_a <- ggplot(mes_df %>% filter(splice_class != "Alternative 5'-ss" & motif_type == "Acceptor"), aes(x = splice_class, y = mes_diff, fill = splice_class)) + 
+g_mes_a <- ggplot(mes_df %>% filter(splice_class != "Alternative 5'SS" & motif_type == "Acceptor"), aes(x = splice_class, y = mes_diff, fill = splice_class)) + 
   geom_boxplot(size = 0.3, outlier.size = 0.3) +
   coord_flip() +
   ggtitle("Acceptor disruption") +
@@ -220,12 +220,12 @@ hb_df <- data.frame(hb_diff = c(hb_score_mt - hb_score_wt),
                     splice_class = factor(snv_info_d$GSM2,
                                           levels = rev(c("exon-skip", "alternative-5'-splice-site", "alternative-3'-splice-site",
                                                          "intron-retention", "complex", "no-change")),
-                                          labels = rev(c("Exon skip", "Alternative 5'-ss", "Alternative 3'-ss",
+                                          labels = rev(c("Exon skipping", "Alternative 5'SS", "Alternative 3'SS",
                                                          "Intron retention", "Complex", "No change"))),
                      mut_pos = snv_info_d$Rel_Start_Motif,
                      is_gsm = is_gsm)
 
-ggplot(hb_df %>% filter(splice_class != "Alternative 3'-ss"), aes(x = splice_class, y = hb_diff, fill = splice_class)) + 
+ggplot(hb_df %>% filter(splice_class != "Alternative 3'SS"), aes(x = splice_class, y = hb_diff, fill = splice_class)) + 
   geom_boxplot(size = 0.3, outlier.size = 0.4) +
   coord_flip() +
   ylim(c(-20, 10)) +

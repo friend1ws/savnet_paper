@@ -82,7 +82,7 @@ cg_info$mut_func2 <- factor(cg_info$mut_func,
                             levels = rev(c("Silent", "Missense", "Nonsense", "Inframe indel", "Frameshift indel", "Other",
                                        "exon-skip", "alternative-5'-splice-site", "alternative-3'-splice-site", "intron-retention", "complex")),
                             labels = rev(c("Silent", "Missense", "Nonsense", "Inframe indel", "Frameshift indel", "Other",
-                                       "Exon skip", "Alternative 5'-ss", "Alternative 3'-ss", "Intron retention", "Complex")))
+                                       "Exon skipping", "Alternative 5'SS", "Alternative 3'SS", "Intron retention", "Complex")))
 cg_info$is_gsm <- ifelse(is.na(cg_info$GSM), "non_gsm", "gsm")
 
 
@@ -94,7 +94,7 @@ cg_info_proc$statistics <- ifelse(cg_info_proc$class_statistics %in% c("Oncogene
 
 
 cg_info_proc$is_gsm <- ifelse(cg_info$mut_func2 %in% 
-                                c("Exon skip", "Alternative splice site",
+                                c("Exon skipping", "Alternative splice site",
                                   "Intron retention", "Complex"), "gsm", "non_gsm")
 
 
@@ -123,7 +123,8 @@ ggplot(cg_info_proc %>% filter(!(mut_func2 %in% c("Silent", "Inframe indel", "Fr
   coord_flip() +
   labs(x = "", y = "log10(P-value)") +
   my_theme() +
-  theme(panel.spacing = unit(1.5, "lines")) +
+  theme(panel.spacing = unit(1.5, "lines"),
+        plot.margin = unit(c(5.5, 6.5, 5.5, 5.5), "points")) +
   # theme(strip.text.x = element_text(size = rel(1.2), angle = 0, hjust = 0),
   #       panel.spacing.x=unit(1.2, "lines")) +
   facet_grid(.~VogelsteinEtAl_2013, scales = "free") +

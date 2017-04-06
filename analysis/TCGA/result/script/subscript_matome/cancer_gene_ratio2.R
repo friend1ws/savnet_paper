@@ -92,7 +92,7 @@ get_cg_ratio_info <- function(mut_info_selected) {
                               levels = rev(c("Silent", "Missense", "Nonsense", "Inframe indel", "Frameshift indel", "Other",
                                          "exon-skip", "alternative-5'-splice-site", "alternative-3'-splice-site", "intron-retention", "complex")),
                               labels = rev(c("Silent", "Missense", "Nonsense", "Inframe indel", "Frameshift indel", "Other",
-                                         "Exon skip", "Alternative 5'-ss", "Alternative 3'-ss", "Intron retention", "Complex")))
+                                         "Exon skipping", "Alternative 5'SS", "Alternative 3'SS", "Intron retention", "Complex")))
   cg_info$is_gsm <- ifelse(is.na(cg_info$GSM), "non_gsm", "gsm")
 
 

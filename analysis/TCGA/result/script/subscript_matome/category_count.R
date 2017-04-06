@@ -155,8 +155,8 @@ splicing_mutation$Splicing_Class <-
          levels = c("exon-skip", "alternative-5'-splice-site", 
                     "alternative-3'-splice-site",
                     "intron-retention"),
-         labels = c("Exon skip", "Alternative 5'-ss",
-                    "Alternative 3'-ss", "Intron retention"))
+         labels = c("Exon skipping", "Alternative 5'SS",
+                    "Alternative 3'SS", "Intron retention"))
 
 
 splicing_mutation$Mutation_Type3 <- 
@@ -278,7 +278,8 @@ ggplot(splicing_mutation_count_simple, aes(x = Mutation_Type2, y = count, fill =
   coord_flip() +
   labs(x = "", y = "Splicing event count", fill = "") +
   my_theme() +
-  theme(legend.position = "bottom") +
+  theme(legend.position = "bottom",
+        plot.margin = unit(c(5.5, 7.5, 5.5, 5.5), "points")) +
   scale_fill_manual(values = splicing_class_colour) +
   scale_y_continuous(expand = c(0, 0)) +
   guides(fill=guide_legend(nrow=1,byrow=TRUE))
