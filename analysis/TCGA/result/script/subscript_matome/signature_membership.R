@@ -10,12 +10,13 @@ mem_info <- read.table("../temporary/TCGA.mut_membership.savnet.result.txt", sep
   filter(Is_GSM == "TRUE") 
 
 
-sig_type_order <- c("Age", "APOBEC", "Tobacco", "MMR defect", "Ultraviolet",
+sig_type_order <- c("Aging", "APOBEC", "Tobacco", "MMR defect", "Ultraviolet",
                     "POLE", "Microsatellite", "Other")
+
 
 mem_info$Sig_Type <- "Other"
 mem_info$Sig_Type[mem_info$COSM_ID == "4" & mem_info$Corr >= 0.75] <- "Tobacco"
-mem_info$Sig_Type[mem_info$COSM_ID == "1" & mem_info$Corr >= 0.75] <- "Age"
+mem_info$Sig_Type[mem_info$COSM_ID == "1" & mem_info$Corr >= 0.75] <- "Aging"
 mem_info$Sig_Type[mem_info$COSM_ID == "6" & mem_info$Corr >= 0.75] <- "MMR defect"
 mem_info$Sig_Type[mem_info$COSM_ID %in% c("2", "13") & mem_info$Corr >= 0.75] <- "APOBEC"
 mem_info$Sig_Type[mem_info$COSM_ID == "21" & mem_info$Corr >= 0.75] <- "Microsatellite"
@@ -100,12 +101,14 @@ ggsave("../figure/signature_membership.tiff", width = 15, height = 6, dpi = 600,
 
 mem_info_all <- read.table("../temporary/TCGA.mut_membership.all.result.txt", sep = "\t", header = TRUE)
 
-sig_type_order <- c("Age", "APOBEC", "Tobacco", "MMR defect", "Ultraviolet",
+sig_type_order <- c("Aging", "APOBEC", "Tobacco", "MMR defect", "Ultraviolet",
                     "POLE", "Microsatellite", "Other")
+sig_type_order2 <- c("Aging", "APOBEC", "Tobacco", "Ultraviolet", "POLE")
+
 
 mem_info_all$Sig_Type <- "Other"
 mem_info_all$Sig_Type[mem_info_all$COSM_ID == "4" & mem_info_all$Corr >= 0.75] <- "Tobacco"
-mem_info_all$Sig_Type[mem_info_all$COSM_ID == "1" & mem_info_all$Corr >= 0.75] <- "Age"
+mem_info_all$Sig_Type[mem_info_all$COSM_ID == "1" & mem_info_all$Corr >= 0.75] <- "Aging"
 mem_info_all$Sig_Type[mem_info_all$COSM_ID == "6" & mem_info_all$Corr >= 0.75] <- "MMR defect"
 mem_info_all$Sig_Type[mem_info_all$COSM_ID %in% c("2", "13") & mem_info_all$Corr >= 0.75] <- "APOBEC"
 mem_info_all$Sig_Type[mem_info_all$COSM_ID == "21" & mem_info_all$Corr >= 0.75] <- "Microsatellite"
@@ -115,8 +118,8 @@ mem_info_all$Sig_Type[mem_info_all$COSM_ID == "7" & mem_info_all$Corr >= 0.75] <
 mem_info_all$Sig_Type <- factor(mem_info_all$Sig_Type, levels = sig_type_order)
 
 
-# base_ratio <- sum(mem_info$Membership_Sum) / sum(mem_info_all$Membership_Sum)
-base_ratio <- 1
+base_ratio <- sum(mem_info$Membership_Sum) / sum(mem_info_all$Membership_Sum)
+# base_ratio <- 1
 
 sig2mem <- mem_info %>% 
   group_by(Sig_Type) %>% 
@@ -128,15 +131,16 @@ sig2mem_all <- mem_info_all %>%
 
 
 gsm_ratio <- sig2mem %>% left_join(sig2mem_all, by = c("Sig_Type")) %>% 
-  mutate(gsm_ratio = (mem_sum / mem_sum_all) / base_ratio)
+  mutate(gsm_ratio = (mem_sum / mem_sum_all)) 
 
 
-ggplot(gsm_ratio, aes(x = Sig_Type, y = gsm_ratio, fill = Sig_Type)) + 
+ggplot(gsm_ratio %>% filter(Sig_Type %in% sig_type_order2), aes(x = Sig_Type, y = gsm_ratio, fill = Sig_Type)) + 
   geom_bar(stat = "identity") + # coord_flip() +
+  geom_abline(intercept = base_ratio, slope = 0, colour = "#a65628", alpha = 0.9, linetype = "longdash") + 
   my_theme() +
-  labs(x = "", y = "Relative SAV fraction", fill = "") +
+  labs(x = "", y = "SAV fraction", fill = "") +
   theme(legend.position = "bottom", axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
-  scale_x_discrete(limits = sig_type_order[1:8]) +
+  scale_x_discrete(limits = sig_type_order2) +
   scale_y_continuous(expand = c(0, 0)) +
   scale_fill_manual(values = signature_colour) +
   guides(fill = FALSE)
@@ -165,25 +169,29 @@ for(i in 1:length(ctype_vec)) {
     group_by(Sig_Type) %>% 
     summarize(mem_sum_all = sum(Membership_Sum)) 
 
+  base_ratio <- sum(sig2mem$mem_sum) / sum(sig2mem_all$mem_sum_all)
+
 
   gsm_ratio <- sig2mem %>% left_join(sig2mem_all, by = c("Sig_Type")) %>% 
-    mutate(gsm_ratio = (mem_sum / mem_sum_all) / base_ratio)
+    mutate(gsm_ratio = (mem_sum / mem_sum_all))
 
 
 
-  tp <- ggplot(gsm_ratio, aes(x = Sig_Type, y = gsm_ratio, fill = Sig_Type)) + 
+  tp <- ggplot(gsm_ratio %>% filter(Sig_Type %in% sig_type_order2), 
+               aes(x = Sig_Type, y = gsm_ratio, fill = Sig_Type)) + 
     geom_bar(stat = "identity") + # coord_flip() +
+    geom_abline(intercept = base_ratio, slope = 0, colour = "#a65628", alpha = 0.9, linetype = "longdash") +
     my_theme() +
     ggtitle(ctype) + 
     # scale_fill_brewer(palette = "Set1") +
     labs(x = "", y = "", fill = "") +
     theme(legend.position = "bottom",
           axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)) +
-    scale_x_discrete(limits = sig_type_order[sig_type_order %in% gsm_ratio$Sig_Type]) +
+    scale_x_discrete(limits = sig_type_order2[sig_type_order2 %in% gsm_ratio$Sig_Type]) +
     scale_y_continuous(expand = c(0, 0), # labels = scientific, 
                        # breaks = seq(0, max(gsm_ratio$gsm_ratio), 0.002),
                        # minor_breaks = seq(0.001, max(gsm_ratio$gsm_ratio), 0.002),
-                       limits = c(0, 1.1 * max(gsm_ratio$gsm_ratio))) +
+                       limits = c(0, 0.006)) +
     scale_fill_manual(values = signature_colour) +
     guides(fill = FALSE)
 
@@ -203,7 +211,7 @@ ytitle <- ggdraw() + draw_label("SAV fraction", size = 8, angle = 90)
 
 plot_grid(ytitle, plot_grid(plotlist = p_ctype, nrow = 2, align = "hv"), nrow = 1, rel_widths = c(0.1, 1), scale = 0.99)
 
-ggsave(paste("../figure/rel_sp_ratio_ctype.tiff", sep = ""), width = 10, height = 10, dpi = 600, units = "cm")
+ggsave(paste("../figure/rel_sp_ratio_ctype.tiff", sep = ""), width = 10, height = 9, dpi = 600, units = "cm")
 
 
 ##########
@@ -222,20 +230,21 @@ get_plot <- function(sig_num, title) {
 	      title = element_text(size = 7))
 }
 
-p_age <- get_plot(1, "Age")
+p_age <- get_plot(1, "Aging")
 p_appobec <- get_plot(13, "APOBEC")
 p_tobacco <- get_plot(4, "Tobacco")
-p_mmr <- get_plot(6, "MMR defect")
+# p_mmr <- get_plot(6, "MMR defect")
 p_uv <- get_plot(7, "Ultraviolet")
 p_pole1 <- get_plot(31, "POLE1")
 p_pole2 <- get_plot(32, "POLE2")
-p_ms <- get_plot(21, "Microsatellite")
+# p_ms <- get_plot(21, "Microsatellite")
 
 
 theme_set(theme_gray())
 
-plot_grid(p_age, p_appobec, p_tobacco, p_mmr, p_uv, p_pole1, p_pole2, p_ms, nrow = 2)
+# plot_grid(p_age, p_appobec, p_tobacco, p_mmr, p_uv, p_pole1, p_pole2, p_ms, nrow = 2)
+plot_grid(p_age, p_appobec, p_tobacco, p_uv, p_pole1, p_pole2, nrow = 3)
 
-ggsave("../figure/pmsignature_list.tiff", width = 15, height = 6, dpi = 600, units = "cm") 
+ggsave("../figure/pmsignature_list.tiff", width = 8, height = 9, dpi = 600, units = "cm") 
 
 

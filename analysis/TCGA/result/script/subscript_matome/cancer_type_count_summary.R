@@ -70,7 +70,7 @@ ggplot(mut_count_trmean) +
               colour = "#d73027", alpha = 0.6) +
   geom_text_repel(data = mut_count_trmean %>% filter(SAV_Count_Mean > 0.5), 
                   aes(x = Mut_Count_Mean, y = SAV_Count_Mean, label = Cancer_Type), size = 1.8) +
-  labs(x = "Trucated mean mutation count", y = "Truncated mean SAV count") +
+  labs(x = "Trucated mean of variant count", y = "Truncated mean of SAV count") +
   my_theme() +
   scale_x_continuous(breaks=seq(0, 1250, 250),limits=c(0,1300))
   # theme(axis.text = element_text(size = rel(1.2)),
