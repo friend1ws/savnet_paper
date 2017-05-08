@@ -100,7 +100,7 @@ get_gene_print_info <- function(ref_gene_id, start_target, end_target, dir_targe
       tymax <- 2 + 0.7
       if (starts[j] <= end_target & ends[j] >= start_target) {
         exon_box <- rbind(exon_box, data.frame(xmin = txmin, xmax = txmax, ymin = tymin, ymax = tymax))
-        # exon_num <- rbind(exon_num, data.frame(x = 0.5 * (txmin + txmax), y = 3.25, label = label))
+        exon_num <- rbind(exon_num, data.frame(x = 0.5 * (txmin + txmax), y = 3.25, label = label))
       }
     # completely inside coding region
     } else if (starts[j] >= as.numeric(target_gene_info[7]) & ends[j] <= as.numeric(target_gene_info[8])) { 
@@ -145,7 +145,7 @@ get_gene_print_info <- function(ref_gene_id, start_target, end_target, dir_targe
         tymax <- 2 + 0.95
         if (starts[j] <= end_target & ends[j] >= start_target) {
           exon_box <- rbind(exon_box, data.frame(xmin = txmin, xmax = txmax, ymin = tymin, ymax = tymax))
-          exon_num <- rbind(exon_num, data.frame(x = 0.5 * (txmin + txmax), y = 3.25, label = label))
+          exon_num <- rbind(exon_num, data.frame(x = 0.5 * ((max(starts[j], start_target)) + (min(ends[j], end_target))), y = 3.25, label = label))
         }
         
         if (!is.null(amino_size)) {
@@ -172,7 +172,7 @@ get_gene_print_info <- function(ref_gene_id, start_target, end_target, dir_targe
         tymax <- 2 + 0.95
         if (starts[j] <= end_target & ends[j] >= start_target) {
           exon_box <- rbind(exon_box, data.frame(xmin = txmin, xmax = txmax, ymin = tymin, ymax = tymax))
-          exon_num <- rbind(exon_num, data.frame(x = 0.5 * (txmin + txmax), y = 3.25, label = label))
+          exon_num <- rbind(exon_num, data.frame(x = 0.5 * ((max(starts[j], start_target)) + (min(ends[j], end_target))), y = 3.25, label = label))
         }
           
         if (!is.null(amino_size)) {
@@ -237,7 +237,20 @@ get_gene_print_info <- function(ref_gene_id, start_target, end_target, dir_targe
     
   }
   
-  
+
+  # remove overlapping exon number
+  exon_num_temp <- exon_num
+  exon_num <- data.frame(x = c(), y = c(), label = c())
+  temp_pos <- -Inf
+  margin <- (end_target - start_target) / 50
+  for(i in 1:nrow(exon_num_temp)) {
+    if (exon_num_temp$x[i] > temp_pos + margin) {
+      exon_num <- rbind(exon_num, exon_num_temp[i, ])
+      temp_pos <- exon_num_temp$x[i]
+    }
+  }
+
+   
   # amino_genome_seg$xend <- start_target + ((end_target - start_target) / current_coding_pos) * amino_genome_seg$xend
   amino_genome_seg$x <- pmax(amino_genome_seg$x, start_target)
   amino_genome_seg$x <- pmin(amino_genome_seg$x, end_target)  
@@ -292,7 +305,7 @@ get_gene_print_info <- function(ref_gene_id, start_target, end_target, dir_targe
     p_gene <- p_gene + scale_x_continuous(limits = c(start_target, end_target), minor_breaks = exon_intron_junction) 
   } 
   
-  return(list(p_gene, exon_box, intron_line, exon_intron_junction))
+  return(list(p_gene, exon_box, intron_line, exon_intron_junction, exon_num))
   
 }
 
@@ -317,21 +330,23 @@ get_gsm_print_info <- function(omega_info_input, gene_symbol, ref_gene_id, count
     unlist(lapply(omega_info_input$Splicing_Key[intron_ind], 
                   function(x) {get_intron_key(x, ref_gene_id)}))
   
+  # check the in-frame status again (by referring the refGene id)
   omega_info_input$Is_Inframe2 <- omega_info_input$Is_Inframe
   omega_info_input$Is_Inframe2[!intron_ind] <- 
     unlist(lapply(omega_info_input$Splicing_Key[!intron_ind], 
                   function(x) {check_inframe(x, ref_gene_id)}))
   
   
-
+  # count the number of mutations for each motif 
   motif_level_mut_count <- omega_info_input %>% 
+    select(Sample_Name, Motif_Pos) %>% distinct() %>%
     group_by(Motif_Pos) %>% 
     summarize(count = n()) %>%
     filter(count >= count_thres)
 
-  # if (gene_symbol == "CDKN2A") { 
-  #   print(as.data.frame(motif_level_mut_count))
-  # }
+  motif2count <- c(motif_level_mut_count$count)
+  names(motif2count) <- motif_level_mut_count$Motif_Pos
+
 
   sp_mut_filt <- omega_info_input %>% 
     filter(Motif_Pos %in% motif_level_mut_count$Motif_Pos) %>%
@@ -342,18 +357,34 @@ get_gsm_print_info <- function(omega_info_input, gene_symbol, ref_gene_id, count
     sp_mut_filt <- sp_mut_filt %>% filter(grepl(mut_type_str, Mutation_Type))
   }
   
-  
   if (dir_target == "-") {
     sp_mut_filt <- sp_mut_filt %>% arrange(desc(Motif_Pos), desc(count))
   } else {
     sp_mut_filt <- sp_mut_filt %>% arrange(Motif_Pos, desc(count))
   }
-  
-  # if (gene_symbol == "CDKN2A") {  
-  #   print("sp_mut_filt_start")
-  #   print(as.data.frame(sp_mut_filt))
-  #   print("sp_mut_filt_end")
-  # }
+
+
+  # restrict the number of splicing keys to at most 3 for each motif position
+  sp_mut_filt_tmp <- sp_mut_filt
+  sp_mut_filt <- c()
+  temp_sp_count <- 0
+  temp_motif_pos <- ""
+  if (nrow(sp_mut_filt_tmp) > 1) {
+
+    for (i in 1:nrow(sp_mut_filt_tmp)) {
+      if (as.character(sp_mut_filt_tmp[i, "Motif_Pos"]) != temp_motif_pos) {
+        temp_sp_count <- 0
+        temp_motif_pos <- as.character(sp_mut_filt_tmp[i, "Motif_Pos"])
+      }
+      if (temp_sp_count < 3) {
+        sp_mut_filt <- rbind(sp_mut_filt, sp_mut_filt_tmp[i,])
+        temp_sp_count <- temp_sp_count + 1
+      }
+    }
+  } else {
+    sp_mut_filt <- sp_mut_filt_tmp
+  }
+
 
   mut_line <- c()
   mut_seg <- c()
@@ -369,6 +400,7 @@ get_gsm_print_info <- function(omega_info_input, gene_symbol, ref_gene_id, count
     return(NULL)
     # return(list(ggplot(), splicing_line, mut_line))
   }
+
   
   temp_mut <- data.frame(Motif_Pos = c(""))
   temp_mut_pos <- ""
@@ -429,14 +461,14 @@ get_gsm_print_info <- function(omega_info_input, gene_symbol, ref_gene_id, count
       temp_mut_pos <- mut_pos
       tmp_splicing_line <- c()
       current_y_minor <- 0
-      temp_mut_count <- 0
+      temp_mut_count <- motif2count[as.character(sp_mut_filt[i, "Motif_Pos"])]
       
     }
     
     
     # get mut info
     
-    temp_mut_count <- temp_mut_count + as.numeric(sp_mut_filt[i,"count"])
+    # temp_mut_count <- temp_mut_count + as.numeric(sp_mut_filt[i,"count"])
     sp_start_end <- strsplit(strsplit(as.character(sp_mut_filt[i, "Splicing_Key"]), ":")[[1]][2], "-")[[1]]
     sp_start <- as.numeric(sp_start_end[1])
     sp_end <- as.numeric(sp_start_end[2]) 
@@ -452,7 +484,7 @@ get_gsm_print_info <- function(omega_info_input, gene_symbol, ref_gene_id, count
                              data.frame(x = tx, xend = txend, 
                                         y = ty, yend = tyend, 
                                         splicing_class = sp_mut_filt$Splicing_Class[i], 
-                                        is_inframe = ifelse(sp_mut_filt$Is_Inframe2[i] == "in-frame", "In frame", "Frameshift")))
+                                        is_inframe = ifelse(sp_mut_filt$Is_Inframe2[i] == "in-frame", "In-frame", "Frameshift")))
     }
     
     # splicing start-end segment
@@ -465,7 +497,7 @@ get_gsm_print_info <- function(omega_info_input, gene_symbol, ref_gene_id, count
                              data.frame(x = tx, xend = txend, 
                                         y = ty, yend = tyend,
                                         splicing_class = sp_mut_filt$Splicing_Class[i], 
-                                        is_inframe = ifelse(sp_mut_filt$Is_Inframe2[i] == "in-frame", "In frame", "Frameshift")))
+                                        is_inframe = ifelse(sp_mut_filt$Is_Inframe2[i] == "in-frame", "In-frame", "Frameshift")))
     }
     
     # splicing end segment
@@ -478,7 +510,7 @@ get_gsm_print_info <- function(omega_info_input, gene_symbol, ref_gene_id, count
                              data.frame(x = tx, xend = txend,
                                         y = ty, yend = tyend, 
                                         splicing_class = sp_mut_filt$Splicing_Class[i], 
-                                        is_inframe = ifelse(sp_mut_filt$Is_Inframe2[i] == "in-frame", "In frame", "Frameshift")))
+                                        is_inframe = ifelse(sp_mut_filt$Is_Inframe2[i] == "in-frame", "In-frame", "Frameshift")))
     }
     
     current_y_minor <- current_y_minor + 1 
@@ -577,7 +609,7 @@ get_gsm_print_info <- function(omega_info_input, gene_symbol, ref_gene_id, count
                                     colour = splicing_class, linetype = is_inframe), size = 0.5) +
     scale_colour_manual(values = splicing_mut_class_colour) +
     scale_fill_manual(values = splicing_mut_class_colour) +
-    scale_linetype_manual(values = c("In frame" = "solid", "Frameshift" = "longdash"))
+    scale_linetype_manual(values = c("In-frame" = "solid", "Frameshift" = "longdash"))
 
 
   if (!is.null(mut_line)) { 
@@ -702,15 +734,16 @@ uniq_key <- unlist(
   )
 )
 
-omega_info_uniq <- omega_info  %>% 
-  mutate(check_key = paste(Sample_Name, Mutation_Key, Splicing_Key)) %>% 
-  filter(check_key %in% uniq_key) 
+# omega_info_uniq <- omega_info  %>% 
+#   mutate(check_key = paste(Sample_Name, Mutation_Key, Splicing_Key)) %>% 
+#   filter(check_key %in% uniq_key) 
 
+omega_info_uniq <- omega_info
 ##########
 
 
 
-print_prof <- function(gene_symbol, ref_gene_id, start_target, end_target, dir_target, mut_margin = 300) {
+print_prof <- function(gene_symbol, ref_gene_id, start_target, end_target, dir_target, fig_width = 10, mut_margin = 300) {
   
   if (gene_symbol != "CDKN2A") {
     gene_print_info <- get_gene_print_info(ref_gene_id, start_target, end_target, dir_target, 
@@ -724,9 +757,9 @@ print_prof <- function(gene_symbol, ref_gene_id, start_target, end_target, dir_t
   p_gene <- gene_print_info[[1]]
   exon_intron_junction <- gene_print_info[[4]]
 
-  if (gene_symbol == "MIEN1") {
-    print(exon_intron_junction)
-  }
+  # if (gene_symbol == "MIEN1") {
+  #   print(exon_intron_junction)
+  # }
 
   gsm_print_info_d <- get_gsm_print_info(omega_info_uniq, gene_symbol, ref_gene_id, 1, start_target, end_target, dir_target, "disruption", exon_intron_junction, mut_margin)
   gsm_print_info_c <- get_gsm_print_info(omega_info_uniq, gene_symbol, ref_gene_id, 1, start_target, end_target, dir_target, "creation", exon_intron_junction, mut_margin)
@@ -735,44 +768,55 @@ print_prof <- function(gene_symbol, ref_gene_id, start_target, end_target, dir_t
   p_gsm_c <- gsm_print_info_c[[1]]
 
   if (gene_symbol != "CDKN2A") {
-    xtitle <- ggdraw() + draw_label(paste(gene_symbol, paste("(", ref_gene_id, ", ", as.numeric(gene2size[gene_symbol]), "aa", ")", sep = "")), size = 7)
+    # xtitle <- ggdraw() + draw_label(paste(gene_symbol, paste("(", ref_gene_id, ", ", as.numeric(gene2size[gene_symbol]), "aa", ")", sep = "")), size = 7)
+    xtitle <- ggdraw() + draw_label(
+                           substitute(paste(italic(a), paste("(", b, ", ", d, "aa", ")", sep = ""), sep = " "), 
+                                      list(a = gene_symbol, b = ref_gene_id, d = as.numeric(gene2size[gene_symbol]))), size = 7)
+
   } else {
-    xtitle <- ggdraw() + draw_label("CDKN2A(NM_000077,NM_058195, 156aa,132aa)", size = 7)
+    xtitle <- ggdraw() + draw_label(substitute(paste(italic(a), "(NM_000077,NM_058195, 156aa,132aa)", sep = " "), list(a = "CDKN2A")), size = 7)
   }
  
   ylabel_dummy <- ggdraw() + draw_label("", angle = 90, size = 7) 
-  ylabel_d <- ggdraw() + draw_label("Disruption", angle = 90, size = 7)
-  ylabel_c <- ggdraw() + draw_label("Creation", angle = 90, size = 7)
- 
+  # ylabel_d <- ggdraw() + draw_label("Disruption", angle = 90, size = 7)
+  # ylabel_c <- ggdraw() + draw_label("Creation", angle = 90, size = 7)
+  ylabel_d <- ggdraw() + draw_label("Disruption", size = 6, x = 0, hjust = 0)
+  ylabel_c <- ggdraw() + draw_label("Creation", size = 6, x = 0, hjust = 0)
  
 
   if ( !is.null(gsm_print_info_d) & !is.null(gsm_print_info_c) ) {
 
     mut_y_d <- max(gsm_print_info_d[[3]]$y)
     mut_y_c <- max(gsm_print_info_c[[3]]$y)
-    if (mut_y_d < 10 | mut_y_c < 10)  {
-      ylabel_d <- ylabel_dummy
-      ylabel_c <- ylabel_dummy
-    }
+    # if (mut_y_d < 10 | mut_y_c < 10)  {
+    #   ylabel_d <- ylabel_dummy
+    #   ylabel_c <- ylabel_dummy
+    # }
  
-    plot_grid(xtitle, plot_grid(ylabel_dummy, p_gene, ncol = 2, rel_widths = c(0.04, 0.96)),
-              plot_grid(ylabel_d, p_gsm_d, ncol = 2, rel_widths = c(0.04, 0.96)),
-              plot_grid(ylabel_c, p_gsm_c, rel_widths = c(0.04, 0.96)),
-              ncol = 1, align = "v", rel_heights = c(1, 3, 0.15 * c(mut_y_d, mut_y_c) + 0.6))
-  
-  
+    # plot_grid(xtitle, plot_grid(ylabel_dummy, p_gene, ncol = 2, rel_widths = c(0.04, 0.96)),
+    #           plot_grid(ylabel_d, p_gsm_d, ncol = 2, rel_widths = c(0.04, 0.96)),
+    #           plot_grid(ylabel_c, p_gsm_c, rel_widths = c(0.04, 0.96)),
+    #           ncol = 1, align = "v", rel_heights = c(1, 3, 0.15 * c(mut_y_d, mut_y_c) + 0.6))
+    plot_grid(xtitle, p_gene, ylabel_d, p_gsm_d, ylabel_c, p_gsm_c, 
+              ncol = 1, align = "v", rel_heights = c(1, 3, 0.6, 0.15 * mut_y_d + 0.6, 0.6, 0.15 * mut_y_c + 0.6))
+ 
+    ggsave(paste("../figure/", gene_symbol, "_prof.tiff", sep = ""), width = fig_width, height = 3.5 + 0.08 *(mut_y_d + mut_y_c), dpi = 600, units = "cm")
+ 
   } else if ( !is.null(gsm_print_info_d) ) {
 
-    print(gsm_print_info_d)
+    # print(gsm_print_info_d)
     mut_y_d <- ifelse(length(gsm_print_info_d[[3]]$y) == 1, gsm_print_info_d[[3]]$y, max(gsm_print_info_d[[3]]$y))
-    if (mut_y_d < 10) ylabel_d <- ylabel_dummy
-    mut_y_c <- 0
+    # if (mut_y_d < 10) ylabel_d <- ylabel_dummy
+    # mut_y_c <- 0
 
-    print(c(mut_y_d, mut_y_c))
-    plot_grid(xtitle, plot_grid(ylabel_dummy, p_gene, ncol = 2, rel_widths = c(0.04, 0.96)),
-              plot_grid(ylabel_d, p_gsm_d, ncol = 2, rel_widths = c(0.04, 0.96)),
-              ncol = 1, align = "v", rel_heights = c(1, 3, 0.15 * c(mut_y_d) + 0.6))
-    
+    # print(c(mut_y_d, mut_y_c))
+    # plot_grid(xtitle, plot_grid(ylabel_dummy, p_gene, ncol = 2, rel_widths = c(0.04, 0.96)),
+    #           plot_grid(ylabel_d, p_gsm_d, ncol = 2, rel_widths = c(0.04, 0.96)),
+    #           ncol = 1, align = "v", rel_heights = c(1, 3, 0.15 * c(mut_y_d) + 0.6))
+    plot_grid(xtitle, p_gene, ylabel_d, p_gsm_d,
+              ncol = 1, align = "v", rel_heights = c(1, 3, 0.6, 0.15 * mut_y_d + 0.6))
+
+    ggsave(paste("../figure/", gene_symbol, "_prof.tiff", sep = ""), width = fig_width, height = 2.8 + 0.08 *(mut_y_d), dpi = 600, units = "cm")
  
   } else if ( !is.null(gsm_print_info_c) ) {
  
@@ -791,7 +835,7 @@ print_prof <- function(gene_symbol, ref_gene_id, start_target, end_target, dir_t
   
   }
 
-  ggsave(paste("../figure/", gene_symbol, "_prof.tiff", sep = ""), width = 10, height = 0.6 + 2.4 + 0.08 *(mut_y_d + mut_y_c), dpi = 600, units = "cm")
+  # ggsave(paste("../figure/", gene_symbol, "_prof.tiff", sep = ""), width = 10, height = 0.6 + 2.4 + 1.2 + 0.08 *(mut_y_d + mut_y_c), dpi = 600, units = "cm")
 
 }
 
@@ -804,21 +848,30 @@ gene_print_info_CDKN2A <- function() {
   gene_print_info_CDKN2A_1 <- get_gene_print_info("NM_000077", 21968227 - 300, 21994330 + 300, "-", NULL, NULL)
   gene_print_info_CDKN2A_2 <- get_gene_print_info("NM_058195", 21968227 - 300, 21994330 + 300, "-", NULL, NULL)
   
-  gene_print_info_CDKN2A_1[[2]]$ymin <- gene_print_info_CDKN2A_1[[2]]$ymin - 1
-  gene_print_info_CDKN2A_1[[2]]$ymax <- gene_print_info_CDKN2A_1[[2]]$ymax - 1
-  
-  gene_print_info_CDKN2A_1[[3]]$y <- gene_print_info_CDKN2A_1[[3]]$y - 1
-  gene_print_info_CDKN2A_1[[3]]$yend <- gene_print_info_CDKN2A_1[[3]]$yend - 1
+  gene_print_info_CDKN2A_1[[2]]$ymin <- gene_print_info_CDKN2A_1[[2]]$ymin - 1.5
+  gene_print_info_CDKN2A_1[[2]]$ymax <- gene_print_info_CDKN2A_1[[2]]$ymax - 1.5
+ 
+  gene_print_info_CDKN2A_1[[3]]$y <- gene_print_info_CDKN2A_1[[3]]$y - 1.5
+  gene_print_info_CDKN2A_1[[3]]$yend <- gene_print_info_CDKN2A_1[[3]]$yend - 1.5
 
-  label_box <- data.frame(x = c(21975132, 21994490), y = c(0.5, 1.5), label = c("NM_000077", "NM_058195"))
+  gene_print_info_CDKN2A_1[[5]]$y <- gene_print_info_CDKN2A_1[[5]]$y - 1.5
+
+
+  label_box <- data.frame(x = c(21975132, 21994490), y = c(0.2, 1.6), label = c("NM_000077", "NM_058195"))
  
   exon_box <- rbind(gene_print_info_CDKN2A_1[[2]], gene_print_info_CDKN2A_2[[2]])
   intron_line <- rbind(gene_print_info_CDKN2A_1[[3]], gene_print_info_CDKN2A_2[[3]])
   exon_intron_junction <- unique(c(gene_print_info_CDKN2A_1[[4]], gene_print_info_CDKN2A_2[[4]]))
-  
+  exon_num <- rbind(gene_print_info_CDKN2A_1[[5]], gene_print_info_CDKN2A_2[[5]])
+
+  print(gene_print_info_CDKN2A_1[[5]])
+  print(gene_print_info_CDKN2A_2[[5]])
+ 
+  print(exon_num)
+ 
   p_gene <- ggplot()
   p_gene <- p_gene + geom_rect(data = exon_box, aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax, fill= "gene"))
-  # p_gene <- p_gene + geom_text(data = exon_num, aes(x = x, y = y, label = label, colour = "gene"), size = 3)
+  p_gene <- p_gene + geom_text(data = exon_num, aes(x = x, y = y, label = label, colour = "gene"), size = 1.8)
 
   p_gene <- p_gene + geom_segment(data = intron_line, aes(x = x, xend = xend, y = y, yend = yend, colour = "gene"), size = 0.3, arrow = arrow(length = unit(0.03, "inches"))) 
 
@@ -853,15 +906,20 @@ gene_print_info_CDKN2A <- function() {
 
 ##########
 
-print_prof("TP53", "NM_000546", 7572926 - 300, 7579912 + 300, "-", 50)
+print_prof("TP53", "NM_000546", 7572926 - 300, 7579912 + 300, "-", 10, 50)
 
-print_prof("PIK3R1", "NM_181523", 67588086 - 300, 67593429 + 300, "+")
+print_prof("PIK3R1", "NM_181523", 67588086 - 300, 67593429 + 300, "+", 10, 300)
 
-print_prof("CDKN2A", "NM_000077", 21968227 - 300, 21994330 + 300, "-")
+print_prof("CDKN2A", "NM_000077", 21968227 - 300, 21994330 + 300, "-", 10, 300)
 
-print_prof("GATA3", "NM_002051", 8105958 - 300, 8115986 + 300, "+")
+print_prof("GATA3", "NM_002051", 8105958 - 300, 8115986 + 300, "+", 10, 300)
 
-print_prof("MET", "NM_000245", 116411551 - 300, 116415165 + 300, "+")
+print_prof("MET", "NM_000245", 116411551 - 300, 116415165 + 300, "+", 10, 300)
 
-print_prof("MIEN1", "NM_032339", 37884752, 37886816, "-")
+print_prof("MIEN1", "NM_032339", 37884752, 37886816, "-", 10, 300)
+
+print_prof("NF1", "NM_001042492", 29421945, 29704695, "+", 20, 300)
+
+print_prof("RB1", "NM_000321", 48877883, 49056026, "+", 20, 300)
+
 

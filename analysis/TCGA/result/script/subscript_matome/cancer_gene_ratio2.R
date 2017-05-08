@@ -44,7 +44,7 @@ mut_func[mut_info$Func.refGene == "exonic" & mut_info$ExonicFunc.refGene == "sto
 mut_func[mut_info$Func.refGene == "exonic" & 
            mut_info$ExonicFunc.refGene %in% c("frameshift deletion", "frameshift insertion")] <- "Frameshift indel"
 mut_func[mut_info$Func.refGene == "exonic" & 
-           mut_info$ExonicFunc.refGene %in% c("nonframeshift deletion", "nonframeshift insertion")] <- "Inframe indel"
+           mut_info$ExonicFunc.refGene %in% c("nonframeshift deletion", "nonframeshift insertion")] <- "In-frame indel"
 
 mut_info$mut_func <- mut_func
 
@@ -89,9 +89,9 @@ get_cg_ratio_info <- function(mut_info_selected) {
 
 
   cg_info$mut_func2 <- factor(cg_info$mut_func,
-                              levels = rev(c("Silent", "Missense", "Nonsense", "Inframe indel", "Frameshift indel", "Other",
+                              levels = rev(c("Silent", "Missense", "Nonsense", "In-frame indel", "Frameshift indel", "Other",
                                          "exon-skip", "alternative-5'-splice-site", "alternative-3'-splice-site", "intron-retention", "complex")),
-                              labels = rev(c("Silent", "Missense", "Nonsense", "Inframe indel", "Frameshift indel", "Other",
+                              labels = rev(c("Silent", "Missense", "Nonsense", "In-frame indel", "Frameshift indel", "Other",
                                          "Exon skipping", "Alternative 5'SS", "Alternative 3'SS", "Intron retention", "Complex")))
   cg_info$is_gsm <- ifelse(is.na(cg_info$GSM), "non_gsm", "gsm")
 
@@ -129,11 +129,11 @@ cg_info_proc_master <- rbind(cg_info_proc_master, cbind(cg_info_proc_tmp, cg_typ
 
 
 
-ggplot(cg_info_proc_master %>% filter(!(mut_func2 %in% c("Inframe indel", "Frameshift indel", "Other")) & class_statistics == "CG_ratio"),
+ggplot(cg_info_proc_master %>% filter(!(mut_func2 %in% c("In-frame indel", "Frameshift indel", "Other")) & class_statistics == "CG_ratio"),
        aes(x = mut_func2, y = value, fill = mut_func2)) + 
   geom_bar(stat = "identity", position = "dodge")  + 
   coord_flip() +
-  labs(x = "", y = "Cancer gene ratio") +
+  labs(x = "", y = "Fraction of cancer-related genes") +
   my_theme() +
   theme(strip.text.x = element_text(size = rel(1.2), angle = 0, hjust = 0),
         panel.spacing.x=unit(1.2, "lines")) +
@@ -147,7 +147,7 @@ ggplot(cg_info_proc_master %>% filter(!(mut_func2 %in% c("Inframe indel", "Frame
 ggsave("../figure/cancer_gene_ratio2.tiff", width = 10, height = 10, dpi = 600, units = "cm")
 
 
-ggplot(cg_info_proc_master %>% filter(!(mut_func2 %in% c("Silent", "Inframe indel", "Frameshift indel", "Other")) & class_statistics == "CG_log_pV"),
+ggplot(cg_info_proc_master %>% filter(!(mut_func2 %in% c("Silent", "In-frame indel", "Frameshift indel", "Other")) & class_statistics == "CG_log_pV"),
        aes(x = mut_func2, y = value, fill = mut_func2)) + 
   geom_bar(stat = "identity", position = "dodge")  + 
   coord_flip() +

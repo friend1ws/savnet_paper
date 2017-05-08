@@ -23,7 +23,7 @@ splicing_mutation$GSM2 <- factor(splicing_mutation$GSM2,
                                  levels = rev(c("exon-skip", "alternative-5'-splice-site", "alternative-3'-splice-site",
                                                 "intron-retention", "complex", "no-change")),
                                  labels = rev(c("Exon skipping", "Alternative 5'SS", "Alternative 3'SS",
-                                                "Intron retention", "Complex", "No change"))
+                                                "Intron retention", "Complex", "Normal splicing"))
 )
 
 
@@ -76,7 +76,7 @@ get_base_count_mat <- function(motif_seqs, nbase) {
 
 
 seq_logo_print_list <- list(plot_grid(ggdraw() + draw_label(""),
-                                      ggdraw() + draw_label("No change", size = 7),
+                                      ggdraw() + draw_label("Normal splicing", size = 7),
                                       ggdraw() + draw_label("Abnormal splicing", size = 7),
                                       ncol = 3, rel_widths = c(0.15, 1, 1)))
 
@@ -85,14 +85,14 @@ for(pos in c(2, 3, 7, 8, 9)) {
   
   motif_sub <- splicing_mutation %>% 
     filter(Type_Motif == "donor", Rel_Start_Motif == pos) %>%
-    filter(GSM2 == "No change") %>% filter(FPKM >= 10.0)
+    filter(GSM2 == "Normal splicing") %>% filter(FPKM >= 10.0)
   
   tgg_logo_no <- ggseqlogo(t(get_base_count_mat(motif_sub$Motif_Seq, 9)), TRUE) + 
     labs(x = "", y = "") 
 
   motif_sub <- splicing_mutation %>% 
     filter(Type_Motif == "donor", Rel_Start_Motif == pos) %>%
-    filter(GSM2 != "No change")
+    filter(GSM2 != "Normal splicing")
   
   tgg_logo_yes <- ggseqlogo(t(get_base_count_mat(motif_sub$Motif_Seq, 9)), TRUE) + 
     labs(x = "", y = "") 
@@ -102,11 +102,11 @@ for(pos in c(2, 3, 7, 8, 9)) {
         tgg_logo_no <- tgg_logo_no + theme_nonbottom()
         tgg_logo_yes <- tgg_logo_yes + theme_nonbottom()
   } else {
-        tgg_logo_no <- tgg_logo_no + theme_bottom() + scale_x_continuous(breaks = 1:9, labels = c("-3", "-2", "-1", "1", "2", "3", "4", "5", "6"))
-        tgg_logo_yes <- tgg_logo_yes + theme_bottom() + scale_x_continuous(breaks = 1:9, labels = c("-3", "-2", "-1", "1", "2", "3", "4", "5", "6"))
+        tgg_logo_no <- tgg_logo_no + theme_bottom() + scale_x_continuous(breaks = 1:9, labels = c("-3", "-2", "-1", "+1", "+2", "+3", "+4", "+5", "+6"))
+        tgg_logo_yes <- tgg_logo_yes + theme_bottom() + scale_x_continuous(breaks = 1:9, labels = c("-3", "-2", "-1", "+1", "+2", "+3", "+4", "+5", "+6"))
   }
 
-  label_pos <- ifelse(pos > 3, as.character(pos - 3), as.character(pos - 4))
+  label_pos <- ifelse(pos > 3, paste("+", as.character(pos - 3), sep = ""), as.character(pos - 4))
   seq_logo_print_list <- c(seq_logo_print_list, list(
     plot_grid(ggdraw() + draw_label(label_pos, size = 7), 
               tgg_logo_no, 
@@ -133,7 +133,7 @@ ggsave("../figure/seqlogo_list_simple.tiff", width = 9, height = 9, dpi = 600, u
 
 count_thres <- 25 
 seq_logo_print_list <- list(plot_grid(ggdraw() + draw_label(""),
-                                      ggdraw() + draw_label("No change", size = 7),
+                                      ggdraw() + draw_label("Normal splicing", size = 7),
                                       ggdraw() + draw_label("Exon skipping", size = 7),
                                       ggdraw() + draw_label("Alternative 5'SS", size = 7),
                                       ggdraw() + draw_label("Intron retention", size = 7),
@@ -146,7 +146,7 @@ for(pos in c(2, 3, 7, 8, 9)) {
   
   motif_sub <- splicing_mutation %>% 
     filter(Type_Motif == "donor", Rel_Start_Motif == pos) %>%
-    filter(GSM2 == "No change") %>% filter(FPKM >= 10.0)
+    filter(GSM2 == "Normal splicing") %>% filter(FPKM >= 10.0)
   count_mat[pos, 1] <- nrow(motif_sub)
 
   if (count_mat[pos, 1] >= count_thres) {
@@ -216,11 +216,11 @@ for(pos in c(2, 3, 7, 8, 9)) {
       tgg_logo_IR <- tgg_logo_IR + theme_nonbottom()
       tgg_logo_CP <- tgg_logo_CP + theme_nonbottom()
   } else {
-      if (count_mat[pos, 1] >= count_thres) tgg_logo_no <- tgg_logo_no + theme_bottom() + scale_x_continuous(breaks = 1:9, labels = c("-3", "-2", "-1", "1", "2", "3", "4", "5", "6"))
-      if (count_mat[pos, 2] >= count_thres) tgg_logo_ES <- tgg_logo_ES + theme_bottom() + scale_x_continuous(breaks = 1:9, labels = c("-3", "-2", "-1", "1", "2", "3", "4", "5", "6"))
-      if (count_mat[pos, 3] >= count_thres) tgg_logo_A5S <- tgg_logo_A5S + theme_bottom() + scale_x_continuous(breaks = 1:9, labels = c("-3", "-2", "-1", "1", "2", "3", "4", "5", "6"))
-      if (count_mat[pos, 4] >= count_thres) tgg_logo_IR <- tgg_logo_IR + theme_bottom() + scale_x_continuous(breaks = 1:9, labels = c("-3", "-2", "-1", "1", "2", "3", "4", "5", "6"))
-      if (count_mat[pos, 5] >= count_thres) tgg_logo_CP <- tgg_logo_CP + theme_bottom() + scale_x_continuous(breaks = 1:9, labels = c("-3", "-2", "-1", "1", "2", "3", "4", "5", "6"))
+      if (count_mat[pos, 1] >= count_thres) tgg_logo_no <- tgg_logo_no + theme_bottom() + scale_x_continuous(breaks = 1:9, labels = c("-3", "-2", "-1", "+1", "+2", "+3", "+4", "+5", "+6"))
+      if (count_mat[pos, 2] >= count_thres) tgg_logo_ES <- tgg_logo_ES + theme_bottom() + scale_x_continuous(breaks = 1:9, labels = c("-3", "-2", "-1", "+1", "+2", "+3", "+4", "+5", "+6"))
+      if (count_mat[pos, 3] >= count_thres) tgg_logo_A5S <- tgg_logo_A5S + theme_bottom() + scale_x_continuous(breaks = 1:9, labels = c("-3", "-2", "-1", "+1", "+2", "+3", "+4", "+5", "+6"))
+      if (count_mat[pos, 4] >= count_thres) tgg_logo_IR <- tgg_logo_IR + theme_bottom() + scale_x_continuous(breaks = 1:9, labels = c("-3", "-2", "-1", "+1", "+2", "+3", "+4", "+5", "+6"))
+      if (count_mat[pos, 5] >= count_thres) tgg_logo_CP <- tgg_logo_CP + theme_bottom() + scale_x_continuous(breaks = 1:9, labels = c("-3", "-2", "-1", "+1", "+2", "+3", "+4", "+5", "+6"))
   }
 
 
@@ -229,7 +229,7 @@ for(pos in c(2, 3, 7, 8, 9)) {
   #   theme_nothing()   
   
  
-  label_pos <- ifelse(pos > 3, as.character(pos - 3), as.character(pos - 4))
+  label_pos <- ifelse(pos > 3, paste("+", as.character(pos - 3), sep = ""), as.character(pos - 4))
   seq_logo_print_list <- c(seq_logo_print_list, list(
     plot_grid(ggdraw() + draw_label(label_pos, size = 7), 
               tgg_logo_no, 
@@ -275,7 +275,7 @@ ggsave("../figure/seqlogo_list_detail.tiff", width = 16, height = 9, dpi = 600, 
 
 
 seq_logo_print_list <- list(plot_grid(ggdraw() + draw_label(""),
-                                      ggdraw() + draw_label("No change", size = 7),
+                                      ggdraw() + draw_label("Normal splicing", size = 7),
                                       ggdraw() + draw_label("Abnormal splicing", size = 7),
                                       ncol = 3, rel_widths = c(0.15, 1, 1)))
 
@@ -283,14 +283,14 @@ for(pos in c(1, 2, 4, 7)) {
 
   motif_sub <- splicing_mutation %>%
     filter(Type_Motif == "acceptor", Rel_Start_Motif == pos) %>%
-    filter(GSM2 == "No change") %>% filter(FPKM >= 10.0)
+    filter(GSM2 == "Normal splicing") %>% filter(FPKM >= 10.0)
 
   tgg_logo_no <- ggseqlogo(t(get_base_count_mat(motif_sub$Motif_Seq, 7)), TRUE) +
     labs(x = "", y = "")
 
   motif_sub <- splicing_mutation %>%
     filter(Type_Motif == "acceptor", Rel_Start_Motif == pos) %>%
-    filter(GSM2 != "No change")
+    filter(GSM2 != "Normal splicing")
 
   tgg_logo_yes <- ggseqlogo(t(get_base_count_mat(motif_sub$Motif_Seq, 7)), TRUE) +
     labs(x = "", y = "")
@@ -300,11 +300,11 @@ for(pos in c(1, 2, 4, 7)) {
         tgg_logo_no <- tgg_logo_no + theme_nonbottom()
         tgg_logo_yes <- tgg_logo_yes + theme_nonbottom()
   } else {
-        tgg_logo_no <- tgg_logo_no + theme_bottom() + scale_x_continuous(breaks = 1:7, labels = c("6", "5", "4", "3", "2", "1", "-1"))
-        tgg_logo_yes <- tgg_logo_yes + theme_bottom() + scale_x_continuous(breaks = 1:7, labels = c("6", "5", "4", "3", "2", "1", "-1"))
+        tgg_logo_no <- tgg_logo_no + theme_bottom() + scale_x_continuous(breaks = 1:7, labels = c("+6", "+5", "+4", "+3", "+2", "+1", "-1"))
+        tgg_logo_yes <- tgg_logo_yes + theme_bottom() + scale_x_continuous(breaks = 1:7, labels = c("+6", "+5", "+4", "+3", "+2", "+1", "-1"))
   }
 
-  label_pos <- ifelse(pos > 6, as.character(-pos + 6), as.character(-pos + 7))
+  label_pos <- ifelse(pos > 6, as.character(-pos + 6), paste("+", as.character(-pos + 7), sep = ""))
   seq_logo_print_list <- c(seq_logo_print_list, list(
     plot_grid(ggdraw() + draw_label(label_pos, size = 7),
               tgg_logo_no,

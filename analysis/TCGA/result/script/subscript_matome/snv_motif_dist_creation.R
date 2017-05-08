@@ -96,7 +96,9 @@ snv_motif_count_dc$Rel_Pos2[snv_motif_count_dc$Rel_Pos > exon_size_d] <-
 
 
 snv_motif_count_dc$Rel_Pos2 <- 
-  factor(snv_motif_count_dc$Rel_Pos2, levels = unique(as.character(sort(snv_motif_count_dc$Rel_Pos2))))
+  factor(snv_motif_count_dc$Rel_Pos2, 
+         levels = unique(as.character(sort(snv_motif_count_dc$Rel_Pos2))),
+         labels = c("-3", "-2", "-1", "+1", "+2", "+3", "+4", "+5", "+6"))
 
 
 p_dc <- ggplot(snv_motif_count_dc,
@@ -131,7 +133,9 @@ snv_motif_count_ac$Rel_Pos2[snv_motif_count_ac$Rel_Pos > intron_size_a] <-
 
 
 snv_motif_count_ac$Rel_Pos2 <- 
-  factor(snv_motif_count_ac$Rel_Pos2, levels = rev(unique(as.character(sort(snv_motif_count_ac$Rel_Pos2)))))
+  factor(snv_motif_count_ac$Rel_Pos2, 
+         levels = rev(unique(as.character(sort(snv_motif_count_ac$Rel_Pos2)))),
+         labels = c("+6", "+5", "+4", "+3", "+2", "+1", "-1"))
 
 
 p_ac <- ggplot(snv_motif_count_ac,

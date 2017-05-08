@@ -61,6 +61,8 @@ with open(savnet_result, 'r') as hin:
         F = line.rstrip('\n').split('\t')
         if F[header2ind["Splicing_Key"]] in key2ctype:
 
+            # print key2ctype[F[header2ind["Splicing_Key"]]]
+
             sf_mut_status = ';'.join(sample2sf_mut[F[header2ind["Sample_Name"]]]) if F[header2ind["Sample_Name"]] in sample2sf_mut else "---"
             print '\t'.join(F[:9]) + '\t' + ','.join(key2ctype[F[header2ind["Splicing_Key"]]]) + '\t' + sf_mut_status
 

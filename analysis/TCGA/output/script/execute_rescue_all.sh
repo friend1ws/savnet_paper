@@ -7,8 +7,14 @@ then
     mkdir -p ../rescue
 fi
 
+# First, list up the SAVs detected by SAVNet
 python subscript_rescue/generate_vcf_list.py ../savnet_out/d3.6_a6.1_8_ka/TCGA.genomon_splicing_mutation.result.txt | sort -k1,1 -k2,2n > ../rescue/sav.anno.txt
 
+
+# Then for each sample, extract the somatic variants that satisfy the following criteria
+# 1. Number of variant supporting read is not less than 3
+# 2. variant allele frequency (VAF)of tumor is not less than 0.1
+# 3. the ratio between VAF of tumor and control is not less than 10
 
 while read CTYPE 
 do

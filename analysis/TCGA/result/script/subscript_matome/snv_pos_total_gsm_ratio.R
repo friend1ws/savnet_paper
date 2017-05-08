@@ -76,12 +76,16 @@ snv_motif_count_dd$Rel_Start_Motif2[snv_motif_count_dd$Rel_Start_Motif <= exon_s
 snv_motif_count_dd$Rel_Start_Motif2[snv_motif_count_dd$Rel_Start_Motif > exon_size_d] <- 
   snv_motif_count_dd$Rel_Start_Motif[snv_motif_count_dd$Rel_Start_Motif > exon_size_d] - exon_size_d
 
+snv_motif_count_dd$Rel_Start_Motif2 <- factor(snv_motif_count_dd$Rel_Start_Motif2,
+                                              levels = c(-3, -2, -1, 1, 2, 3, 4, 5, 6),
+                                              labels = c("-3", "-2", "-1", "+1", "+2", "+3", "+4", "+5", "+6"))
+
 
 p_dd_total <- ggplot(snv_motif_count_dd,
                aes(x = Ref_Mut, y = count, fill = Alt_Mut)) +
   geom_bar(stat = "identity") +
   facet_wrap( ~ Rel_Start_Motif2, nrow = 1) +
-  labs(x = "", y = "Total mutation count", fill = "Alternative base") +
+  labs(x = "", y = "Total variant count", fill = "Alternative base") +
   my_theme() +
   ggtitle("Donor Disruption") +
   theme(# axis.text.x = element_text(size = rel(1)),
@@ -152,7 +156,7 @@ snv_motif_count_ad$Rel_Start_Motif2[snv_motif_count_ad$Rel_Start_Motif > intron_
 
 snv_motif_count_ad$Rel_Start_Motif2 <- factor(snv_motif_count_ad$Rel_Start_Motif2,
                                               levels = rev(c(-1, 1, 2, 3, 4, 5, 6)),
-                                              labels = rev(c("-1", "1", "2", "3", "4", "5", "6")))
+                                              labels = rev(c("-1", "+1", "+2", "+3", "+4", "+5", "+6")))
 
 
 p_ad_total <- ggplot(snv_motif_count_ad,
