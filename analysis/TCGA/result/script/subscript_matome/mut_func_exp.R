@@ -20,7 +20,7 @@ func_class2[
 
 func_class2[
   mut_func_exp$Func_Class %in% c("nonframeshift deletion", "nonframeshift insertion")] <- 
-  "Inframe indel"
+  "In-frame indel"
 
 func_class2[
   mut_func_exp$Func_Class %in% c("exon-skip")] <-
@@ -29,7 +29,7 @@ func_class2[
 func_class2[
   func_class2 == "Exon skipping (frameshift)" &
     mut_func_exp$Is_Inframe == "in-frame"] <-
-  "Exon skipping (inframe)"
+  "Exon skipping (in-frame)"
 
 func_class2[
   mut_func_exp$Func_Class %in% c("alternative-5'-splice-site", "intronic-alternative-5'-splice-site")] <-
@@ -42,12 +42,12 @@ func_class2[
 func_class2[
   func_class2 == "Alternative 5'SS (frameshift)" &
   mut_func_exp$Is_Inframe == "in-frame"] <-
-  "Alternative 5'SS (inframe)"
+  "Alternative 5'SS (in-frame)"
 
 func_class2[
   func_class2 == "Alternative 3'SS (frameshift)" &
   mut_func_exp$Is_Inframe == "in-frame"] <-
-  "Alternative 3'SS (inframe)"
+  "Alternative 3'SS (in-frame)"
 
 
 func_class2[
@@ -70,17 +70,17 @@ func_class2[
   mut_func_exp$Func_Class %in% c("complex")] <- "Complex"
 
 mut_func_exp$Func_Class2 <- factor(func_class2, 
-                                   levels =rev(c("Silent", "Missense", "Nonsense", "Inframe indel", "Frameshift indel",
-                                                 "Exon skipping (frameshift)", "Exon skipping (inframe)",
-                                                 "Alternative 5'SS (frameshift)", "Alternative 5'SS (inframe)",
-                                                 "Alternative 3'SS (frameshift)", "Alternative 3'SS (inframe)",
+                                   levels =rev(c("Silent", "Missense", "Nonsense", "In-frame indel", "Frameshift indel",
+                                                 "Exon skipping (frameshift)", "Exon skipping (in-frame)",
+                                                 "Alternative 5'SS (frameshift)", "Alternative 5'SS (in-frame)",
+                                                 "Alternative 3'SS (frameshift)", "Alternative 3'SS (in-frame)",
                                                  "Intron retention", "Complex", "other")))
 
 
  
 
 ggplot(mut_func_exp %>% 
-         filter(!Func_Class2 %in% c("other", "Inframe indel", "Frameshift indel"),
+         filter(!Func_Class2 %in% c("other", "In-frame indel", "Frameshift indel"),
                 FPKM_mean >= 10.0),
                 # Gene_Symbol %in% mut_func_exp_gene_count$Gene_Symbol),
        aes(x = Func_Class2, y = FPKM_normalized, fill = Func_Class2)) + 
@@ -98,7 +98,7 @@ ggsave("../figure/mut_fun_exp_fpkm10.tiff", width = 10, height = 4, dpi = 600, u
 
 
 ggplot(mut_func_exp %>% 
-         filter(!Func_Class2 %in% c("other", "Inframe indel", "Frameshift indel"),
+         filter(!Func_Class2 %in% c("other", "In-frame indel", "Frameshift indel"),
                 FPKM_mean >= 0.0),
        # Gene_Symbol %in% mut_func_exp_gene_count$Gene_Symbol),
        aes(x = Func_Class2, y = FPKM_normalized, fill = Func_Class2)) + 
@@ -115,7 +115,7 @@ ggsave("../figure/mut_fun_exp.tiff", width = 10, height = 4, dpi = 600, units = 
 
 
 ggplot(mut_func_exp %>% 
-         filter(!Func_Class2 %in% c("other", "Inframe indel", "Frameshift indel"),
+         filter(!Func_Class2 %in% c("other", "In-frame indel", "Frameshift indel"),
                 Gene_Symbol %in% cancer_gene_list),
        # Gene_Symbol %in% mut_func_exp_gene_count$Gene_Symbol),
        aes(x = Func_Class2, y = FPKM_normalized, fill = Func_Class2)) + 

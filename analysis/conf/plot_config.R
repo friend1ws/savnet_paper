@@ -19,38 +19,39 @@ my_theme <- function() {
 } 
 
 splicing_class_colour <- c(
+  "Silent" = "#d9d9d9",
+  "Missense" = "#d9d9d9",
+  "Nonsense" = "#d9d9d9",
+  "Inframe indel" = "#d9d9d9",
+  "Frameshift indel" = "#d9d9d9",
   "Exon skip" = "#fb8072",
   "Exon skipping" = "#fb8072",  
+  "Exon skip (frameshift)" = "#fb8072",
+  "Exon skip (in-frame)" = "#fb8072",
+  "Exon skipping (frameshift)" = "#fb8072",
+  "Exon skipping (in-frame)" = "#fb8072",
   "Alternative 5' splice site" = "#80b1d3",
   "Alternative 5'-ss" = "#80b1d3",
   "Alternative 5'SS" = "#80b1d3",
+  "Alternative 5' splice site (frameshift)" = "#80b1d3",
+  "Alternative 5' splice site (in-frame)" = "#80b1d3",
+  "Alternative 5'-ss (frameshift)" = "#80b1d3",
+  "Alternative 5'-ss (in-frame)" = "#80b1d3", 
+  "Alternative 5'SS (frameshift)" = "#80b1d3", 
+  "Alternative 5'SS (in-frame)" = "#80b1d3",
   "Alternative 3' splice site" = "#b3de69",
   "Alternative 3'-ss" = "#b3de69",
   "Alternative 3'SS" = "#b3de69",    
+  "Alternative 3' splice site (frameshift)" = "#b3de69",
+  "Alternative 3' splice site (in-frame)" = "#b3de69",
+  "Alternative 3'-ss (frameshift)" = "#b3de69",
+  "Alternative 3'-ss (in-frame)" = "#b3de69",  
+  "Alternative 3'SS (frameshift)" = "#b3de69", 
+  "Alternative 3'SS (in-frame)" = "#b3de69",
   "Intron retention" = "#bebada",
   "Complex" = "#fdb462",
-  "Exon skip (frameshift)" = "#fb8072",
-  "Exon skip (inframe)" = "#fb8072",
-  "Exon skipping (frameshift)" = "#fb8072",
-  "Exon skipping (inframe)" = "#fb8072",
-  "Alternative 5' splice site (frameshift)" = "#80b1d3",
-  "Alternative 5' splice site (inframe)" = "#80b1d3", 
-  "Alternative 3' splice site (frameshift)" = "#b3de69", 
-  "Alternative 3' splice site (inframe)" = "#b3de69",  
-  "Alternative 5'-ss (frameshift)" = "#80b1d3",
-  "Alternative 5'-ss (inframe)" = "#80b1d3", 
-  "Alternative 3'-ss (frameshift)" = "#b3de69",
-  "Alternative 3'-ss (inframe)" = "#b3de69",  
-  "Alternative 5'SS (frameshift)" = "#80b1d3",
-  "Alternative 5'SS (inframe)" = "#80b1d3",
-  "Alternative 3'SS (frameshift)" = "#b3de69",
-  "Alternative 3'SS (inframe)" = "#b3de69",
   "No change" = "#d9d9d9",
-  "Silent" = "#d9d9d9",
-  "Missense" = "#d9d9d9", 
-  "Nonsense" = "#d9d9d9",
-  "Inframe indel" = "#d9d9d9", 
-  "Frameshift indel" = "#d9d9d9"
+  "Normal splicing" = "#d9d9d9"
 )
 
 signature_colour <- c(
@@ -77,4 +78,26 @@ g_legend <- function(a.gplot){
   legend <- tmp$grobs[[leg]]
   return(legend)}
 
+
+get_junction_pos <- function(motif_pos, mutation_type) {
+
+   motif_pos_sp1 <- unlist(strsplit(motif_pos, ":"))
+   motif_pos_sp2 <- unlist(strsplit(motif_pos_sp1[2], ","))
+   motif_pos_sp3 <- unlist(strsplit(motif_pos_sp2[1], "-"))
+
+  tchr <- motif_pos_sp1[1]
+  tstart <- as.numeric(motif_pos_sp3[1])
+  tend <- as.numeric(motif_pos_sp3[2])
+  tdir <- motif_pos_sp2[2]
+  
+  
+  if (grepl("donor", mutation_type)) {
+    junc_pos <- ifelse(tdir == "+", tstart + exon_size_d, tend - exon_size_d)
+  } else { 
+    junc_pos <- ifelse(tdir == "+", tend - exon_size_a, tstart + exon_size_a)
+  }
+  
+  return(junc_pos)
+
+}
 

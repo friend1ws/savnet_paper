@@ -74,9 +74,10 @@ get_print_info <- function(score_df, is_mes, is_donor, is_dummy) {
     # facet_grid(.~type) +
     my_theme() +
     scale_fill_gradient2(low = "#2166ac", mid = "#ffffff", high = "#b2182b") +
-    theme(axis.line = element_blank(),
-          axis.text.x = element_text(angle = 90, hjust = 1),
-          legend.key.width = unit(1, "cm"),
+    theme(plot.title = element_text(hjust = 1),
+          axis.line = element_blank(),
+          axis.text.x = element_text(angle = 45, hjust = 1),
+          legend.key.width = unit(0.8, "cm"),
           panel.border = element_blank(),
           panel.grid.major = element_blank(),
           axis.ticks = element_blank(),
@@ -213,7 +214,7 @@ p_legend_less <- ggplot(tdf, aes(x = x, y = y, fill = z)) +
   scale_fill_gradient(high = "#2166ac", low = "#ffffff") +
   my_theme() +
   theme(legend.position = "bottom",
-        legend.key.width = unit(0.6, "cm")) +
+        legend.key.width = unit(0.45, "cm")) +
   labs(fill = "-Log10(P-value) (Splicing patttern 1 < 2)")
 
 p_legend_greater <- ggplot(tdf, aes(x = x, y = y, fill = z)) +
@@ -221,7 +222,7 @@ p_legend_greater <- ggplot(tdf, aes(x = x, y = y, fill = z)) +
   scale_fill_gradient(high = "#b2182b", low = "#ffffff") +
   my_theme() +
   theme(legend.position = "bottom",
-        legend.key.width = unit(0.6, "cm")) +
+        legend.key.width = unit(0.45, "cm")) +
   labs(fill = "-Log10(P-value) (Splicing patttern 1 > 2)")
 ##########
 
@@ -233,6 +234,6 @@ plot_grid(plot_grid(p_mes_donor, p_mes_acceptor, p_hb_donor, nrow = 1),
           plot_grid(g_legend(p_legend_less), g_legend(p_legend_greater), nrow = 1),
           ncol = 1, rel_heights = c(1.0, 0.2))
 
-ggsave("../figure/mes_hb_wt_comp.tiff, width = 18, height = 7.5, dpi = 600, units = "cm")
+ggsave("../figure/mes_hb_wt_comp.tiff", width = 15, height = 6.0, dpi = 600, units = "cm")
 
 

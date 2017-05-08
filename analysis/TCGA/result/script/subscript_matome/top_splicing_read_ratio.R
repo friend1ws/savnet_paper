@@ -12,6 +12,15 @@ gene2ref <- gene2ref_tmp$V2
 names(gene2ref) <- gene2ref_tmp$V1
 
 
+# filter CDKN2A NM_058195
+check_CDKN2A <- function(x) {
+  motif_pos_end <- unlist(lapply(strsplit(x$Splicing_Key, "-"), '[', 2))
+  return(x$Gene_Symbol == "CDKN2A" & motif_pos_end > 21975132)
+}
+
+read_num_info <- read_num_info[!check_CDKN2A(read_num_info), ]
+
+
 # get intron pos for opposite intron retention
 get_motif_info <- function(motif_pos, ref_gene_id) {
   
@@ -86,7 +95,8 @@ for (i in 1:nrow(motif2count)) {
   top_ind <- order_vec[1]
   top_splice <- names(mean_count_vec)[top_ind]
   first_vec <- vec_mat[, top_ind]
-  
+
+  if (FALSE) { 
   sec_ind <- 0
   sec_splice <- "---"
   if (length(order_vec) >= 2 & mean_count_vec[order_vec[2]] > 0) {
@@ -99,6 +109,17 @@ for (i in 1:nrow(motif2count)) {
   } else {
     rel_vector <- rep(1, N)
   }
+  }
+
+  if (length(order_vec) >= 2 & mean_count_vec[order_vec[2]] > 0) {
+    vec_mat[,top_ind] <- 0 
+    other_vec <- rowSums(vec_mat)
+    rel_vector <- first_vec / (first_vec + other_vec)
+    rel_vector[is.na(rel_vector)] <- 0.5
+  } else {
+    rel_vector <- rep(1, N)
+  }
+  
   
   Ds <- rbind(Ds, data.frame(Motif_Pos = rep(as.character(motif2count[i, 1]), N),
                              Gene_Symbol = rep(as.character(motif2count[i, 2]), N),
@@ -117,6 +138,10 @@ Ds$Top_Splice <- factor(Ds$Top_Splice,
                         levels = c("exon-skip", "alternative-5'-splice-site", 
                                    "alternative-3'-splice-site", "intron-retention"),
                         labels = c("Exon skipping", "Alternative 5'SS", "Alternative 3'SS", "Intron retention"))
+
+Ds$Gene_Symbol <- factor(Ds$Gene_Symbol,
+                         levels = c("TP53", "PIK3R1", "CDKN2A", "GATA3", "MET", "MIEN1"))
+
 
 motif2mut_splice_info <- Ds %>% select(Motif_Pos, Mut_Num, Top_Splice) %>% distinct()
 
@@ -184,7 +209,7 @@ motif2info <- motif2info %>% full_join(motif2mut_splice_info, by = "Motif_Pos")
 
 
 
-        
+print(Ds$Gene_Symbol) 
 
 DDDs <- Ds %>% left_join(motif2mut_splice_info, by = "Motif_Pos") %>%
   left_join(motif2info, by = "Motif_Pos") %>% 
@@ -198,10 +223,20 @@ key <- paste(DDDs$Gene_Symbol.x, " exon ",
              DDDs$Motif_Type, " (", 
              DDDs$Top_Splice.x, ")" , sep = "")
 
+xlabels <- unlist(lapply(rev(unique(key)), 
+                         function(x) {
+                           split_label <- unlist(strsplit(x, split = " ")) 
+                           gene_symbol <- split_label[1]
+                           other_lab <- paste(split_label[2:length(split_label)], collapse = " ")
+                           print(gene_symbol)
+                           print(other_lab)
+                           substitute(paste(italic(a), " ", b), list(a = gene_symbol, b = other_lab))
+                         }
+                  ))
+
+
 # paste(Ds$Gene_Symbol, Ds$Motif_Pos, Ds$Top_Splice, Ds$Mut_Num)
 DDDs$Key <- factor(key, levels = rev(unique(key)))
-
-
 
 
 # ggsave("../figure/top_splicing_read_ratio.pdf", width = 8, height = 8)
@@ -214,6 +249,7 @@ ggplot(DDDs %>% filter(Mut_ID %in% as.character(1:12)), aes(x = Key, y = Rel_Cou
   theme(axis.ticks = element_blank(),
         panel.grid.major.y = element_line(linetype = "longdash", colour = "grey60")) +
   labs(x = "", y = "Fraction of the most frequent type of abnormal splicing") +
+  scale_x_discrete(labels = xlabels) + 
   # labs(x = "", y = "") +
     guides(colour = FALSE) 
 
@@ -232,7 +268,7 @@ motif2first_second_read_count <- function(motif_pos_str) {
 
   read_num_info_filt <- read_num_info %>% 
     filter(Motif_Pos == motif_pos_str) %>%
-    mutate(Splicing_Key2 = paste(Splicing_Class, " (", Splicing_Key, ")", sep = "")) %>%
+    mutate(Splicing_Key2 = paste(Splicing_Class, " (chr", Splicing_Key, ")", sep = "")) %>%
     # mutate(n_Supporting_Read_Num = Supporting_Read_Num / Weight) %>% 
     select(Sample_Name, Splicing_Key2, Mutation_Key, Supporting_Read_Num) %>% 
     spread(key = Splicing_Key2, value = Supporting_Read_Num)
@@ -283,7 +319,8 @@ motif2first_second_read_count <- function(motif_pos_str) {
   temp_for_gene_symbol <- read_num_info %>% filter(Motif_Pos == motif_pos_str)
   gene_symbol <- unique(temp_for_gene_symbol$Gene_Symbol)
   motif_info <- get_motif_info(motif_pos_str, as.character(gene2ref[gene_symbol])) 
-  plot_title <- paste(gene_symbol, " exon ", motif_info[2], ", ", motif_info[1], sep = "")
+  plot_title <- substitute(paste(italic(a), " exon ", b, ", ", c, sep = ""),
+                           list(a = gene_symbol, b = motif_info[2], c = motif_info[1]))
   
   df <- data.frame(mut_id = mut_id, first_vec = first_vec, second_vec = second_vec)
   
@@ -300,11 +337,13 @@ motif2first_second_read_count <- function(motif_pos_str) {
 
 
 p_TP53 <- motif2first_second_read_count("17:7579306-7579314,-")
-p_CDKN2A <- motif2first_second_read_count("9:21971207-21971213,-")
+# p_CDKN2A <- motif2first_second_read_count("9:21971207-21971213,-")
+p_PIK3R1 <- motif2first_second_read_count("5:67591242-67591248,+")
 p_GATA3 <- motif2first_second_read_count("10:8111430-8111436,+")
 
 
-plot_grid(p_TP53, p_CDKN2A, p_GATA3, ncol = 3)
+# plot_grid(p_TP53, p_CDKN2A, p_GATA3, ncol = 3)
+plot_grid(p_TP53, p_PIK3R1, p_GATA3, ncol = 3)
 
 
 

@@ -51,6 +51,7 @@ splicing_mutation_proc$Mutation_Type2 <-
 
 ##########
 
+
 splicing_mutation <- splicing_mutation %>% 
   left_join(splicing_mutation_proc, key = c("Sample_Name", "Mutation_Key"))
 
@@ -137,6 +138,7 @@ splicing_mutation$Mutation_Type3[
 
 
 
+
 splicing_mutation[
   splicing_mutation$Splicing_Class == "intronic-alternative-5'-splice-site",
   "Splicing_Class"] <- "alternative-5'-splice-site"
@@ -159,14 +161,12 @@ splicing_mutation$Splicing_Class <-
                     "Alternative 3'SS", "Intron retention"))
 
 
+mut_type3_order <- rev(c("SNV, canonical", "SNV, noncanonical", "SNV", "Indel, canonical", "Indel, noncanonical", "Indel"))
+
 splicing_mutation$Mutation_Type3 <- 
   factor(splicing_mutation$Mutation_Type3,
-         levels = rev(c("SNV, canonical",
-                        "SNV, noncanonical",
-                        "SNV",
-                        "Indel, canonical",
-                        "Indel, noncanonical",
-                        "Indel")))
+         levels = mut_type3_order)
+
          
 
 # splicing_mutation$Mutation_Type4 <-
@@ -178,14 +178,36 @@ splicing_mutation$Mutation_Type3 <-
 #   group_by(Mutation_Type3, Splicing_Class) %>% 
 #  summarize(count = n())
 
-p_dd <- ggplot(splicing_mutation %>% 
-         filter(Mutation_Type2 == "Donor disruption") %>% 
-         group_by(Mutation_Type3, Splicing_Class) %>% 
-         summarize(count = n()), 
-       aes(x = Mutation_Type3, y = count, fill = Splicing_Class)) + 
+splicing_mutation_type_count2 <- splicing_mutation %>%
+    filter(Mutation_Type2 == "Donor disruption") %>%
+    group_by(Mutation_Type3, Splicing_Class) %>%
+    summarize(count = n())
+
+splicing_mutation_type_count3 <- splicing_mutation %>%
+    filter(Mutation_Type2 == "Donor disruption") %>%
+    select(Sample_Name, Mutation_Key, Mutation_Type3) %>%
+    distinct() %>%
+    group_by(Mutation_Type3) %>%
+    summarize(count = n())
+
+splicing_mutation_type_count2$Mutation_Type32 <- factor(splicing_mutation_type_count2$Mutation_Type3,
+    levels = mut_type3_order,
+    labels = unlist(lapply(mut_type3_order, 
+                           function(x) {paste(x, " (", splicing_mutation_type_count3$count[splicing_mutation_type_count3$Mutation_Type3 == x], ")", sep = "")})))
+
+
+print(splicing_mutation_type_count3)
+
+
+# p_dd <- ggplot(splicing_mutation %>% 
+#          filter(Mutation_Type2 == "Donor disruption") %>% 
+#          group_by(Mutation_Type3, Splicing_Class) %>% 
+#          summarize(count = n()), 
+#        aes(x = Mutation_Type3, y = count, fill = Splicing_Class)) + 
+p_dd <-ggplot(splicing_mutation_type_count2, aes(Mutation_Type32, y = count, fill = Splicing_Class)) + 
   geom_bar(stat = "identity") +
   coord_flip() +
-  ggtitle("Donor disruption") +
+  ggtitle(paste("Donor disruption (", sum(splicing_mutation_type_count3$count), ")", sep ="")) +
   labs(x = "", y = "", fill = "") +
   my_theme() +
   theme(legend.position = "bottom") +
@@ -194,14 +216,29 @@ p_dd <- ggplot(splicing_mutation %>%
   guides(fill = FALSE)
   # guides(fill=guide_legend(nrow=1,byrow=TRUE))
 
-p_dc <- ggplot(splicing_mutation %>% 
-                 filter(Mutation_Type2 == "Donor creation") %>% 
-                 group_by(Mutation_Type3, Splicing_Class) %>% 
-                 summarize(count = n()), 
-               aes(x = Mutation_Type3, y = count, fill = Splicing_Class)) + 
+
+splicing_mutation_type_count2 <- splicing_mutation %>%
+    filter(Mutation_Type2 == "Donor creation") %>%
+    group_by(Mutation_Type3, Splicing_Class) %>%
+    summarize(count = n())
+
+splicing_mutation_type_count3 <- splicing_mutation %>%
+    filter(Mutation_Type2 == "Donor creation") %>%
+    select(Sample_Name, Mutation_Key, Mutation_Type3) %>%
+    distinct() %>%
+    group_by(Mutation_Type3) %>%
+    summarize(count = n())
+
+splicing_mutation_type_count2$Mutation_Type32 <- factor(splicing_mutation_type_count2$Mutation_Type3,
+    levels = mut_type3_order,
+    labels = unlist(lapply(mut_type3_order,
+                           function(x) {paste(x, " (", splicing_mutation_type_count3$count[splicing_mutation_type_count3$Mutation_Type3 == x], ")", sep = "")})))
+
+
+p_dc <- ggplot(splicing_mutation_type_count2, aes(Mutation_Type32, y = count, fill = Splicing_Class)) +
   geom_bar(stat = "identity") +
   coord_flip() +
-  ggtitle("Donor creation") +
+  ggtitle(paste("Donor creation (", sum(splicing_mutation_type_count3$count), ")", sep ="")) +
   labs(x = "", y = "Splicing event count", fill = "") +
   my_theme() +
   theme(legend.position = "bottom") +
@@ -210,14 +247,29 @@ p_dc <- ggplot(splicing_mutation %>%
   guides(fill = FALSE)
 # guides(fill=guide_legend(nrow=1,byrow=TRUE))
 
-p_ad <- ggplot(splicing_mutation %>% 
-                 filter(Mutation_Type2 == "Acceptor disruption") %>% 
-                 group_by(Mutation_Type3, Splicing_Class) %>% 
-                 summarize(count = n()), 
-               aes(x = Mutation_Type3, y = count, fill = Splicing_Class)) + 
+
+splicing_mutation_type_count2 <- splicing_mutation %>% 
+    filter(Mutation_Type2 == "Acceptor disruption") %>%
+    group_by(Mutation_Type3, Splicing_Class) %>% 
+    summarize(count = n())
+
+splicing_mutation_type_count3 <- splicing_mutation %>% 
+    filter(Mutation_Type2 == "Acceptor disruption") %>%
+    select(Sample_Name, Mutation_Key, Mutation_Type3) %>% 
+    distinct() %>% 
+    group_by(Mutation_Type3) %>% 
+    summarize(count = n())
+
+splicing_mutation_type_count2$Mutation_Type32 <- factor(splicing_mutation_type_count2$Mutation_Type3,
+    levels = mut_type3_order,
+    labels = unlist(lapply(mut_type3_order,
+                           function(x) {paste(x, " (", splicing_mutation_type_count3$count[splicing_mutation_type_count3$Mutation_Type3 == x], ")", sep = "")})))
+
+
+p_ad <- ggplot(splicing_mutation_type_count2, aes(Mutation_Type32, y = count, fill = Splicing_Class)) +
   geom_bar(stat = "identity") +
   coord_flip() +
-  ggtitle("Acceptor disruption") +
+  ggtitle(paste("Acceptor disruption (", sum(splicing_mutation_type_count3$count), ")", sep ="")) +
   labs(x = "", y = "", fill = "") +
   my_theme() +
   theme(legend.position = "bottom") +
@@ -226,14 +278,29 @@ p_ad <- ggplot(splicing_mutation %>%
   guides(fill = FALSE)
 # guides(fill=guide_legend(nrow=1,byrow=TRUE))
 
-p_ac <- ggplot(splicing_mutation %>% 
-                 filter(Mutation_Type2 == "Acceptor creation") %>% 
-                 group_by(Mutation_Type3, Splicing_Class) %>% 
-                 summarize(count = n()), 
-               aes(x = Mutation_Type3, y = count, fill = Splicing_Class)) + 
+
+splicing_mutation_type_count2 <- splicing_mutation %>%
+    filter(Mutation_Type2 == "Acceptor creation") %>%
+    group_by(Mutation_Type3, Splicing_Class) %>%
+    summarize(count = n())
+
+splicing_mutation_type_count3 <- splicing_mutation %>%
+    filter(Mutation_Type2 == "Acceptor creation") %>%
+    select(Sample_Name, Mutation_Key, Mutation_Type3) %>%
+    distinct() %>%
+    group_by(Mutation_Type3) %>%
+    summarize(count = n())
+
+splicing_mutation_type_count2$Mutation_Type32 <- factor(splicing_mutation_type_count2$Mutation_Type3,
+    levels = mut_type3_order,
+    labels = unlist(lapply(mut_type3_order,
+                           function(x) {paste(x, " (", splicing_mutation_type_count3$count[splicing_mutation_type_count3$Mutation_Type3 == x], ")", sep = "")})))
+
+
+p_ac <- ggplot(splicing_mutation_type_count2, aes(Mutation_Type32, y = count, fill = Splicing_Class)) +
   geom_bar(stat = "identity") +
   coord_flip() +
-  ggtitle("Acceptor creation") +
+  ggtitle(paste("Acceptor creation (", sum(splicing_mutation_type_count3$count), ")", sep ="")) +
   labs(x = "", y = "Splicing event count", fill = "") +
   my_theme() +
   theme(legend.position = "bottom") +
