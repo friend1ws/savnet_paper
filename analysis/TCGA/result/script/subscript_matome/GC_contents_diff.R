@@ -46,7 +46,7 @@ GC_info_proc$Splice_Class2 <- factor(GC_info_proc$Splice_Class,
                                     levels = c("exon-skip", "alternative-5'-splice-site", "alternative-3'-splice-site", 
                                                "intron-retention", "complex", "no-change"),
                                     labels = c("Exon skipping", "Alternative 5'SS", "Alternative 3'SS",
-                                               "Intron retention", "Complex", "No change"))
+                                               "Intron retention", "Complex", "Normal splicing"))
 
 GC_info_proc$Is_Intron2 <- factor(GC_info_proc$Is_Intron, 
                                  levels = c("GC_intron_5prime", "GC_exon", "GC_intron_3prime", "GC_intron", "GC_exon_intron_diff"),
@@ -86,7 +86,7 @@ g_gc_a <- ggplot(GC_info_proc %>%
 
 plot_grid(g_gc_d, g_gc_a, ncol = 1)
 
-ggsave("../figure/diff_gc_content.tiff", width = 9, height = 9, dpi = 600, units = "cm")
+ggsave("../figure/diff_gc_content.tiff", width = 9, height = 11, dpi = 600, units = "cm")
 
 
 
@@ -95,7 +95,7 @@ ggsave("../figure/diff_gc_content.tiff", width = 9, height = 9, dpi = 600, units
 #                                      levels = rev(c("exon-skip", "alternative-5'-splice-site", "alternative-3'-splice-site",
 #                                                 "intron-retention", "complex", "no-change")),
 #                                      labels = rev(c("Exon skipping", "Alternative 5' splice site", "Alternative 3' splice site",
-#                                                 "Intron retention", "Complex", "No change")))
+#                                                 "Intron retention", "Complex", "Normal splicing")))
 
 
 g_dgc_d <- ggplot(GC_info_proc %>% 
@@ -163,7 +163,7 @@ Len_info_proc$Splice_Class2 <- factor(Len_info_proc$Splice_Class,
                                     levels = c("exon-skip", "alternative-5'-splice-site", "alternative-3'-splice-site",
                                                "intron-retention", "complex", "no-change"),
                                     labels = c("Exon skipping", "Alternative 5'SS", "Alternative 3'SS",
-                                               "Intron retention", "Complex", "No change"))
+                                               "Intron retention", "Complex", "Normal splicing"))
 
 Len_info_proc$Is_Intron2 <- factor(Len_info_proc$Is_Intron,
                                  levels = c("Len_intron_5prime", "Len_exon", "Len_intron_3prime"),
@@ -200,7 +200,7 @@ g_len_a <- ggplot(Len_info_proc %>%
         axis.title = element_text(size = 6),
         strip.text = element_text(size = 5))
 
-plot_grid(g_len_d, g_len_a, ncol = 1)
+plot_grid(g_len_d, g_len_a, ncol = 2)
 
-ggsave("../figure/diff_length.tiff", width = 9, height = 9, dpi = 600, units = "cm")
+ggsave("../figure/diff_length.tiff", width = 18, height = 6, dpi = 600, units = "cm")
 

@@ -41,9 +41,13 @@ p_dd <- ggplot(a %>% filter(Mutation_Type == "splicing donor disruption"),
                aes(x = Pos_Diff, fill = Splicing_Class)) + 
   geom_histogram(binwidth = 5, colour = "grey30", size = 0.2) +
   my_theme() +
-  theme(plot.margin = unit(c(0.15, 0.15, 0.15, 0.15), "lines")) + 
-  xlim(c(-300, 100)) +
-  ggtitle("Donor disruption") +
+  theme(plot.margin = unit(c(0.21, 0.21, 0.21, 0.21), "lines"),
+        axis.title.x = element_text(size = 0),
+        axis.title.y = element_text(size = 0)) + 
+  # xlim(c(-300, 100)) +
+  # scale_x_continuous(limits = c(-300, 100), breaks = c(-300, -200, -100, 0, 100), labels = c("-300", "-200", "-100", "-1 +1", "+100")) +
+  scale_x_continuous(limits = c(-200, 100), breaks = c(-200, -100, 0, 100), labels = c("-200", "-100", "-1 +1", "+100")) + 
+  ggtitle("Cryptic 5'SS by \ndonor disruption") +
   labs(x = "", y = "") +
   scale_fill_manual(values = splicing_class_colour) + 
   scale_y_continuous(expand = c(0, 0)) +
@@ -54,35 +58,49 @@ p_dc <- ggplot(a %>% filter(Mutation_Type == "splicing donor creation"),
                aes(x = Pos_Diff, fill = Splicing_Class)) + 
   geom_histogram(binwidth = 5, colour = "grey30", size = 0.2) +
   my_theme() +
-  theme(plot.margin = unit(c(0.15, 0.15, 0.15, 0.15), "lines")) + 
-  xlim(c(-300, 100)) +
-  ggtitle("Donor creation") +
+  theme(plot.margin = unit(c(0.21, 0.21, 0.21, 0.21), "lines"),
+        axis.title.x = element_text(size = 0),
+        axis.title.y = element_text(size = 0)) + 
+  # xlim(c(-300, 100)) +
+  # scale_x_continuous(limits = c(-300, 100), breaks = c(-300, -200, -100, 0, 100), labels = c("-300", "-200", "-100", "-1 +1", "+100")) + 
+  scale_x_continuous(limits = c(-200, 100), breaks = c(-200, -100, 0, 100), labels = c("-200", "-100", "-1 +1", "+100")) + 
+  ggtitle("Alternative 5'SS by \ndonor creation") +
   labs(x = "", y = "") +
   scale_fill_manual(values = splicing_class_colour) +
   scale_y_continuous(expand = c(0, 0)) +
   geom_vline(size = 0.3, xintercept = 0, colour="#d73027", linetype = "longdash") +
   guides(fill = FALSE)
 
-p_ad <- ggplot(a %>% filter(Mutation_Type == "splicing acceptor disruption"),
-               aes(x = Pos_Diff, fill = Splicing_Class)) + 
-  geom_histogram(binwidth = 5, colour = "grey30", size = 0.2) +
+p_ad <- ggplot() +
+  geom_rect(aes(xmin=25, xmax=5, ymin=0, ymax=Inf), fill = "#fccde5", alpha = 0.70) +
+  geom_histogram(data = a %>% filter(Mutation_Type == "splicing acceptor disruption"),
+                 aes(x = Pos_Diff, fill = Splicing_Class), binwidth = 5, colour = "grey30", size = 0.2) +
   my_theme() +
-  theme(plot.margin = unit(c(0.15, 0.15, 0.15, 0.15), "lines")) +
-  scale_x_reverse(limits=c(100, -300)) +
-  ggtitle("Acceptor disruption") +
+  theme(plot.margin = unit(c(0.21, 0.21, 0.21, 0.21), "lines"),
+        axis.title.x = element_text(size = 0),
+        axis.title.y = element_text(size = 0)) +
+  # scale_x_reverse(limits=c(100, -300)) +
+  # scale_x_continuous(trans = "reverse", limits = c(100, -300), breaks = c(100, 0, -100, -200, -300), labels = c("+100", "+1 -1", "-100", "-200", "-300")) +
+  scale_x_continuous(trans = "reverse", limits = c(100, -200), breaks = c(100, 0, -100, -200), labels = c("+100", "+1 -1", "-100", "-200")) +
+  ggtitle("Cryptic 3'SS by \nacceptor disruption") +
   labs(x = "", y = "") +
   scale_fill_manual(values = splicing_class_colour) +
   scale_y_continuous(expand = c(0, 0)) +
   geom_vline(size = 0.3, xintercept = 0, colour="#d73027", linetype = "longdash") +
   guides(fill = FALSE)
 
-p_ac <- ggplot(a %>% filter(Mutation_Type == "splicing acceptor creation"),
-               aes(x = Pos_Diff, fill = Splicing_Class)) + 
-  geom_histogram(binwidth = 5, colour = "grey30", size = 0.2) +
+p_ac <- ggplot() +
+  geom_rect(aes(xmin=25, xmax=5, ymin=0, ymax=Inf), fill = "#fccde5", alpha = 0.70) + 
+  geom_histogram(data = a %>% filter(Mutation_Type == "splicing acceptor creation"),
+                 aes(x = Pos_Diff, fill = Splicing_Class), binwidth = 5, colour = "grey30", size = 0.2) +
   my_theme() +
-  theme(plot.margin = unit(c(0.15, 0.15, 0.15, 0.15), "lines")) +
-  scale_x_reverse(limits=c(100, -300)) +
-  ggtitle("Acceptor creation") +
+  theme(plot.margin = unit(c(0.21, 0.21, 0.21, 0.21), "lines"),
+        axis.title.x = element_text(size = 0), 
+        axis.title.y = element_text(size = 0)) +
+  # scale_x_reverse(limits=c(100, -300)) +
+  # scale_x_continuous(trans = "reverse", limits = c(100, -300), breaks = c(100, 0, -100, -200, -300), labels = c("+100", "+1 -1", "-100", "-200", "-300")) +
+  scale_x_continuous(trans = "reverse", limits = c(100, -200), breaks = c(100, 0, -100, -200), labels = c("+100", "+1 -1", "-100", "-200")) +
+  ggtitle("Alternative 3'SS by \nacceptor creation") +
   labs(x = "", y = "") +
   scale_fill_manual(values = splicing_class_colour) +
   scale_y_continuous(expand = c(0, 0)) +
@@ -99,7 +117,8 @@ p_dc_ac_dd_ad <- plot_grid(p_dc, p_ac, p_dd, p_ad, ncol = 2, align = "hv")
 xlabel <- ggdraw() + draw_label("Position", size = 7)
 ylabel <- ggdraw() + draw_label("Abnormal splicing event count", angle = 90, size = 7)
 
-p_dc_ac_dd_ad_xl <- plot_grid(p_dc_ac_dd_ad, xlabel, ncol = 1, align = "v", rel_heights = c(2, 0.1))
+p_dc_ac_dd_ad_xl <- plot_grid(p_dc_ac_dd_ad, ggdraw() + draw_label("", size = 7), xlabel, ncol = 1, align = "v", rel_heights = c(2, 0.15, 0.1))
+# p_dc_ac_dd_ad_xl <- plot_grid(p_dc_ac_dd_ad, xlabel, ncol = 1, align = "v", rel_heights = c(2, 0.1))
 
 plot_grid(ylabel, p_dc_ac_dd_ad_xl, ncol = 2, align = "h", rel_widths = c(0.04, 1))
 
