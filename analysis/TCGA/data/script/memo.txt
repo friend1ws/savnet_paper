@@ -1,4 +1,0 @@
-2017 2/17
-Need to perform bug-fixed version of GenomonExpression to all data.
-Realized that single paired files are not included.
-
