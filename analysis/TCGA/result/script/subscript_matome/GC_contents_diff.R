@@ -58,7 +58,7 @@ g_gc_d <- ggplot(GC_info_proc %>%
   filter(Type_Motif == "Donor", Splice_Class2 != "Alternative 3'SS", Is_Intron2 %in% c("5' intron", "Exon", "3' intron")), 
   aes(x = Is_Intron2, y = GC_ratio, fill = Splice_Class2)) + 
   geom_boxplot(outlier.size = 0.3, size = 0.3) +
-  labs(x = "", y = "GC contents") +
+  labs(x = "", y = "GC content") +
   ggtitle("Donor disruption") +
   facet_grid(.~Splice_Class2) +
   guides(fill = FALSE) +
@@ -73,7 +73,7 @@ g_gc_a <- ggplot(GC_info_proc %>%
   filter(Type_Motif == "Acceptor", Splice_Class2 != "Alternative 5'SS", Is_Intron2 %in% c("5' intron", "Exon", "3' intron")),
   aes(x = Is_Intron2, y = GC_ratio, fill = Splice_Class2)) + 
   geom_boxplot(outlier.size = 0.3, size = 0.3) +
-  labs(x = "", y = "GC contents") +
+  labs(x = "", y = "GC content") +
   ggtitle("Acceptor disruption") +
   facet_grid(.~Splice_Class2) +
   guides(fill = FALSE) +
@@ -102,7 +102,7 @@ g_dgc_d <- ggplot(GC_info_proc %>%
   filter(Is_Intron == "GC_exon_intron_diff" & Type_Motif == "Donor", Splice_Class2 != "Alternative 3'SS"),
   aes(x = Splice_Class2, y = GC_ratio, fill = Splice_Class2)) + 
   geom_boxplot(outlier.size = 0.3, size = 0.3) +
-  labs(x = "", y = "Diff. of GC contents between exonic and intronic regions") +
+  labs(x = "", y = "Diff. of GC content between exonic and intronic regions") +
   ggtitle("Donor disruption") +
   # facet_grid(Type_Motif~.) +
   guides(fill = FALSE) +
@@ -117,7 +117,7 @@ g_dgc_a <- ggplot(GC_info_proc %>%
   filter(Is_Intron == "GC_exon_intron_diff" & Type_Motif == "Acceptor", Splice_Class2 != "Alternative 5'SS"),
   aes(x = Splice_Class2, y = GC_ratio, fill = Splice_Class2)) + 
   geom_boxplot(outlier.size = 0.3, size = 0.3) +
-  labs(x = "", y = "Diff. of GC contents between exonic and intronic regions") +
+  labs(x = "", y = "Diff. of GC content between exonic and intronic regions") +
   ggtitle("Acceptor disruption") +
   # facet_grid(Type_Motif~.) +
   guides(fill = FALSE) +
@@ -174,7 +174,7 @@ g_len_d <- ggplot(Len_info_proc %>%
   filter(Type_Motif == "Donor", Splice_Class2 != "Alternative 3'SS", Is_Intron2 %in% c("5' intron", "Exon", "3' intron")),
   aes(x = Is_Intron2, y = log10(Len), fill = Splice_Class2)) +
   geom_boxplot(outlier.size = 0.3, size = 0.3) +
-  labs(x = "", y = "log10(Length)") +
+  labs(x = "", y = "Log10(length)") +
   ggtitle("Donor disruption") +
   facet_grid(.~Splice_Class2) +
   guides(fill = FALSE) +
@@ -189,7 +189,7 @@ g_len_a <- ggplot(Len_info_proc %>%
   filter(Type_Motif == "Acceptor", Splice_Class2 != "Alternative 5'SS", Is_Intron2 %in% c("5' intron", "Exon", "3' intron")),
   aes(x = Is_Intron2, y = log10(Len), fill = Splice_Class2)) +
   geom_boxplot(outlier.size = 0.3, size = 0.3) +
-  labs(x = "", y = "log10(Length)") +
+  labs(x = "", y = "Log10(length)") +
   ggtitle("Acceptor disruption") +
   facet_grid(.~Splice_Class2) +
   guides(fill = FALSE) +

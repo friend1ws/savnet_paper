@@ -2,6 +2,10 @@ library(dplyr)
 library(tidyr)
 library(ggplot2)
 library(cowplot)
+library(Cairo)
+
+Cairo()
+
 
 source("../../../conf/plot_config.R")
 
@@ -78,7 +82,8 @@ snv_motif_count_dd$Rel_Start_Motif2[snv_motif_count_dd$Rel_Start_Motif > exon_si
 
 snv_motif_count_dd$Rel_Start_Motif2 <- factor(snv_motif_count_dd$Rel_Start_Motif2,
                                               levels = c(-3, -2, -1, 1, 2, 3, 4, 5, 6),
-                                              labels = c("-3", "-2", "-1", "+1", "+2", "+3", "+4", "+5", "+6"))
+                                              # labels = c("-3", "-2", "-1", "+1", "+2", "+3", "+4", "+5", "+6"))
+                                              labels = c(add_emdash("3"), add_emdash("2"), add_emdash("1"), "+1", "+2", "+3", "+4", "+5", "+6"))                                        
 
 
 p_dd_total <- ggplot(snv_motif_count_dd,
@@ -87,7 +92,7 @@ p_dd_total <- ggplot(snv_motif_count_dd,
   facet_wrap( ~ Rel_Start_Motif2, nrow = 1) +
   labs(x = "", y = "Total variant count", fill = "Alternative base") +
   my_theme() +
-  ggtitle("Donor Disruption") +
+  ggtitle("Donor disruption") +
   theme(# axis.text.x = element_text(size = rel(1)),
         # axis.text.y = element_text(size = rel(1)),
         # axis.title = element_text(size = rel(1)),
@@ -96,7 +101,7 @@ p_dd_total <- ggplot(snv_motif_count_dd,
         axis.ticks.x = element_blank(),
         legend.position = "bottom") +
   scale_fill_manual(values = base_col) +
-  scale_y_continuous(limits = c(0, 16000)) + 
+  scale_y_continuous(limits = c(0, 16000), labels = scales::comma_format()) + 
   guides(fill = FALSE)
 
 
@@ -135,7 +140,7 @@ p_dd_gsm <- ggplot() +
         axis.ticks.x = element_blank(),
         legend.position = "bottom") +
   scale_fill_manual(values = base_col) +
-  scale_y_continuous(limits = c(0, 3000), sec.axis = sec_axis(~ . * (1 / 12000), name = "")) +
+  scale_y_continuous(limits = c(0, 3000), labels = scales::comma_format(), sec.axis = sec_axis(~ . * (1 / 12000), name = "")) +
   guides(fill = FALSE)
 
 
@@ -156,7 +161,9 @@ snv_motif_count_ad$Rel_Start_Motif2[snv_motif_count_ad$Rel_Start_Motif > intron_
 
 snv_motif_count_ad$Rel_Start_Motif2 <- factor(snv_motif_count_ad$Rel_Start_Motif2,
                                               levels = rev(c(-1, 1, 2, 3, 4, 5, 6)),
-                                              labels = rev(c("-1", "+1", "+2", "+3", "+4", "+5", "+6")))
+                                              labels = rev(c(add_emdash("1"), "+1", "+2", "+3", "+4", "+5", "+6")))
+
+print(snv_motif_count_ad$Rel_Start_Motif2)
 
 
 p_ad_total <- ggplot(snv_motif_count_ad,
@@ -174,7 +181,7 @@ p_ad_total <- ggplot(snv_motif_count_ad,
         axis.ticks.x = element_blank(),
         legend.position = "bottom") +
   scale_fill_manual(values = base_col) +
-  scale_y_continuous(limits = c(0, 16000)) + 
+  scale_y_continuous(limits = c(0, 16000), labels = scales::comma_format()) + 
   guides(fill = FALSE)
 
 
@@ -211,7 +218,7 @@ p_ad_gsm <- ggplot() +
         axis.ticks.x = element_blank(),
         legend.position = "bottom") +
   scale_fill_manual(values = base_col) +
-  scale_y_continuous(limits = c(0, 3000), sec.axis = sec_axis(~ . * (1 / 12000), name = "Splicing ratio")) +
+  scale_y_continuous(limits = c(0, 3000), labels = scales::comma_format(), sec.axis = sec_axis(~ . * (1 / 12000), name = "Splicing ratio")) +
   guides(fill = FALSE)
 
 
@@ -254,4 +261,4 @@ plot_grid(plot_grid(p_donor, p_acceptor, ncol = 2, align = "h", rel_widths = c(1
 ggsave("../figure/snv_pos_total_gsm_ratio.tiff", width = 20, height = 9, dpi = 600, units = "cm")
 
 
-
+warnings()

@@ -4,6 +4,7 @@ library(tidyr)
 library(cowplot)
 
 source("../../../conf/plot_config.R")
+source("subscript_matome/sav_profile_function.R")
 
 read_num_info <- read.table("../temporary/TCGA.motif_read_num.txt", sep = "\t", header = TRUE, quote = "", stringsAsFactors = FALSE)
 refGene <- read.table("../../../db/refGene/refGene.txt.gz", sep = "\t", header = FALSE, stringsAsFactors = FALSE)
@@ -22,35 +23,35 @@ read_num_info <- read_num_info[!check_CDKN2A(read_num_info), ]
 
 
 # get intron pos for opposite intron retention
-get_motif_info <- function(motif_pos, ref_gene_id) {
+# get_motif_info <- function(motif_pos, ref_gene_id) {
+#   
+#   motif_pos_sp1 <- strsplit(motif_pos, ":")[[1]]
+#   motif_pos_sp2 <- strsplit(motif_pos_sp1[2], ",")[[1]]
+#   motif_pos_sp3 <- strsplit(motif_pos_sp2[1], "-")[[1]]
+3   
+#   tchr <- motif_pos_sp1[1]
+#   tstart <- as.numeric(motif_pos_sp3[1])
+#   tend <- as.numeric(motif_pos_sp3[2])
+#   tdir <- motif_pos_sp2[2]
   
-  motif_pos_sp1 <- strsplit(motif_pos, ":")[[1]]
-  motif_pos_sp2 <- strsplit(motif_pos_sp1[2], ",")[[1]]
-  motif_pos_sp3 <- strsplit(motif_pos_sp2[1], "-")[[1]]
-  
-  tchr <- motif_pos_sp1[1]
-  tstart <- as.numeric(motif_pos_sp3[1])
-  tend <- as.numeric(motif_pos_sp3[2])
-  tdir <- motif_pos_sp2[2]
-  
-  target_gene_info <- refGene %>% filter(V2 == ref_gene_id)
-  exon_starts <- as.numeric(strsplit(as.character(target_gene_info[10]), split=",")[[1]]) + 1
-  exon_ends <- as.numeric(strsplit(as.character(target_gene_info[11]), split=",")[[1]])
-  
-  exon_ind1 <- which(exon_starts >= tstart & exon_starts <= tend)
-  exon_ind2 <- which(exon_ends >= tstart & exon_ends <= tend)  
-  
-  if (length(exon_ind1) > 0) {
-    c(ifelse(tdir == "+", "acceptor", "donor"), 
-      ifelse(tdir == "+", exon_ind1, length(exon_starts) - exon_ind1 + 1))
-  } else if (length(exon_ind2) > 0) {
-    c(ifelse(tdir == "+", "donor", "acceptor"), 
-      ifelse(tdir == "+", exon_ind2, length(exon_starts) - exon_ind2 + 1))  
-  } else {
-    return(c(NA, NA))
-  }
-  
-}
+#   target_gene_info <- refGene %>% filter(V2 == ref_gene_id)
+#   exon_starts <- as.numeric(strsplit(as.character(target_gene_info[10]), split=",")[[1]]) + 1
+#   exon_ends <- as.numeric(strsplit(as.character(target_gene_info[11]), split=",")[[1]])
+#   
+#   exon_ind1 <- which(exon_starts >= tstart & exon_starts <= tend)
+#   exon_ind2 <- which(exon_ends >= tstart & exon_ends <= tend)  
+#   
+#   if (length(exon_ind1) > 0) {
+#     c(ifelse(tdir == "+", "acceptor", "donor"), 
+#       ifelse(tdir == "+", exon_ind1, length(exon_starts) - exon_ind1 + 1))
+#   } else if (length(exon_ind2) > 0) {
+#     c(ifelse(tdir == "+", "donor", "acceptor"), 
+#       ifelse(tdir == "+", exon_ind2, length(exon_starts) - exon_ind2 + 1))  
+#   } else {
+#     return(c(NA, NA))
+#   }
+#   
+# }
 
 
 
@@ -154,6 +155,7 @@ DDs <- Ds %>% select(Motif_Pos, Gene_Symbol) %>% distinct()
 motif_infos <- lapply(1:nrow(DDs), 
                      function(i) {
                        get_motif_info(as.character(DDs$Motif_Pos[i]), 
+                                      refGene,  
                                       as.character(gene2ref[as.character(DDs$Gene_Symbol[i])]))})
 
 
@@ -318,7 +320,7 @@ motif2first_second_read_count <- function(motif_pos_str) {
   
   temp_for_gene_symbol <- read_num_info %>% filter(Motif_Pos == motif_pos_str)
   gene_symbol <- unique(temp_for_gene_symbol$Gene_Symbol)
-  motif_info <- get_motif_info(motif_pos_str, as.character(gene2ref[gene_symbol])) 
+  motif_info <- get_motif_info(motif_pos_str, refGene, as.character(gene2ref[gene_symbol])) 
   plot_title <- substitute(paste(italic(a), " exon ", b, ", ", c, sep = ""),
                            list(a = gene_symbol, b = motif_info[2], c = motif_info[1]))
   

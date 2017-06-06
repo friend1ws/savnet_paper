@@ -8,7 +8,7 @@ mut_count <- read.table("../temporary/omega.mut_count.txt", sep = "\t", header =
 
 
 sv_count_median <- mut_count %>% 
-  filter(SAV_Count <= 8) %>% 
+  filter(SAV_Count <= 10) %>% 
   group_by(Cancer_Type) %>% 
   summarize(median_count = median(SAV_Count), q25_count = quantile(SAV_Count, probs=0.25), q75_count = quantile(SAV_Count, probs=0.75)) %>% 
   arrange(median_count, q75_count, q25_count, Cancer_Type)
@@ -20,14 +20,14 @@ ggplot(mut_count, aes(x = Cancer_Type, y = SAV_Count)) +
   geom_point(position = position_jitter(width = 0.1, height = 0.1), colour = "#fc8d59", alpha = 0.2, size = 0.3) +
   geom_boxplot(outlier.colour = NA, fill = "#3288bd", size = 0.3) +
   my_theme() +
-  labs(y = "SAV count", x = "Cancer type") +
+  labs(y = "SAV count per sample", x = "Cancer type") +
   theme(# axis.text = element_text(size = rel(1.2)),
         # axis.title = element_text(size = rel(1.5)),
         axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5),
         axis.title.x = element_blank()) + # ,
         # legend.text = element_text(size = rel(1.2)),
         # legend.title = element_text(size = rel(1.5))) +
-  scale_y_continuous(limit = c(-0.2, 8))
+  scale_y_continuous(limit = c(-0.2, 10), breaks = seq(0, 10, 2))
 
 ggsave("../figure/count_summary.tiff", width = 9, height = 4, dpi = 600, units = "cm")
 
@@ -70,9 +70,9 @@ ggplot(mut_count_trmean) +
               colour = "#d73027", alpha = 0.6) +
   geom_text_repel(data = mut_count_trmean %>% filter(SAV_Count_Mean > 0.5), 
                   aes(x = Mut_Count_Mean, y = SAV_Count_Mean, label = Cancer_Type), size = 1.8) +
-  labs(x = "Trucated mean of variant count", y = "Truncated mean of SAV count") +
+  labs(x = "Truncated mean of total variant count", y = "Truncated mean of SAV count") +
   my_theme() +
-  scale_x_continuous(breaks=seq(0, 1250, 250),limits=c(0,1300))
+  scale_x_continuous(breaks=seq(0, 1250, 250),limits=c(0,1300), labels = scales::comma_format())
   # theme(axis.text = element_text(size = rel(1.2)),
   #       axis.title = element_text(size = rel(1.5))) # +
   # scale_x_continuous(expand = c(0, 0)) +

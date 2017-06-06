@@ -2,6 +2,9 @@ library(dplyr)
 library(ggplot2)
 library(stringr)
 library(tidyr)
+library(Cairo)
+
+Cairo()
 
 source("../../../conf/plot_config.R")
 
@@ -121,7 +124,7 @@ ggplot(cg_info_proc %>% filter(!(mut_func2 %in% c("Silent", "In-frame indel", "F
        aes(x = mut_func2, y = value, fill = mut_func2)) + 
   geom_bar(stat = "identity", position = "dodge")  + 
   coord_flip() +
-  labs(x = "", y = "log10(P-value)") +
+  labs(x = "", y = add_emdash("Log10(P-value)")) +
   my_theme() +
   theme(panel.spacing = unit(1.5, "lines"),
         plot.margin = unit(c(5.5, 6.5, 5.5, 5.5), "points")) +

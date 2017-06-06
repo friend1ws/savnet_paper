@@ -397,3 +397,34 @@ get_legend_info <- function() {
 }
 
 
+get_motif_info <- function(motif_pos, refGene, ref_gene_id) {
+  
+  motif_pos_sp1 <- strsplit(motif_pos, ":")[[1]]
+  motif_pos_sp2 <- strsplit(motif_pos_sp1[2], ",")[[1]]
+  motif_pos_sp3 <- strsplit(motif_pos_sp2[1], "-")[[1]]
+  
+  tchr <- motif_pos_sp1[1]
+  tstart <- as.numeric(motif_pos_sp3[1])
+  tend <- as.numeric(motif_pos_sp3[2])
+  tdir <- motif_pos_sp2[2]
+  
+  target_gene_info <- refGene %>% filter(V2 == ref_gene_id)
+  exon_starts <- as.numeric(strsplit(as.character(target_gene_info[10]), split=",")[[1]]) + 1
+  exon_ends <- as.numeric(strsplit(as.character(target_gene_info[11]), split=",")[[1]])
+  
+  exon_ind1 <- which(exon_starts >= tstart & exon_starts <= tend)
+  exon_ind2 <- which(exon_ends >= tstart & exon_ends <= tend)  
+  
+  if (length(exon_ind1) > 0) {
+    c(ifelse(tdir == "+", "acceptor", "donor"), 
+      ifelse(tdir == "+", exon_ind1, length(exon_starts) - exon_ind1 + 1))
+  } else if (length(exon_ind2) > 0) {
+    c(ifelse(tdir == "+", "donor", "acceptor"), 
+      ifelse(tdir == "+", exon_ind2, length(exon_starts) - exon_ind2 + 1))  
+  } else {
+    return(c(NA, NA))
+  }
+  
+}
+
+

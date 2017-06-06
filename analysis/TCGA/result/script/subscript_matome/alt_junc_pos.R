@@ -1,6 +1,9 @@
 library(dplyr)
 library(ggplot2)
 library(cowplot)
+library(Cairo)
+
+Cairo()
 
 source("../../../conf/plot_config.R")
 
@@ -46,7 +49,8 @@ p_dd <- ggplot(a %>% filter(Mutation_Type == "splicing donor disruption"),
         axis.title.y = element_text(size = 0)) + 
   # xlim(c(-300, 100)) +
   # scale_x_continuous(limits = c(-300, 100), breaks = c(-300, -200, -100, 0, 100), labels = c("-300", "-200", "-100", "-1 +1", "+100")) +
-  scale_x_continuous(limits = c(-200, 100), breaks = c(-200, -100, 0, 100), labels = c("-200", "-100", "-1 +1", "+100")) + 
+  scale_x_continuous(limits = c(-200, 100), breaks = c(-200, -100, 0, 100), 
+                     labels = c(add_emdash("200"), add_emdash("100"), paste(add_emdash("1"), "+1", sep = " "), "+100")) + 
   ggtitle("Cryptic 5'SS by \ndonor disruption") +
   labs(x = "", y = "") +
   scale_fill_manual(values = splicing_class_colour) + 
@@ -63,7 +67,8 @@ p_dc <- ggplot(a %>% filter(Mutation_Type == "splicing donor creation"),
         axis.title.y = element_text(size = 0)) + 
   # xlim(c(-300, 100)) +
   # scale_x_continuous(limits = c(-300, 100), breaks = c(-300, -200, -100, 0, 100), labels = c("-300", "-200", "-100", "-1 +1", "+100")) + 
-  scale_x_continuous(limits = c(-200, 100), breaks = c(-200, -100, 0, 100), labels = c("-200", "-100", "-1 +1", "+100")) + 
+  scale_x_continuous(limits = c(-200, 100), breaks = c(-200, -100, 0, 100), 
+                     labels = c(add_emdash("200"), add_emdash("100"), paste(add_emdash("1"), "+1", sep = " "), "+100")) + 
   ggtitle("Alternative 5'SS by \ndonor creation") +
   labs(x = "", y = "") +
   scale_fill_manual(values = splicing_class_colour) +
@@ -81,7 +86,8 @@ p_ad <- ggplot() +
         axis.title.y = element_text(size = 0)) +
   # scale_x_reverse(limits=c(100, -300)) +
   # scale_x_continuous(trans = "reverse", limits = c(100, -300), breaks = c(100, 0, -100, -200, -300), labels = c("+100", "+1 -1", "-100", "-200", "-300")) +
-  scale_x_continuous(trans = "reverse", limits = c(100, -200), breaks = c(100, 0, -100, -200), labels = c("+100", "+1 -1", "-100", "-200")) +
+  scale_x_continuous(trans = "reverse", limits = c(100, -200), breaks = c(100, 0, -100, -200), 
+                     labels = c("+100", paste("+1", add_emdash("1"), sep = " "), add_emdash("100"), add_emdash("200"))) +
   ggtitle("Cryptic 3'SS by \nacceptor disruption") +
   labs(x = "", y = "") +
   scale_fill_manual(values = splicing_class_colour) +
@@ -99,7 +105,8 @@ p_ac <- ggplot() +
         axis.title.y = element_text(size = 0)) +
   # scale_x_reverse(limits=c(100, -300)) +
   # scale_x_continuous(trans = "reverse", limits = c(100, -300), breaks = c(100, 0, -100, -200, -300), labels = c("+100", "+1 -1", "-100", "-200", "-300")) +
-  scale_x_continuous(trans = "reverse", limits = c(100, -200), breaks = c(100, 0, -100, -200), labels = c("+100", "+1 -1", "-100", "-200")) +
+  scale_x_continuous(trans = "reverse", limits = c(100, -200), breaks = c(100, 0, -100, -200), 
+                     labels = c("+100", paste("+1", add_emdash("1"), sep = " "), add_emdash("100"), add_emdash("200"))) +
   ggtitle("Alternative 3'SS by \nacceptor creation") +
   labs(x = "", y = "") +
   scale_fill_manual(values = splicing_class_colour) +
@@ -120,7 +127,7 @@ ylabel <- ggdraw() + draw_label("Abnormal splicing event count", angle = 90, siz
 p_dc_ac_dd_ad_xl <- plot_grid(p_dc_ac_dd_ad, ggdraw() + draw_label("", size = 7), xlabel, ncol = 1, align = "v", rel_heights = c(2, 0.15, 0.1))
 # p_dc_ac_dd_ad_xl <- plot_grid(p_dc_ac_dd_ad, xlabel, ncol = 1, align = "v", rel_heights = c(2, 0.1))
 
-plot_grid(ylabel, p_dc_ac_dd_ad_xl, ncol = 2, align = "h", rel_widths = c(0.04, 1))
+plot_grid(ylabel, p_dc_ac_dd_ad_xl, ncol = 2, align = "h", rel_widths = c(0.05, 1))
 
 
 ggsave("../figure/alt_junc_pos.tiff", width = 10, height = 7, dpi = 600, units = "cm")

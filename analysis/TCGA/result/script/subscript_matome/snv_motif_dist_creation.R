@@ -1,7 +1,9 @@
 library(dplyr)
 library(ggplot2)
 library(cowplot)
+library(Cairo)
 
+CairoTIFF()
 source("../../../conf/plot_config.R")
 
 gg_color_hue6 <- hcl(h = seq(15, 375, length = 7), l=65, c=100)[1:6]
@@ -98,7 +100,8 @@ snv_motif_count_dc$Rel_Pos2[snv_motif_count_dc$Rel_Pos > exon_size_d] <-
 snv_motif_count_dc$Rel_Pos2 <- 
   factor(snv_motif_count_dc$Rel_Pos2, 
          levels = unique(as.character(sort(snv_motif_count_dc$Rel_Pos2))),
-         labels = c("-3", "-2", "-1", "+1", "+2", "+3", "+4", "+5", "+6"))
+         # labels = c("-3", "-2", "-1", "+1", "+2", "+3", "+4", "+5", "+6"))
+         labels = c(add_emdash("3"), add_emdash("2"), add_emdash("1"), "+1", "+2", "+3", "+4", "+5", "+6"))
 
 
 p_dc <- ggplot(snv_motif_count_dc,
@@ -135,7 +138,8 @@ snv_motif_count_ac$Rel_Pos2[snv_motif_count_ac$Rel_Pos > intron_size_a] <-
 snv_motif_count_ac$Rel_Pos2 <- 
   factor(snv_motif_count_ac$Rel_Pos2, 
          levels = rev(unique(as.character(sort(snv_motif_count_ac$Rel_Pos2)))),
-         labels = c("+6", "+5", "+4", "+3", "+2", "+1", "-1"))
+         # labels = c("+6", "+5", "+4", "+3", "+2", "+1", "-1"))
+         labels = c("+6", "+5", "+4", "+3", "+2", "+1", add_emdash("1")))
 
 
 p_ac <- ggplot(snv_motif_count_ac,

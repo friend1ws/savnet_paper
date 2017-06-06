@@ -2,6 +2,9 @@ library(dplyr)
 library(spliceSites)
 library(ggplot2)
 library(cowplot)
+library(Cairo)
+
+Cairo()
 
 source("../../../conf/plot_config.R")
 
@@ -58,7 +61,7 @@ get_print_info <- function(score_df, is_mes, is_donor, is_dummy) {
 
   if (is_mes == TRUE) {
     if (is_donor == TRUE) {
-      ttitle <- "MaxExt score, donor"
+      ttitle <- "MaxEnt score, donor"
     } else {
       ttitle <- "MaxEnt score, acceptor"
     }
@@ -214,16 +217,17 @@ p_legend_less <- ggplot(tdf, aes(x = x, y = y, fill = z)) +
   scale_fill_gradient(high = "#2166ac", low = "#ffffff") +
   my_theme() +
   theme(legend.position = "bottom",
-        legend.key.width = unit(0.45, "cm")) +
-  labs(fill = "-Log10(P-value) (Splicing patttern 1 < 2)")
+        legend.key.width = unit(0.40, "cm")) +
+  labs(fill = paste(add_emdash("Log10"), "(P-value) (Splicing pattern 1 < 2)", sep = ""))
+  # labs(fill = "-Log10(P-value) (Splicing pattern 1 < 2)")
 
 p_legend_greater <- ggplot(tdf, aes(x = x, y = y, fill = z)) +
   geom_tile() +
   scale_fill_gradient(high = "#b2182b", low = "#ffffff") +
   my_theme() +
   theme(legend.position = "bottom",
-        legend.key.width = unit(0.45, "cm")) +
-  labs(fill = "-Log10(P-value) (Splicing patttern 1 > 2)")
+        legend.key.width = unit(0.40, "cm")) +
+  labs(fill = paste(add_emdash("Log10"), "(P-value) (Splicing pattern 1 > 2)", sep = ""))
 ##########
 
 p_mes_donor <- get_print_info(snv_info_d, TRUE, TRUE, FALSE)
@@ -234,6 +238,10 @@ plot_grid(plot_grid(p_mes_donor, p_mes_acceptor, p_hb_donor, nrow = 1),
           plot_grid(g_legend(p_legend_less), g_legend(p_legend_greater), nrow = 1),
           ncol = 1, rel_heights = c(1.0, 0.2))
 
-ggsave("../figure/mes_hb_wt_comp.tiff", width = 15, height = 6.0, dpi = 600, units = "cm")
+# plot_grid(plot_grid(p_mes_donor, p_mes_acceptor, p_hb_donor, nrow = 1),
+#                     g_legend(p_legend_less), g_legend(p_legend_greater), ncol = 1, rel_heights = c(1.0, 0.2, 0.2))
+
+
+ggsave("../figure/mes_hb_wt_comp.tiff", width = 14.6, height = 6, dpi = 600, units = "cm")
 
 

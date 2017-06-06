@@ -2,6 +2,7 @@ library(dplyr)
 library(ggplot2)
 library(cowplot)
 library(tidyr)
+library(Cairo)
 
 source("../../../conf/plot_config.R")
 
@@ -79,8 +80,9 @@ g_donor_2 <- ggplot() +
         panel.grid.major.x = element_blank()) +
   scale_fill_manual(values = c("Called SAV count" = "#66bd63", "Estimated false positive count" = "#bf812d")) +
   scale_x_discrete(labels = 
-                     c("-5", rep("", 3), "-1 ", " +1", rep("", 3), "+5", rep("", 4), "+10", rep("", 4), "+15")) +
-  scale_y_continuous(limits = c(0, 4000), sec.axis = sec_axis(~ . * (1 / 5000), name = "")) +
+                     c(add_emdash("5"), rep("", 3), paste(add_emdash("1"), " ", sep = ""), 
+                       " +1", rep("", 3), "+5", rep("", 4), "+10", rep("", 4), "+15")) +
+  scale_y_continuous(limits = c(0, 4000), sec.axis = sec_axis(~ . * (1 / 5000), name = ""), labels = scales::comma_format()) +
   guides(fill = FALSE)
 
 ##########
@@ -115,8 +117,8 @@ g_acceptor_2 <- ggplot() +
   scale_fill_manual(values = c("Called SAV count" = "#66bd63", "Estimated false positive count" = "#bf812d")) +
   scale_x_discrete(labels = 
                      c("+15", rep("", 4), "+10", rep("", 4), "+5", 
-                       rep("", 3), "+1 ", " -1", rep("", 3), "-5")) +
-  scale_y_continuous(limits = c(0, 4000), sec.axis = sec_axis(~ . * (1 / 5000), name = "Position-wise FDR")) +
+                       rep("", 3), "+1 ", paste(" ", add_emdash("1"), sep = ""), rep("", 3), add_emdash("5"))) +
+  scale_y_continuous(limits = c(0, 4000), sec.axis = sec_axis(~ . * (1 / 5000), name = "Position-wise FDR"), labels = scales::comma_format()) +
   guides(fill = FALSE)
 
 

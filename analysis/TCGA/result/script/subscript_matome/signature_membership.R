@@ -10,12 +10,12 @@ mem_info <- read.table("../temporary/TCGA.mut_membership.savnet.result.txt", sep
   filter(Is_GSM == "TRUE") 
 
 
-sig_type_order <- c("Aging", "APOBEC", "Tobacco", "MMR defect", "Ultraviolet",
+sig_type_order <- c("Aging", "APOBEC", "Smoking", "MMR defect", "Ultraviolet",
                     "POLE", "Microsatellite", "Other")
 
 
 mem_info$Sig_Type <- "Other"
-mem_info$Sig_Type[mem_info$COSM_ID == "4" & mem_info$Corr >= 0.75] <- "Tobacco"
+mem_info$Sig_Type[mem_info$COSM_ID == "4" & mem_info$Corr >= 0.75] <- "Smoking"
 mem_info$Sig_Type[mem_info$COSM_ID == "1" & mem_info$Corr >= 0.75] <- "Aging"
 mem_info$Sig_Type[mem_info$COSM_ID == "6" & mem_info$Corr >= 0.75] <- "MMR defect"
 mem_info$Sig_Type[mem_info$COSM_ID %in% c("2", "13") & mem_info$Corr >= 0.75] <- "APOBEC"
@@ -101,13 +101,13 @@ ggsave("../figure/signature_membership.tiff", width = 15, height = 6, dpi = 600,
 
 mem_info_all <- read.table("../temporary/TCGA.mut_membership.all.result.txt", sep = "\t", header = TRUE)
 
-sig_type_order <- c("Aging", "APOBEC", "Tobacco", "MMR defect", "Ultraviolet",
+sig_type_order <- c("Aging", "APOBEC", "Smoking", "MMR defect", "Ultraviolet",
                     "POLE", "Microsatellite", "Other")
-sig_type_order2 <- c("Aging", "APOBEC", "Tobacco", "Ultraviolet", "POLE")
+sig_type_order2 <- c("Aging", "APOBEC", "Smoking", "Ultraviolet", "POLE")
 
 
 mem_info_all$Sig_Type <- "Other"
-mem_info_all$Sig_Type[mem_info_all$COSM_ID == "4" & mem_info_all$Corr >= 0.75] <- "Tobacco"
+mem_info_all$Sig_Type[mem_info_all$COSM_ID == "4" & mem_info_all$Corr >= 0.75] <- "Smoking"
 mem_info_all$Sig_Type[mem_info_all$COSM_ID == "1" & mem_info_all$Corr >= 0.75] <- "Aging"
 mem_info_all$Sig_Type[mem_info_all$COSM_ID == "6" & mem_info_all$Corr >= 0.75] <- "MMR defect"
 mem_info_all$Sig_Type[mem_info_all$COSM_ID %in% c("2", "13") & mem_info_all$Corr >= 0.75] <- "APOBEC"
@@ -232,7 +232,7 @@ get_plot <- function(sig_num, title) {
 
 p_age <- get_plot(1, "Aging")
 p_appobec <- get_plot(13, "APOBEC")
-p_tobacco <- get_plot(4, "Tobacco")
+p_tobacco <- get_plot(4, "Smoking")
 # p_mmr <- get_plot(6, "MMR defect")
 p_uv <- get_plot(7, "Ultraviolet")
 p_pole1 <- get_plot(31, "POLE1")

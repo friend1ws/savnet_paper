@@ -112,7 +112,7 @@ sasm_type_info_proc$Gene_Symbol2 <- factor(sasm_type_info_proc$Gene_Symbol,
 
 sasm_type_info_proc$mut_type <- factor(sasm_type_info_proc$mut_type,
                                       levels = rev(c("motif_disruption_C", "motif_disruption_N", "motif_creation")),
-                                      labels = rev(c("Canonical site disruption", "Noncanonical site disruption", "Creation")))
+                                      labels = rev(c("Canonical SS disruption", "Non-canonical SS disruption", "SS creation")))
 
 
 p_sasmtype <- ggplot(sasm_type_info_proc, aes(x = Gene_Symbol2, y = ratio, fill = mut_type)) + 
@@ -137,8 +137,8 @@ p_sasmtype <- ggplot(sasm_type_info_proc, aes(x = Gene_Symbol2, y = ratio, fill 
     axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5),
     axis.text.y = element_text(colour =  gene_colour, face = "italic"),
     legend.position = "bottom") +
-  scale_fill_manual(breaks = c("Canonical site disruption", "Noncanonical site disruption", "Creation"),
-                    values = c("Canonical site disruption" = "#a6d854", "Noncanonical site disruption" = "#ffd92f", "Creation" = "#e78ac3"))
+  scale_fill_manual(breaks = c("Canonical SS disruption", "Non-canonical SS disruption", "SS creation"),
+                    values = c("Canonical SS disruption" = "#a6d854", "Non-canonical SS disruption" = "#ffd92f", "SS creation" = "#e78ac3"))
 
 
 

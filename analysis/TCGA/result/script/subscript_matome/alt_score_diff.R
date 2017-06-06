@@ -203,7 +203,7 @@ score_disruption <- data.frame(diff_score = c(mes_alt_dd - mut_info_dd$mes_wt,
 ggplot(rbind(score_creation, score_disruption) %>% filter(score_type == "mes"), aes(x = is_mutation, y = diff_score, fill = is_mutation)) +
   geom_boxplot(outlier.size = 0.3, size = 0.3) +
   ylim(c(-25, 25)) +
-  labs(x = "", y = "Diff. of MaxEnt score between \nalternative and authentic splice sites") +
+  labs(x = "", y = "Diff. of MaxEnt score between \nalternative and authentic SSs") +
   my_theme() +
   facet_grid(is_dc~is_da) +
   scale_fill_manual(values = c("WT" = "#ccebc5", "Mut" = "#bc80bd")) +
@@ -216,7 +216,7 @@ ggsave("../figure/alt_diff_mes_creation_disruption.tiff", width = 5, height = 6,
 ggplot(rbind(score_creation, score_disruption) %>% filter(score_type == "hbond"), aes(x = is_mutation, y = diff_score, fill = is_mutation)) +
   geom_boxplot(outlier.size = 0.3, size = 0.3) +
   ylim(c(-20, 20)) +
-  labs(x = "", y = "Diff. of H-bond score between \nalternative and authentic splice sites") +
+  labs(x = "", y = "Diff. of H-bond score between \nalternative and authentic SSs") +
   my_theme() +
   facet_grid(is_dc~is_da) +
   scale_fill_manual(values = c("WT" = "#ccebc5", "Mut" = "#bc80bd")) +

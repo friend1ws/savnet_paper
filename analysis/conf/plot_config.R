@@ -58,7 +58,7 @@ signature_colour <- c(
   "Age" = "#e41a1c", 
   "Aging" = "#e41a1c", 
   "APOBEC" = "#377eb8", 
-  "Tobacco" = "#4daf4a",
+  "Smoking" = "#4daf4a",
   "MMR defect" = "#984ea3",
   "Ultraviolet" =  "#ff7f00",
   "POLE" = "#ffff33",
@@ -99,5 +99,10 @@ get_junction_pos <- function(motif_pos, mutation_type) {
   
   return(junc_pos)
 
+}
+
+
+add_emdash <- function(str) {
+    return(paste("\u2212", str, sep = ""))
 }
 

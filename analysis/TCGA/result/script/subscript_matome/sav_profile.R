@@ -770,11 +770,11 @@ print_prof <- function(gene_symbol, ref_gene_id, start_target, end_target, dir_t
   if (gene_symbol != "CDKN2A") {
     # xtitle <- ggdraw() + draw_label(paste(gene_symbol, paste("(", ref_gene_id, ", ", as.numeric(gene2size[gene_symbol]), "aa", ")", sep = "")), size = 7)
     xtitle <- ggdraw() + draw_label(
-                           substitute(paste(italic(a), paste("(", b, ", ", d, "aa", ")", sep = ""), sep = " "), 
+                           substitute(paste(italic(a), paste(" (", b, ", ", d, "aa", ")", sep = ""), sep = " "), 
                                       list(a = gene_symbol, b = ref_gene_id, d = as.numeric(gene2size[gene_symbol]))), size = 7)
 
   } else {
-    xtitle <- ggdraw() + draw_label(substitute(paste(italic(a), "(NM_000077,NM_058195, 156aa,132aa)", sep = " "), list(a = "CDKN2A")), size = 7)
+    xtitle <- ggdraw() + draw_label(substitute(paste(italic(a), " (NM_000077,NM_058195, 156aa,132aa)", sep = " "), list(a = "CDKN2A")), size = 7)
   }
  
   ylabel_dummy <- ggdraw() + draw_label("", angle = 90, size = 7) 

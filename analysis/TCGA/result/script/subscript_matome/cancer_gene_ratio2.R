@@ -2,6 +2,9 @@ library(dplyr)
 library(ggplot2)
 library(stringr)
 library(tidyr)
+library(Cairo)
+
+Cairo()
 
 source("../../../conf/plot_config.R")
 
@@ -107,17 +110,19 @@ get_cg_ratio_info <- function(mut_info_selected) {
 cg_info_proc_master <- data.frame()
 
 cg_info_proc_tmp <- get_cg_ratio_info(mut_info %>% select(GSM, mut_func, cg_type = VogelsteinEtAl_2013))
-cg_type_tmp <- rep("Vogelstein (2013)", nrow(cg_info_proc_tmp))
+cg_type_tmp <- rep("Vogelstein et al. (2013)", nrow(cg_info_proc_tmp))
+# cg_type_tmp <- rep(expression(paste("Vogelstein ", italic("et "), italic("al. "), "(2013)", sep = "")), nrow(cg_info_proc_tmp))
+
 names(cg_type_tmp) <- "Cancer_Gene_Type"
 cg_info_proc_master <- rbind(cg_info_proc_master, cbind(cg_info_proc_tmp, cg_type_tmp))
 
 cg_info_proc_tmp <- get_cg_ratio_info(mut_info %>% select(GSM, mut_func, cg_type = YeEtAl_2016))
-cg_type_tmp <- rep("Ye (2016)", nrow(cg_info_proc_tmp))
+cg_type_tmp <- rep("Ye et al. (2016)", nrow(cg_info_proc_tmp))
 names(cg_type_tmp) <- "Cancer_Gene_Type"
 cg_info_proc_master <- rbind(cg_info_proc_master, cbind(cg_info_proc_tmp, cg_type_tmp))
 
 cg_info_proc_tmp <- get_cg_ratio_info(mut_info %>% select(GSM, mut_func, cg_type = LawrenceEtAl_2014))
-cg_type_tmp <- rep("Lawrence (2014)", nrow(cg_info_proc_tmp))
+cg_type_tmp <- rep("Lawrence et al. (2014)", nrow(cg_info_proc_tmp))
 names(cg_type_tmp) <- "Cancer_Gene_Type"
 cg_info_proc_master <- rbind(cg_info_proc_master, cbind(cg_info_proc_tmp, cg_type_tmp))
 
@@ -126,6 +131,33 @@ cg_type_tmp <- rep("CGC (Feb 2017)", nrow(cg_info_proc_tmp))
 names(cg_type_tmp) <- "Cancer_Gene_Type"
 cg_info_proc_master <- rbind(cg_info_proc_master, cbind(cg_info_proc_tmp, cg_type_tmp))
 
+
+
+# make_label <- function(value) {
+#     if (value == "Vogelstein (2013)") {
+#         return(bquote(Vogelstein~italic("et al.")~(2013)))
+#     } else if (value == "Ye (2016)") {
+#         return(bquote(Ye~italic("et al.")~(2016)))
+#     } else if (value == "Lawrence (2014)") {
+#         return(bquote(Lawrence~italic("et al.")~(2014)))
+#     } else {
+#         return(bquote(value))
+#     }
+# }
+
+# plot_labeller <- function(variable, value) {
+#   do.call(expression, lapply(levels(value), make_label))
+# }
+
+
+# cg_name_get <- function(cg) {
+#     cg2etal <- c("Vogelstein (2013)" = expression(paste("Vogelstein ", italic("et "), italic("al. "), "(2013)", sep = "")),
+#                  "Ye (2016)" = expression(paste("Ye ", italic("et "), italic("al. "), "(2016)", sep = "")),
+#                  "Lawrence (2014)" = expression(paste("Lawrence ", italic("et "), italic("al. "), "(2014)", sep = "")),
+#                  "CGC (Feb 2017)" = "CGC (Feb 2017)"
+#                 )
+#     return(cg2etal[cg])
+# }
 
 
 
@@ -144,14 +176,14 @@ ggplot(cg_info_proc_master %>% filter(!(mut_func2 %in% c("In-frame indel", "Fram
   guides(fill = FALSE)
 
 
-ggsave("../figure/cancer_gene_ratio2.tiff", width = 10, height = 10, dpi = 600, units = "cm")
+ggsave("../figure/cancer_gene_ratio2.tiff", width = 10, height = 12, dpi = 600, units = "cm")
 
 
 ggplot(cg_info_proc_master %>% filter(!(mut_func2 %in% c("Silent", "In-frame indel", "Frameshift indel", "Other")) & class_statistics == "CG_log_pV"),
        aes(x = mut_func2, y = value, fill = mut_func2)) + 
   geom_bar(stat = "identity", position = "dodge")  + 
   coord_flip() +
-  labs(x = "", y = "log10(P-value)") +
+  labs(x = "", y = add_emdash("Log10(P-value)")) +
   my_theme() +
   theme(strip.text.x = element_text(size = rel(1.2), angle = 0, hjust = 0),
         panel.spacing.x=unit(1.2, "lines")) +
@@ -161,7 +193,7 @@ ggplot(cg_info_proc_master %>% filter(!(mut_func2 %in% c("Silent", "In-frame ind
   guides(fill = FALSE)
 
 
-ggsave("../figure/cancer_gene_pV2.tiff", width = 10, height = 10, dpi = 600, units = "cm")
+ggsave("../figure/cancer_gene_pV2.tiff", width = 10, height = 12, dpi = 600, units = "cm")
 
 
 

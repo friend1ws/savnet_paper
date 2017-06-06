@@ -5,7 +5,6 @@ then
     mkdir -p ../splicing_factor
 fi
 
-# python subscript_splicing_factor/get_sample_with_sf.py ../../data/mutation > ../splicing_factor/sample_list_with_sfm.txt
 python subscript_splicing_factor/get_sample_with_sf.py ../../data/input_list/ 1 0.01 ../splicing_factor/sample_list_with_sfm.txt ../splicing_factor/ctype_sfgene_list.txt
 
 while read line

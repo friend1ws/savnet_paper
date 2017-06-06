@@ -14,6 +14,7 @@ cancer_type_sfgene_list = sys.argv[5]
 
 all_files = glob.glob(input_list_dir + "/*.mut_SJ_IR_list.txt")
 
+header_ind_1 = False
 hout1 = open(sfgene_list_output, 'w')
 hout2 = open(cancer_type_sfgene_list, 'w')
 for input_list_file in sorted(all_files):
@@ -63,8 +64,10 @@ for input_list_file in sorted(all_files):
 
 
     for sfgene in ["U2AF1", "SRSF2", "SF3B1", "ZRSR2"]:
-        if sfgene2count[sfgene] > sfgene_num_thres and float(sfgene2count[sfgene]) / sample_count > sfgene_ratio_thres:
+        if sfgene2count[sfgene] > 0:
             print >> hout1, '\n'.join(sfgene2line[sfgene])
+        if sfgene2count[sfgene] > sfgene_num_thres and float(sfgene2count[sfgene]) / sample_count > sfgene_ratio_thres:
+            # print >> hout1, '\n'.join(sfgene2line[sfgene])
             print >> hout2, cancer_type + '\t' + sfgene
 
 

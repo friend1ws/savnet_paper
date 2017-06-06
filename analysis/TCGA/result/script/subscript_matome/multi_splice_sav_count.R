@@ -24,10 +24,11 @@ multiple_effect_count$splice_count2 <- factor(multiple_effect_count$splice_count
 # ggplot(multiple_effect_count, aes(x = splice_count2, y = log10(count + 1))) + 
 ggplot(multiple_effect_count, aes(x = splice_count2, y = count)) + 
   geom_bar(stat = "identity", fill = "#6baed6") + 
-  labs(x = "Associated splicing event count", y = "SAV count") +
+  labs(x = "Number of associated splicing events", y = "SAV count") +
   # scale_y_log10() +
   my_theme() +
-  scale_y_continuous(expand = c(0, 0), trans = "log10", breaks = c(1, 10, 100, 1000, 10000))
+  scale_y_continuous(expand = c(0, 0), trans = "log10", breaks = c(1, 10, 100, 1000, 10000),
+                     labels = scales::comma_format())
 
 ggsave("../figure/multi_event.tiff", width = 6, height = 4, dpi = 600, unit = "cm")
 

@@ -18,6 +18,8 @@ fi
 # Splicing Factor related table
 cp ../../output/splicing_factor/TCGA.SJ_IR.sig_summary.txt ../table/
 cp ../../output/splicing_factor/TCGA.savnet.sf_mut.summary.txt ../table/
+cp ../../output/splicing_factor/sample_list_with_sfm.txt ../table/
+
 
 # spling summary table
 cut -f1-14 ../../output/rescue/TCGA.savnet.with_rescued.result.txt | grep -v "Rescued" > ../table/TCGA.savnet.result.proc.txt 
@@ -156,5 +158,20 @@ python subscript_matome/gather_read_num.py ../../output/rescue/TCGA.savnet.with_
 Rscript subscript_matome/top_splicing_read_ratio.R 
 
 
+
+# Supplementary Table
+cp ../../db/CancerType/TableS1.txt ../table/
+
+python subscript_matome/proc_mut_count.py ../table/omega.mut_count.txt ../table/TableS2.txt  
+
+python subscript_matome/proc_savnet.py ../table/TCGA.savnet.result.proc.txt ../table/TCGA.savnet.rescued.proc.txt ../table/TableS3.txt
+
+python subscript_matome/proc_sfm_info.py ../table/sample_list_with_sfm.txt ../table/TableS4.txt
+
+python subscript_matome/proc_sf_SJ_IR.py ../table/TCGA.SJ_IR.sig_summary.txt ../table/TableS5.txt
+
+Rscript subscript_matome/hotspot_summarize.R
+
+python subscript_matome/summarize_stable.py
 
 

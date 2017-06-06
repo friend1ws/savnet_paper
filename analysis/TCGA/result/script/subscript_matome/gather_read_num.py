@@ -6,6 +6,8 @@ gsm_file = sys.argv[1]
 gsm_out_dir = sys.argv[2]
 output_file = sys.argv[3]
 motif_count_thres = 5 
+# motif_count_thres = 2
+
 
 sample_motif = {}
 motif2splicing_info = {}

@@ -1,6 +1,9 @@
 library(dplyr)
 library(ggplot2)
 library(cowplot)
+library(Cairo)
+
+Cairo()
 
 source("../../../conf/plot_config.R")
 
@@ -24,6 +27,7 @@ g_mes_d <- ggplot(mes_df %>% filter(splice_class != "Alternative 3'SS" & motif_t
   ggtitle("Donor disruption") +
   ylim(c(-15, 10)) +
   my_theme() +
+  theme(axis.title.y = element_text(size = 0)) +
   scale_fill_manual(values = splicing_class_colour) + 
   labs(x = "", y = "") +
   guides(fill = FALSE)
@@ -35,6 +39,7 @@ g_mes_a <- ggplot(mes_df %>% filter(splice_class != "Alternative 5'SS" & motif_t
   labs(x = "", y = "") +
   ylim(c(-15, 10)) +
   my_theme() +
+  theme(axis.title.y = element_text(size = 0)) +
   scale_fill_manual(values = splicing_class_colour) + 
   labs(x = "", y = "") +
   guides(fill = FALSE)
@@ -71,7 +76,7 @@ g_mes_a <- ggplot(mes_df %>% filter(splice_class != "Alternative 5'SS" & motif_t
   labs(x = "", y = "") +
   guides(fill = FALSE)
 
-ylabel <- ggdraw() + draw_label("Wild type MaxEnt score", size = 7) + theme(plot.margin = unit(c(0.05, 0.05, 0.05, 0.05), "lines"))
+ylabel <- ggdraw() + draw_label("MaxEnt score (before substitution)", size = 7) + theme(plot.margin = unit(c(0.05, 0.05, 0.05, 0.05), "lines"))
 
 plot_grid(plot_grid(g_mes_d, g_mes_a, ncol = 2, align = "h"), ylabel, ncol = 1, rel_heights = c(1, 0.12))
 
@@ -87,9 +92,9 @@ ggplot(mes_df %>% filter(motif_type == "Donor"),
   labs(fill = "") +
   my_theme() +
   ylim(c(-15, 10)) + 
-  labs(x = "Position", y = "Diff. of MaxEnt score", fill = "Splicing") +
+  labs(x = "Position", y = "Diff. of MaxEnt score", fill = "") +
   scale_x_discrete(limits = 1:9, 
-                   labels = c("-3", "-2", "-1", "+1", "+2", "+3", "+4", "+5", "+6")) +
+                   labels = c(add_emdash("3"), add_emdash("2"), add_emdash("1"), "+1", "+2", "+3", "+4", "+5", "+6")) +
   scale_fill_manual(values = c("#ef8a62", "#999999")) +
   theme(# axis.text.x = element_text(colour = pos_colour),
         legend.position = "bottom")
@@ -107,9 +112,9 @@ ggplot(mes_df %>% filter(motif_type == "Acceptor"),
   my_theme() +
   labs(fill = "") +
   ylim(c(-15, 10)) + 
-  labs(x = "Position", y = "Diff. of MaxEnt score", fill = "Splicing") +
+  labs(x = "Position", y = "Diff. of MaxEnt score", fill = "") +
   scale_x_discrete(limits = 1:7, 
-                   labels = c("+6", "+5", "+4", "+3", "+2", "+1", "-1")) +
+                   labels = c("+6", "+5", "+4", "+3", "+2", "+1", add_emdash("1"))) +
   scale_fill_manual(values = c("#ef8a62", "#999999")) +
   theme(# axis.text.x = element_text(colour = pos_colour),
         legend.position = "bottom") 
@@ -142,7 +147,7 @@ g_mes_d <- ggplot(hb_df %>% filter(splice_class != "Alternative 3'SS"), aes(x = 
   labs(x = "", y = "") + 
   guides(fill = FALSE)
 
-ylabel <- ggdraw() + draw_label("Wild type H-bond score", size = 7) + theme(plot.margin = unit(c(0.05, 0.05, 0.05, 0.05), "lines"))
+ylabel <- ggdraw() + draw_label("H-bond score (before substitution)", size = 7) + theme(plot.margin = unit(c(0.05, 0.05, 0.05, 0.05), "lines"))
 
 plot_grid(g_mes_d, ylabel, ncol = 1, rel_heights = c(1, 0.12))
 
@@ -160,9 +165,9 @@ ggplot(hb_df,
   my_theme() +
   labs(fill = "") +
   ylim(c(-20, 10)) + 
-  labs(x = "Position", y = "Diff. of H-bond score", fill = "Splicing") +
+  labs(x = "Position", y = "Diff. of H-bond score", fill = "") +
   scale_x_discrete(limits = 1:9, 
-                   labels = c("-3", "-2", "-1", "+1", "+2", "+3", "+4", "+5", "+6")) +
+                   labels = c(add_emdash("3"), add_emdash("2"), add_emdash("1"), "+1", "+2", "+3", "+4", "+5", "+6")) +
   theme(# axis.text.x = element_text(colour = pos_colour),
         legend.position = "bottom") +
   scale_fill_manual(values = c("#ef8a62", "#999999")) 

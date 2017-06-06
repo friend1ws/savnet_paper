@@ -104,9 +104,9 @@ get_print_info <- function(GC_Len_df, is_donor, is_GC, is_dummy) {
                       levels = c("GC_intron_5prime", "GC_exon", "GC_intron_3prime"),
                       labels = c("5' intron", "Exon", "3' intron"))
     if (is_donor == TRUE) {
-      ttitle <- "GC contents, donor"
+      ttitle <- "GC content, donor"
     } else {
-      ttitle <- "GC contents, acceptor"
+      ttitle <- "GC content, acceptor"
     }
   } else {
     Ps$type <- factor(Ps$type,
@@ -176,7 +176,7 @@ p_legend_less <- ggplot(tdf, aes(x = x, y = y, fill = z)) +
   my_theme() +
   theme(legend.position = "bottom",
         legend.key.width = unit(0.6, "cm")) +
-  labs(fill = "-Log10(P-value) (Splicing patttern 1 < 2)")
+  labs(fill = "-Log10(P-value) (Splicing pattern 1 < 2)")
 
 p_legend_greater <- ggplot(tdf, aes(x = x, y = y, fill = z)) +
   geom_tile() +
@@ -184,7 +184,7 @@ p_legend_greater <- ggplot(tdf, aes(x = x, y = y, fill = z)) +
   my_theme() +
   theme(legend.position = "bottom",
         legend.key.width = unit(0.6, "cm")) +
-  labs(fill = "-Log10(P-value) (Splicing patttern 1 > 2)")
+  labs(fill = "-Log10(P-value) (Splicing pattern 1 > 2)")
 ###########
 
 p_GC_donor <- get_print_info(GC, TRUE, TRUE, FALSE)
