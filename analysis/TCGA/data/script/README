@@ -1,0 +1,23 @@
+Processing Order
+
+# copy junction, intron retention, expression and quality control files
+1. bash copy_files.sh
+
+# copy mutation files and process them
+2. bash process_mutation1.sh
+
+
+3. bash process_mutation2.sh
+
+4. bash process_control.sh
+
+5. bash make_savnet_input_all.sh
+
+6. bash process_allele_count_all.sh
+
+7. bash process_pmsignature1.sh
+
+8. bash process_pmsignature2.sh
+
+9. bash process_pmsignature3.sh
+
