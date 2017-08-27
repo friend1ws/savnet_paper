@@ -93,7 +93,7 @@ ggplot(mut_func_exp %>%
   guides(fill = FALSE)
   
 
-ggsave("../figure/mut_fun_exp_fpkm10.tiff", width = 10, height = 4, dpi = 600, units = "cm")
+ggsave("../figure/mut_fun_exp_fpkm10.tiff", width = 10, height = 5.0, dpi = 600, units = "cm")
 
 
 
@@ -110,7 +110,7 @@ ggplot(mut_func_exp %>%
   # theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
   guides(fill = FALSE)
 
-ggsave("../figure/mut_fun_exp.tiff", width = 10, height = 4, dpi = 600, units = "cm")
+ggsave("../figure/mut_fun_exp.tiff", width = 10, height = 5.0, dpi = 600, units = "cm")
 
 
 
@@ -129,7 +129,7 @@ ggplot(mut_func_exp %>%
 
 
 
-ggsave("../figure/mut_fun_exp_CG.tiff", width = 10, height = 4, dpi = 600, units = "cm")
+ggsave("../figure/mut_fun_exp_CG.tiff", width = 10, height = 5.0, dpi = 600, units = "cm")
 
 
 

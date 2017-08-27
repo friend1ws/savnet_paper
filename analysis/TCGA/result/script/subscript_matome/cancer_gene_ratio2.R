@@ -99,7 +99,7 @@ get_cg_ratio_info <- function(mut_info_selected) {
   cg_info$is_gsm <- ifelse(is.na(cg_info$GSM), "non_gsm", "gsm")
 
 
-  cg_info_proc <- as.data.frame(cg_info) %>% gather(key = class_statistics, value = value, CG_ratio, CG_log_pV) %>% 
+  cg_info_proc <- as.data.frame(cg_info) %>% gather(key = class_statistics, value = value, CG_ratio, CG_log_pV, CG, NonCG) %>% 
     select(mut_func2, class_statistics, value)
 
   return(cg_info_proc)
@@ -132,6 +132,7 @@ names(cg_type_tmp) <- "Cancer_Gene_Type"
 cg_info_proc_master <- rbind(cg_info_proc_master, cbind(cg_info_proc_tmp, cg_type_tmp))
 
 
+print(cg_info_proc_master)
 
 # make_label <- function(value) {
 #     if (value == "Vogelstein (2013)") {
@@ -158,7 +159,6 @@ cg_info_proc_master <- rbind(cg_info_proc_master, cbind(cg_info_proc_tmp, cg_typ
 #                 )
 #     return(cg2etal[cg])
 # }
-
 
 
 ggplot(cg_info_proc_master %>% filter(!(mut_func2 %in% c("In-frame indel", "Frameshift indel", "Other")) & class_statistics == "CG_ratio"),
@@ -194,6 +194,24 @@ ggplot(cg_info_proc_master %>% filter(!(mut_func2 %in% c("Silent", "In-frame ind
 
 
 ggsave("../figure/cancer_gene_pV2.tiff", width = 10, height = 12, dpi = 600, units = "cm")
+
+
+ggplot(cg_info_proc_master %>% 
+         filter(!(mut_func2 %in% c("Silent", "Missense", "Nonsense", "In-frame indel", "Frameshift indel", "Other")) & class_statistics == "CG"),
+       aes(x = mut_func2, y = value, fill = mut_func2)) +
+  geom_bar(stat = "identity", position = "dodge")  +
+  coord_flip() +
+  labs(x = "", y = "Frequency of SAVs affecting cancer-related genes") +
+  my_theme() +
+  theme(strip.text.x = element_text(size = rel(1.2), angle = 0, hjust = 0),
+        panel.spacing.x=unit(1.2, "lines")) +
+  facet_grid(cg_type_tmp~., scales = "free") +
+  scale_fill_manual(values = splicing_class_colour) +
+  scale_y_continuous(expand = c(0, 0)) +
+  guides(fill = FALSE)
+
+
+ggsave("../figure/cancer_gene_cg_count.tiff", width = 10, height = 12, dpi = 600, units = "cm")
 
 
 

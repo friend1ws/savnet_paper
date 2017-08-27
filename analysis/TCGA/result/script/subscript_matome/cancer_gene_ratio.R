@@ -89,15 +89,18 @@ cg_info$mut_func2 <- factor(cg_info$mut_func,
 cg_info$is_gsm <- ifelse(is.na(cg_info$GSM), "non_gsm", "gsm")
 
 
-cg_info_proc <- cg_info %>% gather(key = class_statistics, value = value, Oncogene_ratio, TSG_ratio, Oncogene_log_pV, TSG_log_pV) %>% 
+cg_info_proc <- cg_info %>% gather(key = class_statistics, value = value, Oncogene, TSG, Oncogene_ratio, TSG_ratio, Oncogene_log_pV, TSG_log_pV) %>% 
   select(mut_func2, class_statistics, value)
 
-cg_info_proc$VogelsteinEtAl_2013 <- ifelse(cg_info_proc$class_statistics %in% c("Oncogene_ratio", "Oncogene_log_pV"), "Oncogene", "TSG")
-cg_info_proc$statistics <- ifelse(cg_info_proc$class_statistics %in% c("Oncogene_ratio", "TSG_ratio"), "ratio", "log_pV")
+cg_info_proc$VogelsteinEtAl_2013 <- ifelse(cg_info_proc$class_statistics %in% c("Oncogene", "Oncogene_ratio", "Oncogene_log_pV"), "Oncogene", "TSG")
+# cg_info_proc$statistics <- ifelse(cg_info_proc$class_statistics %in% c("Oncogene_ratio", "TSG_ratio"), "ratio", "log_pV")
+cg_info_proc$statistics <- rep("count", nrow(cg_info_proc))
+cg_info_proc$statistics[cg_info_proc$class_statistics %in% c("Oncogene_ratio", "TSG_ratio")] <- "ratio"
+cg_info_proc$statistics[cg_info_proc$class_statistics %in% c("Oncogene_log_pV", "TSG_log_pV")] <- "log_pV" 
 
 
 cg_info_proc$is_gsm <- ifelse(cg_info$mut_func2 %in% 
-                                c("Exon skipping", "Alternative splice site",
+                                c("Exon skipping", "Alternative 5'SS", "Alternative 3'SS",
                                   "Intron retention", "Complex"), "gsm", "non_gsm")
 
 
@@ -137,4 +140,27 @@ ggplot(cg_info_proc %>% filter(!(mut_func2 %in% c("Silent", "In-frame indel", "F
 
 
 ggsave("../figure/cancer_gene_pV.tiff", width = 10, height = 4, dpi = 600, units = "cm")
+
+
+ggplot(cg_info_proc %>% filter(!(mut_func2 %in% c("Silent", "Missense", "Nonsense", "In-frame indel", "Frameshift indel", "Other")) & statistics == "count"),
+       aes(x = mut_func2, y = value, fill = mut_func2)) +
+  geom_bar(stat = "identity", position = "dodge")  +
+  coord_flip() +
+  labs(x = "", y = "SAV count") +
+  my_theme() +
+  theme(panel.spacing = unit(1.5, "lines"),
+        plot.margin = unit(c(5.5, 6.5, 5.5, 5.5), "points")) +
+  # theme(strip.text.x = element_text(size = rel(1.2), angle = 0, hjust = 0),
+  #       panel.spacing.x=unit(1.2, "lines")) +
+  facet_grid(.~VogelsteinEtAl_2013, scales = "free") +
+  scale_fill_manual(values = splicing_class_colour) +
+  scale_y_continuous(expand = c(0, 0)) +
+  guides(fill = FALSE)
+
+
+ggsave("../figure/cancer_gene_count.tiff", width = 10, height = 3.2, dpi = 600, units = "cm")
+
+
+
+print(as.data.frame(cg_info_proc %>% filter(statistics == "count" & VogelsteinEtAl_2013 == "TSG")))
 

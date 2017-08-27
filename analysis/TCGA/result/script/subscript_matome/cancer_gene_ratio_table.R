@@ -55,11 +55,17 @@ get_cg_stat <- function(mut_info) {
     a <- mut_info %>% filter(GSM != "no-change" & cg_type == "CG") %>% select(Sample_Name) %>% distinct()
     n4 <- nrow(a)
 
+    # Number of samples with at least one CG SAVs other than those disrupting canonical splices sites
+    a <- mut_info %>% filter(GSM != "no-change" & cg_type == "CG" & (grepl("creation", Mutation_Type) | Is_Canonical == "non-canonical")) %>%
+           select(Sample_Name) %>% distinct()
+    n5 <- nrow(a)
+
+    # Ratio of SAVs to total LOF variants
     b1 <- mut_info %>% filter((GSM != "no-change" | ExonicFunc.refGene %in% c("stopgain", "frameshift deletion", "frameshift insertion")) & cg_type == "CG")
     b2 <- mut_info %>% filter(GSM != "no-change" & cg_type == "CG")
-    n5 <- nrow(b2) / nrow(b1)
+    n6 <- nrow(b2) / nrow(b1)
 
-    return(c(n1, n2, n3, n4, n5))
+    return(c(n1, n2, n3, n4, n5, n6))
 }
 
 V <- get_cg_stat(mut_info %>% mutate(cg_type = VogelsteinEtAl_2013))
@@ -70,7 +76,7 @@ V <- rbind(V, get_cg_stat(mut_info %>% mutate(cg_type = Cancer_Gene_Census)))
 print(V)
 V <- cbind(c("VogelsteinEtAl_2013", "YeEtAl_2016", "LawrenceEtAl_2014", "Cancer_Gene_Census"), V)
 
-colnames(V) <- c("Cancer_Gene_Type", "CG_SAV_COUNT", "CG_SAV_N_D_COUNT", "CG_SAV_C_COUNT", "CG_SAV_SAMPLE_COUNT", "CG_SAV_RATIO_LOH")
+colnames(V) <- c("Cancer_Gene_Type", "CG_SAV_COUNT", "CG_SAV_ND_COUNT", "CG_SAV_C_COUNT", "CG_SAV_SAMPLE_COUNT", "CG_SAV_C_ND_SAMPLE_COUNT", "CG_SAV_RATIO_LOF")
 
 write.table(V, "../table/cancer_gene_ratio_table.txt", sep = "\t", quote = FALSE, row.names = FALSE)
 
